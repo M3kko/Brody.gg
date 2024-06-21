@@ -1,0 +1,99 @@
+/* 
+    -- Table of Content --
+
+    * # Preloader
+    * # Margin
+    * # InfoBox
+    * # Breadcrumb
+    * # Header
+    * # About
+    * # Project
+    * # Project Details
+    * # Credentials
+    * # Service
+    * # Blog
+    * # Contact
+    * # Footer
+    * Responsive
+
+*/
+:root {
+    --primary_color: #5B78F6;
+    --dark: #323232;
+}
+*,*::before,*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    scroll-behavior: smooth;
+    color: #9f9f9f;
+    background: #0F0F0F;
+    line-height: 19.2px;
+}
+img {
+    max-width: 100%;
+}
+a {
+    text-decoration: none;
+}
+.text-right {
+    text-align: right;
+}
+.container {
+    max-width: 1170px;
+}
+
+.gap-24 {
+    gap: 24px;
+}
+.h-full {
+    height: 100%;
+}
+
+/* # Preloader */
+.preloader {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #111;
+    transform-origin: bottom;
+    z-index: 111111
+}
+
+.preloader .black_wall {
+    height: 100%;
+    background-color: #222;
+    transform-origin: top;
+    animation: preloader_slide 0.5s ease-in-out 0s 1 normal both
+}
+
+.preloader .loader {
+    width: 100%;
+    height: 3px;
+    position: absolute;
+    border-radius: 2px;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    background-color: var(--primary_color);
+    transform-origin: left;
+    animation: loader_running 3s ease-in-out 1s infinite normal both
+}
+
+.preloader.off {
+    animation: preloader_slide 0.5s ease-in-out 0s 1 reverse both
+}
+
+
+
+/* # Margin */
+.mt-24 {
+    margin-top: 24px;
