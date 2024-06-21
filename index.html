@@ -63,13 +63,8 @@
                                 <img src="./assets/images/me.png" alt="About Me">
                             </div>
                             <div class="infos">
-                                <h1>I'm Broderick</h1>
-                                <h5>I'm a 15 year old <span id="changing-text-container"><span id="changing-text"></span></span></h5>
-                               
-                             
-                                <a href="#" class="about-btn">
-                                    <img src="./assets/images/icon.svg" alt="Button">
-                                </a>
+                                <h2 style="color: white;">I'm Broderick</h2>
+                                <h5>I'm a 15 year old <span id="changing-text-container"><span id="changing-text"></span> based out of Austin Texas</span></h5>
                             </div>
                         </div>
                     </div>
@@ -78,13 +73,8 @@
                         <div class="about-credentials-wrap">
                             <div data-aos="zoom-in">
                                 <div class="banner shadow-box">
-                                    <div class="marquee">
-                                        <div>
-                                          <span>LATEST WORK AND <b>FEATURED</b> <img src="./assets/images/star1.svg" alt="Star"> LATEST WORK AND <b>FEATURED</b> <img src="./assets/images/star1.svg" alt="Star"> LATEST WORK AND <b>FEATURED</b> <img src="./assets/images/star1.svg" alt="Star"> LATEST WORK AND <b>FEATURED</b> LATEST WORK AND <img src="./assets/images/star1.svg" alt="Star"> LATEST WORK AND <b>FEATURED</b> LATEST WORK AND <img src="./assets/images/star1.svg" alt="Star"></span>
-                                        </div>
-                                      </div>
+                                    <div class="current-time" id="current-time"></div>
                                 </div>
-
                             </div>
 
                             <div class="gx-row d-flex gap-24">
@@ -172,7 +162,6 @@
                                         <a href="./service.html" class="about-btn">
                                             <img src="./assets/images/icon.svg" alt="Button">
                                         </a>
-    
                                     </div>
                                 </div>
                             </div>
@@ -287,6 +276,18 @@
         }
 
         setInterval(changeText, 2000); // Change text every 2 seconds
+
+        // JavaScript for displaying current time
+        function updateTime() {
+            const currentTimeElement = document.getElementById('current-time');
+            const options = { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const now = new Intl.DateTimeFormat('en-US', options).format(new Date());
+            currentTimeElement.textContent = `It's currently ${now} where I am.`;
+        }
+
+        // Update the time immediately and then every second
+        updateTime();
+        setInterval(updateTime, 1000);
     </script>
 </body>
 </html>
