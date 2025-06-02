@@ -1,7 +1,7 @@
 {
     "redirects": [
       {
-        "source": "/charm1",
+        "source": "/charm5",
         "destination": "https://discord.com",
         "permanent": true
       },
