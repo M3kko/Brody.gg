@@ -2,7 +2,7 @@
     "redirects": [
       {
         "source": "/charm1",
-        "destination": "discord.com",
+        "destination": "https://discord.com",
         "permanent": true
       },
       {
