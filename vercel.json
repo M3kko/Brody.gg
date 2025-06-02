@@ -1,0 +1,15 @@
+{
+    "redirects": [
+      {
+        "source": "/charm1",
+        "destination": "discord.com",
+        "permanent": true
+      },
+      {
+        "source": "/charm2",
+        "destination": "findmy://",
+        "permanent": true
+      }
+    ]
+  }
+  
