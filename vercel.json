@@ -1,14 +1,15 @@
 {
-    "redirects": [
+    "routes": [
       {
-        "source": "/charm5",
-        "destination": "https://discord.com",
-        "permanent": true
-      },
+        "src": "^/charm1/?$",          
+        "dest": "/api/charm-roulette"  
+      }
+    ],
+    "redirects": [
       {
         "source": "/charm2",
         "destination": "findmy://",
-        "permanent": true
+        "permanent": false             
       }
     ]
   }
