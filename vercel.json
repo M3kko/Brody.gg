@@ -2,7 +2,7 @@
     "rewrites": [
       {
         "source": "/charm1",          
-        "dest": "/api/charm-roulette"  
+        "destination": "/api/charm-roulette"  
       }
     ],
     "redirects": [
