@@ -2,9 +2,8 @@
 
 export default function handler(req, res) {
     const links = [
-      'discord://channels/@me/1278908744335626370/1378900109236113528',
-      'discord://channels/@me/1278908744335626370/1299984795274711130',
-      'discord://channels/@me/1278908744335626370/1375160685473959967'
+      'discord://discord.com/channels/@me/1278908744335626370/1299984795274711130',
+      
 
     ];
   
