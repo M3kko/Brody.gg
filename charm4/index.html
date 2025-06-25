@@ -1,118 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Letter to Lotta</title>
-    <style>
-        @font-face {
-            font-family: 'The Series';
-            src: url('./assets/fonts/The Series.otf') format('opentype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background-color: #F5E6D3;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            font-family: 'The Series', cursive;
-            line-height: 1.8;
-            color: #2C2416;
-            overflow-y: auto;
-        }
-        
-        .letter-container {
-            max-width: 800px;
-            width: 100%;
-            background-color: #FAF0E6;
-            padding: 60px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .letter-content {
-            position: relative;
-            z-index: 1;
-            font-size: 22px;
-            white-space: pre-line;
-            word-wrap: break-word;
-            line-height: 1.2;
-        }
-        
-        /* Reduce empty line spacing */
-        .letter-content br {
-            line-height: 0.8;
-        }
-        
-        .letter-content em {
-            font-style: italic;
-            text-decoration: underline;
-            text-decoration-style: wavy;
-            text-decoration-color: #8B7355;
-        }
-        
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .letter-container {
-                padding: 40px 25px;
-            }
-            
-            .letter-content {
-                font-size: 20px;
-                line-height: 1.3;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .letter-container {
-                padding: 30px 20px;
-            }
-            
-            .letter-content {
-                font-size: 19px;
-                line-height: 1.35;
-            }
-        }
-        
-        /* Paper texture effect */
-        .letter-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 10px,
-                    rgba(255, 255, 255, 0.03) 10px,
-                    rgba(255, 255, 255, 0.03) 20px
-                );
-            pointer-events: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>Letter to Lotta</title>
+<style>
+@font-face {
+font-family: 'The Series';
+src: url('./assets/fonts/The Series.otf') format('opentype');
+font-weight: normal;
+font-style: normal;
+font-display: swap;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+background-color: #F5E6D3;
+min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
+font-family: 'The Series', cursive;
+line-height: 1.8;
+color: #2C2416;
+overflow-y: auto;
+}
+.letter-container {
+max-width: 800px;
+width: 100%;
+background-color: #FAF0E6;
+padding: 60px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+position: relative;
+overflow: hidden;
+}
+.letter-content {
+position: relative;
+z-index: 1;
+font-size: 22px;
+white-space: pre-line;
+word-wrap: break-word;
+line-height: 1.8;
+}
+/* Reduce empty line spacing */
+.letter-content br {
+line-height: 0.8;
+}
+.letter-content em {
+font-style: italic;
+text-decoration: underline;
+text-decoration-style: wavy;
+text-decoration-color: #8B7355;
+}
+/* Tablet responsiveness */
+@media (max-width: 768px) {
+body {
+padding: 15px;
+}
+.letter-container {
+padding: 40px 30px;
+}
+.letter-content {
+font-size: 24px;
+line-height: 1.8;
+}
+}
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+body {
+padding: 10px;
+min-height: 100vh;
+align-items: flex-start;
+padding-top: 20px;
+}
+.letter-container {
+padding: 35px 25px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.letter-content {
+font-size: 20px;
+line-height: 1.75;
+}
+}
+/* Small mobile responsiveness */
+@media (max-width: 375px) {
+body {
+padding: 8px;
+padding-top: 15px;
+}
+.letter-container {
+padding: 30px 20px;
+}
+.letter-content {
+font-size: 18px;
+line-height: 1.7;
+}
+}
+/* Paper texture effect */
+.letter-container::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-image:
+repeating-linear-gradient(
+45deg,
+transparent,
+transparent 10px,
+rgba(255, 255, 255, 0.03) 10px,
+rgba(255, 255, 255, 0.03) 20px
+);
+pointer-events: none;
+}
+/* Ensure text doesn't get too small on zoom */
+@media (max-width: 480px) {
+html {
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+text-size-adjust: 100%;
+}
+}
+</style>
 </head>
 <body>
-    <div class="letter-container">Dear Lotta,
-
+<div class="letter-container">
+<div class="letter-content">Dear Lotta,
 
 I am <em>so</em> proud of you.
 
@@ -158,10 +176,9 @@ I love you so much lotta.
 
 Life won't always be full of roses, but I sure as heck will be here to keep handing you them.
 
-
-
-<span style="display: block; text-align: right;">I love you always and forever,</span><span style="display: block; text-align: right;"><em>Broderick</em></span>
+<span style="display: block; text-align: right;">I love you always and forever,</span>
+<span style="display: block; text-align: right;"><em>Broderick</em></span>
 </div>
-  </div>
+</div>
 </body>
 </html>
