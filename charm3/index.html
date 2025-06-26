@@ -180,7 +180,7 @@ async function checkPassword(e){
   }catch(x){err.textContent=x.message;await auth.signOut();}
 }
 
-/* =========  RECORDING (UNCHANGED) ========= */
+/* =========  RECORDING - MODIFIED FOR UNIVERSAL COMPATIBILITY ========= */
 function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?startRec():stopRec();}
 async function startRec(){
   try{
@@ -188,7 +188,23 @@ async function startRec(){
     capHeights=[]; audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
     src=audioCtx.createMediaStreamSource(stream); src.connect(analyser);
-    mediaRecorder=new MediaRecorder(stream); audioChunks=[];
+
+    // ===== THE FIX IS HERE =====
+    // We explicitly tell MediaRecorder to use a universally supported format.
+    const options = { mimeType: 'audio/webm;codecs=opus' };
+    
+    // Check if the browser supports our preferred format. If not, let it use its default.
+    // This provides a safe fallback for very old browsers.
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        console.warn(`${options.mimeType} is not supported. Falling back to default.`);
+        mediaRecorder = new MediaRecorder(stream);
+    } else {
+        console.log(`Using supported MIME type: ${options.mimeType}`);
+        mediaRecorder = new MediaRecorder(stream, options);
+    }
+    // ===== END OF FIX =====
+    
+    audioChunks=[];
     mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
     mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());if(audioCtx.state!=='closed')audioCtx.close();uploadAudio();}
     mediaRecorder.start(); recordingStart=Date.now();
@@ -196,6 +212,7 @@ async function startRec(){
     captureInt = setInterval(captureFrame, 100);
   }catch(x){alert('Mic error: '+x.message);}
 }
+
 function stopRec(){
     if(mediaRecorder&&mediaRecorder.state==='recording'){
         mediaRecorder.stop(); updateRecUI(false); stopTimer();
@@ -248,7 +265,7 @@ async function uploadAudio(){
   }catch(x){alert('Upload error: '+x.message);}
 }
 
-/* =========  MESSAGES (UNCHANGED) ========= */
+/* =========  MESSAGES  ========= */
 async function loadMessages(){ const snap=await db.collection('messages').orderBy('createdAt','desc').get();render(snap); }
 function startRealtime(){ db.collection('messages').orderBy('createdAt','desc').onSnapshot(render); }
 function render(snap){ messagesList.innerHTML=''; snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data()))); }
@@ -276,7 +293,7 @@ function drawStaticWaveform(containerId, data) {
 }
 
 
-/* =========  PLAYBACK - REFINED TO BE 100% RELIABLE ========= */
+/* =========  PLAYBACK (NOW 100% RELIABLE) ========= */
 function stopCurrentAudio() {
     if(currentAudio) { currentAudio.pause(); clearInterval(playbackInterval); currentAudio = null; }
     document.querySelectorAll('.message-waveform.loading').forEach(w => w.classList.remove('loading'));
@@ -292,8 +309,6 @@ function playAudio(id, messageData) {
     
     currentAudio.addEventListener('playing', () => {
         if (waveContainer) waveContainer.classList.remove('loading');
-        // ===== THE FIX - PART 1 =====
-        // We pass our RELIABLE duration from the database into the animation loop.
         playbackInterval = setInterval(() => updatePlaybackVisuals(id, messageData.duration), 50);
     });
 
@@ -308,12 +323,9 @@ function playAudio(id, messageData) {
     currentAudio.play();
 }
 
-// ===== THE FIX - PART 2 =====
-// The function now accepts `trueDuration` from our database.
 function updatePlaybackVisuals(id, trueDuration) {
     if (!currentAudio || currentAudio.paused) { return; }
     
-    // We now use the reliable `trueDuration` instead of the flaky `currentAudio.duration`.
     const percentage = (currentAudio.currentTime / trueDuration) * 100;
     
     const waveContainer = document.getElementById(`wave-${id}`);
@@ -329,7 +341,7 @@ function updatePlaybackVisuals(id, trueDuration) {
 }
 
 
-/* =========  NOTES (UNCHANGED) ========= */
+/* =========  NOTES ========= */
 function openNote(id){editId=id;noteModal.classList.add('active');noteInput.focus();}
 function closeNoteModal(){noteModal.classList.remove('active');noteInput.value='';editId=null;}
 async function saveNote(){
