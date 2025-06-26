@@ -53,16 +53,34 @@
             border-radius: 10px;
             width: 250px;
             text-align: center;
+            margin-bottom: 15px;
         }
 
         .password-input::placeholder {
             color: rgba(255, 255, 255, 0.5);
         }
 
+        .submit-button {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
         .password-error {
             color: #ff6b6b;
-            margin-top: 10px;
+            margin-top: 15px;
             font-size: 14px;
+            min-height: 20px;
         }
 
         /* Background elements */
@@ -80,18 +98,73 @@
 
         .star {
             position: fixed;
-            background: url('https://via.placeholder.com/30x30/FFFFFF/FFFFFF?text=★') no-repeat center;
             background-size: contain;
+            z-index: 1;
         }
 
-        .star-1 { top: 20%; left: 10%; width: 20px; height: 20px; }
-        .star-2 { top: 15%; left: 80%; width: 25px; height: 25px; }
-        .star-3 { top: 40%; left: 90%; width: 15px; height: 15px; }
-        .star-4 { top: 60%; left: 5%; width: 30px; height: 30px; }
-        .star-5 { top: 70%; left: 85%; width: 18px; height: 18px; }
-        .star-6 { top: 30%; left: 20%; width: 22px; height: 22px; }
-        .star-7 { top: 80%; left: 30%; width: 25px; height: 25px; }
-        .star-8 { top: 50%; left: 70%; width: 20px; height: 20px; }
+        .star-1 { 
+            top: 10%; 
+            left: 15%; 
+            width: 25px; 
+            height: 25px; 
+            background: url('https://via.placeholder.com/25x25/FFFFFF/FFFFFF?text=Star1') no-repeat center;
+        }
+        
+        .star-2 { 
+            top: 20%; 
+            left: 85%; 
+            width: 30px; 
+            height: 30px; 
+            background: url('https://via.placeholder.com/30x30/FFFFFF/FFFFFF?text=Star2') no-repeat center;
+        }
+        
+        .star-3 { 
+            top: 35%; 
+            left: 10%; 
+            width: 20px; 
+            height: 20px; 
+            background: url('https://via.placeholder.com/20x20/FFFFFF/FFFFFF?text=Star3') no-repeat center;
+        }
+        
+        .star-4 { 
+            top: 45%; 
+            left: 92%; 
+            width: 28px; 
+            height: 28px; 
+            background: url('https://via.placeholder.com/28x28/FFFFFF/FFFFFF?text=Star4') no-repeat center;
+        }
+        
+        .star-5 { 
+            top: 60%; 
+            left: 5%; 
+            width: 35px; 
+            height: 35px; 
+            background: url('https://via.placeholder.com/35x35/FFFFFF/FFFFFF?text=Star5') no-repeat center;
+        }
+        
+        .star-6 { 
+            top: 75%; 
+            left: 88%; 
+            width: 22px; 
+            height: 22px; 
+            background: url('https://via.placeholder.com/22x22/FFFFFF/FFFFFF?text=Star6') no-repeat center;
+        }
+        
+        .star-7 { 
+            top: 85%; 
+            left: 25%; 
+            width: 26px; 
+            height: 26px; 
+            background: url('https://via.placeholder.com/26x26/FFFFFF/FFFFFF?text=Star7') no-repeat center;
+        }
+        
+        .star-8 { 
+            top: 50%; 
+            left: 70%; 
+            width: 24px; 
+            height: 24px; 
+            background: url('https://via.placeholder.com/24x24/FFFFFF/FFFFFF?text=Star8') no-repeat center;
+        }
 
         /* Main App */
         .app-container {
@@ -344,7 +417,11 @@
     <div class="password-screen" id="passwordScreen">
         <div class="password-container">
             <h1>🌙 Enter Password</h1>
-            <input type="password" class="password-input" id="passwordInput" placeholder="••••••••" onkeypress="checkEnter(event)">
+            <form onsubmit="checkPassword(event)">
+                <input type="password" class="password-input" id="passwordInput" placeholder="••••••••" autofocus>
+                <br>
+                <button type="submit" class="submit-button">Enter</button>
+            </form>
             <div class="password-error" id="passwordError"></div>
         </div>
     </div>
@@ -391,30 +468,17 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
     <script>
-        // CONFIGURE THESE:
-        const APP_PASSWORD = "102624"; // Change this to your password
+        // Configuration
+        const APP_PASSWORD = "102624";
         
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCR3y8knbFlkZeE_osJorlgI35oh4gm3JM",
-  authDomain: "moon-messages.firebaseapp.com",
-  projectId: "moon-messages",
-  storageBucket: "moon-messages.firebasestorage.app",
-  messagingSenderId: "541321527834",
-  appId: "1:541321527834:web:b06a6417ef9c7915d787a3",
-  measurementId: "G-4WFBYRMYQR"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR3y8knbFlkZeE_osJorlgI35oh4gm3JM",
+            authDomain: "moon-messages.firebaseapp.com",
+            projectId: "moon-messages",
+            storageBucket: "moon-messages.firebasestorage.app",
+            messagingSenderId: "541321527834",
+            appId: "1:541321527834:web:b06a6417ef9c7915d787a3"
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -423,24 +487,28 @@ const analytics = getAnalytics(app);
         const storage = firebase.storage();
 
         // Global variables
-        let mediaRecorder;
+        let mediaRecorder = null;
         let audioChunks = [];
-        let audioContext;
-        let analyser;
-        let microphone;
-        let animationId;
-        let recordingStartTime;
-        let timerInterval;
+        let audioContext = null;
+        let analyser = null;
+        let microphone = null;
+        let animationId = null;
+        let recordingStartTime = null;
+        let timerInterval = null;
         let currentEditingMessageId = null;
         let currentAudio = null;
         let currentMessageId = null;
 
         // Password check
-        async function checkPassword() {
+        async function checkPassword(event) {
+            event.preventDefault();
+            
             const input = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('passwordError');
+            
             if (input === APP_PASSWORD) {
                 try {
-                    // Sign in anonymously to Firebase
+                    errorDiv.textContent = 'Authenticating...';
                     await auth.signInAnonymously();
                     document.getElementById('passwordScreen').style.display = 'none';
                     document.getElementById('appContainer').classList.add('active');
@@ -448,19 +516,14 @@ const analytics = getAnalytics(app);
                     startRealtimeListener();
                 } catch (error) {
                     console.error('Auth error:', error);
-                    document.getElementById('passwordError').textContent = 'Authentication error';
+                    errorDiv.textContent = 'Authentication error. Please try again.';
                 }
             } else {
-                document.getElementById('passwordError').textContent = 'Incorrect password';
+                errorDiv.textContent = 'Incorrect password';
+                document.getElementById('passwordInput').value = '';
                 setTimeout(() => {
-                    document.getElementById('passwordError').textContent = '';
-                }, 2000);
-            }
-        }
-
-        function checkEnter(event) {
-            if (event.key === 'Enter') {
-                checkPassword();
+                    errorDiv.textContent = '';
+                }, 3000);
             }
         }
 
@@ -516,7 +579,9 @@ const analytics = getAnalytics(app);
                 mediaRecorder.stop();
                 updateRecordingUI(false);
                 stopTimer();
-                cancelAnimationFrame(animationId);
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
             }
         }
 
@@ -627,7 +692,7 @@ const analytics = getAnalytics(app);
             db.collection('messages')
                 .orderBy('createdAt', 'desc')
                 .onSnapshot((snapshot) => {
-                    loadMessages();
+                    displayMessages(snapshot);
                 });
         }
 
@@ -636,6 +701,10 @@ const analytics = getAnalytics(app);
                 .orderBy('createdAt', 'desc')
                 .get();
             
+            displayMessages(snapshot);
+        }
+
+        function displayMessages(snapshot) {
             const messagesList = document.getElementById('messagesList');
             messagesList.innerHTML = '';
 
@@ -684,10 +753,12 @@ const analytics = getAnalytics(app);
             const audio = new Audio(message.audioUrl);
             currentAudio = audio;
 
-            // Set starting position based on saved progress
-            if (message.playbackProgress) {
-                audio.currentTime = (message.playbackProgress / 100) * audio.duration;
-            }
+            // Wait for metadata to load
+            audio.addEventListener('loadedmetadata', () => {
+                if (message.playbackProgress && message.playbackProgress < 100) {
+                    audio.currentTime = (message.playbackProgress / 100) * audio.duration;
+                }
+            });
 
             audio.addEventListener('timeupdate', () => {
                 if (audio.duration) {
@@ -707,18 +778,24 @@ const analytics = getAnalytics(app);
 
         async function updatePlaybackProgress(messageId, progress) {
             // Update UI immediately
-            const card = document.querySelector(`[onclick*="${messageId}"]`);
-            if (card) {
-                const progressBar = card.querySelector('.waveform-progress');
-                if (progressBar) {
-                    progressBar.style.width = `${progress}%`;
+            const cards = document.querySelectorAll('.message-card');
+            cards.forEach(card => {
+                if (card.onclick.toString().includes(messageId)) {
+                    const progressBar = card.querySelector('.waveform-progress');
+                    if (progressBar) {
+                        progressBar.style.width = `${progress}%`;
+                    }
                 }
-            }
+            });
 
             // Update Firebase
-            await db.collection('messages').doc(messageId).update({
-                playbackProgress: progress
-            });
+            try {
+                await db.collection('messages').doc(messageId).update({
+                    playbackProgress: progress
+                });
+            } catch (error) {
+                console.error('Error updating progress:', error);
+            }
         }
 
         function openNoteModal(messageId) {
@@ -736,10 +813,14 @@ const analytics = getAnalytics(app);
         async function saveNote() {
             const title = document.getElementById('noteInput').value.trim();
             if (title && currentEditingMessageId) {
-                await db.collection('messages').doc(currentEditingMessageId).update({
-                    title: title
-                });
-                closeNoteModal();
+                try {
+                    await db.collection('messages').doc(currentEditingMessageId).update({
+                        title: title
+                    });
+                    closeNoteModal();
+                } catch (error) {
+                    alert('Error saving note: ' + error.message);
+                }
             }
         }
 
@@ -755,6 +836,13 @@ const analytics = getAnalytics(app);
                 closeNoteModal();
             }
         });
+
+        // Handle Enter key in note modal
+        document.getElementById('noteInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                saveNote();
+            }
+        });
     </script>
 </body>
-</html>"></data>
+</html>
