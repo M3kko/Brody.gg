@@ -180,7 +180,7 @@ async function checkPassword(e){
   }catch(x){err.textContent=x.message;await auth.signOut();}
 }
 
-/* =========  RECORDING - MODIFIED FOR UNIVERSAL COMPATIBILITY ========= */
+/* =========  RECORDING  ========= */
 function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?startRec():stopRec();}
 async function startRec(){
   try{
@@ -188,22 +188,10 @@ async function startRec(){
     capHeights=[]; audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
     src=audioCtx.createMediaStreamSource(stream); src.connect(analyser);
-
-    // ===== THE FIX IS HERE =====
-    // We explicitly tell MediaRecorder to use a universally supported format.
     const options = { mimeType: 'audio/webm;codecs=opus' };
-    
-    // Check if the browser supports our preferred format. If not, let it use its default.
-    // This provides a safe fallback for very old browsers.
-    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        console.warn(`${options.mimeType} is not supported. Falling back to default.`);
-        mediaRecorder = new MediaRecorder(stream);
-    } else {
-        console.log(`Using supported MIME type: ${options.mimeType}`);
-        mediaRecorder = new MediaRecorder(stream, options);
-    }
-    // ===== END OF FIX =====
-    
+    mediaRecorder = MediaRecorder.isTypeSupported(options.mimeType) 
+      ? new MediaRecorder(stream, options) 
+      : new MediaRecorder(stream);
     audioChunks=[];
     mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
     mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());if(audioCtx.state!=='closed')audioCtx.close();uploadAudio();}
@@ -212,7 +200,6 @@ async function startRec(){
     captureInt = setInterval(captureFrame, 100);
   }catch(x){alert('Mic error: '+x.message);}
 }
-
 function stopRec(){
     if(mediaRecorder&&mediaRecorder.state==='recording'){
         mediaRecorder.stop(); updateRecUI(false); stopTimer();
@@ -293,39 +280,80 @@ function drawStaticWaveform(containerId, data) {
 }
 
 
-/* =========  PLAYBACK (NOW 100% RELIABLE) ========= */
+/* =========  PLAYBACK (REWRITTEN FOR BULLETPROOF RELIABILITY) ========= */
 function stopCurrentAudio() {
-    if(currentAudio) { currentAudio.pause(); clearInterval(playbackInterval); currentAudio = null; }
+    if(currentAudio) { 
+        currentAudio.pause();
+        currentAudio.src = ''; // Detach the source to stop all network activity
+        currentAudio = null; 
+    }
+    clearInterval(playbackInterval);
     document.querySelectorAll('.message-waveform.loading').forEach(w => w.classList.remove('loading'));
     document.querySelectorAll('.waveform-bar.played').forEach(b => b.classList.remove('played'));
     currentId = null;
 }
+
+// ===== THE NEW, MORE ROBUST PLAYBACK LOGIC =====
 function playAudio(id, messageData) {
     const waveContainer = document.getElementById(`wave-${id}`);
-    if (currentId === id) { currentAudio.paused ? currentAudio.play() : currentAudio.pause(); return; }
-    stopCurrentAudio();
-    currentId = id; currentAudio = new Audio(messageData.audioUrl);
-    if (waveContainer) waveContainer.classList.add('loading');
     
-    currentAudio.addEventListener('playing', () => {
-        if (waveContainer) waveContainer.classList.remove('loading');
-        playbackInterval = setInterval(() => updatePlaybackVisuals(id, messageData.duration), 50);
-    });
+    if (currentId === id) { // Handle play/pause on the currently active track
+        currentAudio.paused ? currentAudio.play() : currentAudio.pause();
+        return;
+    }
 
+    stopCurrentAudio(); // Stop any other track first
+
+    currentId = id;
+    currentAudio = new Audio(messageData.audioUrl);
+    
+    // Add event listeners *before* starting playback
+    
+    // Show loading indicator as soon as browser starts fetching
+    currentAudio.addEventListener('loadstart', () => {
+        if (waveContainer) waveContainer.classList.add('loading');
+    });
+    currentAudio.addEventListener('waiting', () => {
+        if (waveContainer) waveContainer.classList.add('loading');
+    });
+    
+    // Pause state handling
     currentAudio.addEventListener('pause', () => {
         clearInterval(playbackInterval);
         if (waveContainer) waveContainer.classList.remove('loading');
     });
+
+    // End of track handling
     currentAudio.addEventListener('ended', () => {
-        if (waveContainer) waveContainer.querySelectorAll('.waveform-bar').forEach(bar => bar.classList.add('played'));
+        if (waveContainer) {
+            waveContainer.querySelectorAll('.waveform-bar').forEach(bar => bar.classList.add('played'));
+        }
         setTimeout(() => stopCurrentAudio(), 300);
     });
-    currentAudio.play();
+    
+    // THE ULTIMATE FIX: Start visuals only when the browser gives the 'all-clear' signal
+    currentAudio.addEventListener('canplaythrough', () => {
+        // Clear loading state as it's ready
+        if (waveContainer) waveContainer.classList.remove('loading');
+        
+        // If an interval is somehow already running, clear it to be safe
+        clearInterval(playbackInterval);
+
+        // Start the visual animation loop, confident that all timing is accurate
+        playbackInterval = setInterval(() => updatePlaybackVisuals(id, messageData.duration), 50);
+    });
+    
+    currentAudio.play().catch(error => {
+        console.error("Playback error:", error);
+        stopCurrentAudio();
+    });
 }
 
 function updatePlaybackVisuals(id, trueDuration) {
     if (!currentAudio || currentAudio.paused) { return; }
     
+    // This calculation is now always reliable because it uses our saved duration
+    // and the animation loop only starts when `currentTime` is accurate.
     const percentage = (currentAudio.currentTime / trueDuration) * 100;
     
     const waveContainer = document.getElementById(`wave-${id}`);
