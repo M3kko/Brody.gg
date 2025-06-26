@@ -1,266 +1,307 @@
+<!-- Night Messages 🌙  — single-file, ready to run (26 Jun 2025) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Night Messages 🌙</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-            background:#434f5d; color:#fff; min-height:100vh; overflow-x:hidden; position:relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Night Messages 🌙</title>
 
-        /* 1️⃣  ―――  ONLY THE TEXT BLINKS  ――― */
-        .message-title span.blink { animation:textBlink 1.5s ease-in-out infinite; }
-        @keyframes textBlink { 0%,50%,100%{opacity:.5;} 25%,75%{opacity:1;} }
+<style>
+/* =====  BASE / RESET  ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+     background:#434f5d;color:#fff;min-height:100vh;overflow-x:hidden;position:relative}
 
-        /* Password screen */
-        .password-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#434f5d;z-index:1000}
-        .password-container{text-align:center}
-        .password-container h1{font-size:2em;margin-bottom:30px;font-weight:300}
-        .password-input{padding:15px 25px;font-size:18px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;width:250px;text-align:center;margin-bottom:15px}
-        .password-input::placeholder{color:rgba(255,255,255,.5)}
-        .submit-button{padding:12px 30px;font-size:16px;border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:10px;cursor:pointer;transition:.3s}
-        .submit-button:hover{background:rgba(255,255,255,.3);transform:translateY(-2px)}
-        .password-error{color:#ff6b6b;margin-top:15px;font-size:14px;min-height:20px}
+/* =====  PASSWORD GATE  ===== */
+.password-screen{position:fixed;inset:0;display:flex;align-items:center;
+                 justify-content:center;background:#434f5d;z-index:1000}
+.password-container{text-align:center}
+.password-container h1{font-size:2rem;font-weight:300;margin-bottom:1.8rem}
+.password-input{width:250px;padding:15px 25px;font-size:1.125rem;text-align:center;
+                background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.32);
+                border-radius:10px;margin-bottom:1rem}
+.password-input::placeholder{color:rgba(255,255,255,.6)}
+.submit-button{padding:12px 30px;font-size:1rem;border:none;background:rgba(255,255,255,.25);
+               color:#fff;border-radius:10px;cursor:pointer;transition:.3s}
+.submit-button:hover{background:rgba(255,255,255,.35);transform:translateY(-2px)}
+.password-error{color:#ff6b6b;margin-top:1rem;min-height:20px;font-size:.9rem}
 
-        /* Background art (unchanged placeholders) */
-        .moon{position:fixed;top:-100px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:url('https://via.placeholder.com/200x200/FFE5B4/FFE5B4?text=MOON') center/contain no-repeat;z-index:1}
-        .star{position:fixed;background-size:contain;z-index:1}
-        .star-1{top:10%;left:15%;width:25px;height:25px;background:url('https://via.placeholder.com/25x25/FFFFFF?text=*')center/contain no-repeat}
-        .star-2{top:20%;left:85%;width:30px;height:30px;background:url('https://via.placeholder.com/30x30/FFFFFF?text=*')center/contain no-repeat}
-        .star-3{top:35%;left:10%;width:20px;height:20px;background:url('https://via.placeholder.com/20x20/FFFFFF?text=*')center/contain no-repeat}
-        .star-4{top:45%;left:92%;width:28px;height:28px;background:url('https://via.placeholder.com/28x28/FFFFFF?text=*')center/contain no-repeat}
-        .star-5{top:60%;left:5%;width:35px;height:35px;background:url('https://via.placeholder.com/35x35/FFFFFF?text=*')center/contain no-repeat}
-        .star-6{top:75%;left:88%;width:22px;height:22px;background:url('https://via.placeholder.com/22x22/FFFFFF?text=*')center/contain no-repeat}
-        .star-7{top:85%;left:25%;width:26px;height:26px;background:url('https://via.placeholder.com/26x26/FFFFFF?text=*')center/contain no-repeat}
-        .star-8{top:50%;left:70%;width:24px;height:24px;background:url('https://via.placeholder.com/24x24/FFFFFF?text=*')center/contain no-repeat}
+/* =====  DECORATIVE BG  ===== */
+.moon{position:fixed;top:-100px;left:50%;transform:translateX(-50%);
+      width:200px;height:200px;background:url("https://via.placeholder.com/200x200/FFE5B4/FFE5B4?text=MOON")
+      center/contain no-repeat;z-index:1}
+.star{position:fixed;background-size:contain;z-index:1}
+.star-1{top:10%;left:15%;width:25px;height:25px;background:url("https://via.placeholder.com/25/fff?text=*")center/contain no-repeat}
+.star-2{top:20%;left:85%;width:30px;height:30px;background:url("https://via.placeholder.com/30/fff?text=*")center/contain no-repeat}
+.star-3{top:35%;left:10%;width:20px;height:20px;background:url("https://via.placeholder.com/20/fff?text=*")center/contain no-repeat}
+.star-4{top:45%;left:92%;width:28px;height:28px;background:url("https://via.placeholder.com/28/fff?text=*")center/contain no-repeat}
+.star-5{top:60%;left:5%;width:35px;height:35px;background:url("https://via.placeholder.com/35/fff?text=*")center/contain no-repeat}
+.star-6{top:75%;left:88%;width:22px;height:22px;background:url("https://via.placeholder.com/22/fff?text=*")center/contain no-repeat}
+.star-7{top:85%;left:25%;width:26px;height:26px;background:url("https://via.placeholder.com/26/fff?text=*")center/contain no-repeat}
+.star-8{top:50%;left:70%;width:24px;height:24px;background:url("https://via.placeholder.com/24/fff?text=*")center/contain no-repeat}
 
-        /* App shell */
-        .app-container{display:none;padding:20px;max-width:600px;margin:0 auto;position:relative;z-index:10}
-        .app-container.active{display:block}
+/* =====  MAIN SHELL  ===== */
+.app-container{display:none;padding:20px;max-width:600px;margin:0 auto;z-index:10}
+.app-container.active{display:block}
 
-        /* Recorder */
-        .recorder-section{margin-top:120px;text-align:center;margin-bottom:40px}
-        .record-button{width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;transition:.3s}
-        .record-button:hover{background:rgba(255,255,255,.2);transform:scale(1.05)}
-        .record-button.recording{background:#ff4444;border-color:#ff4444}
-        .record-button svg{width:50px;height:50px;fill:#fff}
-        .record-button.recording svg{width:30px;height:30px}
+/* recorder */
+.recorder-section{margin-top:120px;text-align:center;margin-bottom:40px}
+.record-button{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+               margin:0 auto 20px;background:rgba(255,255,255,.12);border:3px solid rgba(255,255,255,.32);
+               cursor:pointer;transition:.3s}
+.record-button:hover{background:rgba(255,255,255,.22);transform:scale(1.05)}
+.record-button.recording{background:#ff4444;border-color:#ff4444}
+.record-button svg{width:50px;height:50px;fill:#fff}
+.record-button.recording svg{width:30px;height:30px}
 
-        /* Live waveform (during recording) */
-        .waveform-container{height:60px;background:rgba(255,255,255,.1);border-radius:10px;padding:10px;display:none;align-items:center;margin-bottom:20px}
-        .waveform-container.active{display:flex}
-        #waveform{width:100%;height:100%}
+.waveform-container{height:60px;background:rgba(255,255,255,.1);border-radius:10px;padding:10px;display:none;
+                    align-items:center;margin-bottom:20px}
+.waveform-container.active{display:flex}
+#waveform{width:100%;height:100%}
+.recording-timer{font-size:1.125rem;color:rgba(255,255,255,.85);margin-top:10px}
 
-        /* Message list */
-        .messages-list{margin-top:40px}
-        .message-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:15px;padding:20px;margin-bottom:15px;cursor:pointer;transition:.3s;position:relative}
-        .message-card:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
-        .message-title{font-size:18px;font-weight:500;margin-bottom:10px;padding-right:40px}
-        .message-title.untitled{color:rgba(255,255,255,.5);font-style:italic}
-        .message-meta{font-size:14px;color:rgba(255,255,255,.7);display:flex;gap:15px}
-        .write-note-btn{position:absolute;top:20px;right:20px;background:none;border:none;cursor:pointer;opacity:.7;transition:.3s}
-        .write-note-btn:hover{opacity:1}
-        .write-note-btn svg{width:20px;height:20px;fill:#fff}
+/* cards */
+.messages-list{margin-top:40px}
+.message-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+              border-radius:15px;padding:20px;margin-bottom:15px;cursor:pointer;position:relative;transition:.3s}
+.message-card:hover{background:rgba(255,255,255,.14);transform:translateY(-2px)}
+.message-title{font-size:1.125rem;font-weight:500;margin-bottom:10px;padding-right:40px}
+.message-title.untitled{color:rgba(255,255,255,.55);font-style:italic}
+.message-title span.blink{animation:textBlink 1.5s ease-in-out infinite}
+@keyframes textBlink{0%,50%,100%{opacity:.45}25%,75%{opacity:1}}
+.message-meta{font-size:.875rem;color:rgba(255,255,255,.75);display:flex;gap:14px}
+.write-note-btn{position:absolute;top:20px;right:20px;background:none;border:none;cursor:pointer;opacity:.7;transition:.3s}
+.write-note-btn:hover{opacity:1}.write-note-btn svg{width:20px;height:20px;fill:#fff}
 
-        /* Stored waveform preview */
-        .message-waveform{margin-top:15px;height:40px;background:rgba(255,255,255,.05);border-radius:5px;position:relative;overflow:hidden}
-        .waveform-progress{position:absolute;inset:0;height:100%;background:rgba(255,255,255,.25);width:0%;z-index:2}
-        .waveform-bars{position:absolute;inset:0;display:flex;align-items:center;gap:2px;padding:0 2px}
-        .waveform-bar{flex:1;min-width:2px;background:rgba(255,255,255,.15);border-radius:2px}
+.message-waveform{margin-top:15px;height:44px;background:rgba(255,255,255,.04);border-radius:5px;position:relative;overflow:hidden}
+.waveform-bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:1px;padding:0 2px;pointer-events:none}
+.waveform-bar{flex:1;min-width:2px;border-radius:2px;background:rgba(255,255,255,.35)}
+.waveform-progress{position:absolute;inset:0;width:0%;background:rgba(0,0,0,.35);mix-blend-mode:hard-light;z-index:2}
 
-        /* Note modal */
-        .note-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center}
-        .note-modal.active{display:flex}
-        .note-modal-content{background:#434f5d;padding:30px;border-radius:15px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,.2)}
-        .note-input{width:100%;padding:15px;font-size:16px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;margin:20px 0}
-        .modal-buttons{display:flex;gap:10px;justify-content:flex-end}
-        .modal-btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:.3s}
-        .save-btn{background:rgba(255,255,255,.2);color:#fff}
-        .save-btn:hover{background:rgba(255,255,255,.3)}
-        .cancel-btn{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
-        .cancel-btn:hover{background:rgba(255,255,255,.15)}
-        .recording-timer{font-size:18px;color:rgba(255,255,255,.8);margin-top:10px}
-    </style>
+/* modal */
+.note-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100}
+.note-modal.active{display:flex}
+.note-modal-content{background:#434f5d;padding:30px;border-radius:15px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,.22)}
+.note-input{width:100%;padding:15px;font-size:1rem;background:rgba(255,255,255,.12);
+            color:#fff;border:2px solid rgba(255,255,255,.32);border-radius:10px;margin:20px 0}
+.modal-buttons{display:flex;gap:10px;justify-content:flex-end}
+.modal-btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;font-size:1rem;transition:.3s}
+.save-btn{background:rgba(255,255,255,.25);color:#fff}.save-btn:hover{background:rgba(255,255,255,.35)}
+.cancel-btn{background:rgba(255,255,255,.14);color:rgba(255,255,255,.7)}.cancel-btn:hover{background:rgba(255,255,255,.22)}
+</style>
 </head>
 <body>
-    <!-- Decorative BG -->
-    <div class="moon"></div>
-    <div class="star star-1"></div><div class="star star-2"></div><div class="star star-3"></div><div class="star star-4"></div><div class="star star-5"></div><div class="star star-6"></div><div class="star star-7"></div><div class="star star-8"></div>
+<!-- BG ART -->
+<div class="moon"></div>
+<div class="star star-1"></div><div class="star star-2"></div><div class="star star-3"></div><div class="star star-4"></div>
+<div class="star star-5"></div><div class="star star-6"></div><div class="star star-7"></div><div class="star star-8"></div>
 
-    <!-- Password -->
-    <div class="password-screen" id="passwordScreen">
-        <div class="password-container">
-            <h1>🌙 Enter Password</h1>
-            <form onsubmit="checkPassword(event)">
-                <input type="password" id="passwordInput" class="password-input" placeholder="••••••••" autofocus>
-                <br><button class="submit-button">Enter</button>
-            </form>
-            <div class="password-error" id="passwordError"></div>
-        </div>
+<!-- PASSWORD -->
+<div id="passwordScreen" class="password-screen">
+  <div class="password-container">
+    <h1>🌙 Enter Password</h1>
+    <form onsubmit="checkPassword(event)">
+      <input id="passwordInput" class="password-input" type="password" placeholder="••••••••" autofocus>
+      <br><button class="submit-button" type="submit">Enter</button>
+    </form>
+    <div id="passwordError" class="password-error"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appContainer" class="app-container">
+  <div class="recorder-section">
+    <button id="recordButton" class="record-button" onclick="toggleRecording()">
+      <svg id="micIcon" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+      <svg id="stopIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="6" width="12" height="12"/></svg>
+    </button>
+
+    <div id="waveformContainer" class="waveform-container"><canvas id="waveform"></canvas></div>
+    <div id="recordingTimer" class="recording-timer" style="display:none">0:00</div>
+  </div>
+
+  <div id="messagesList" class="messages-list"></div>
+</div>
+
+<!-- NOTE MODAL -->
+<div id="noteModal" class="note-modal" onclick="if(event.target.id==='noteModal')closeNoteModal()">
+  <div class="note-modal-content">
+    <h2>Add Note</h2>
+    <input id="noteInput" class="note-input" type="text" placeholder="Enter a title…" onkeypress="if(event.key==='Enter')saveNote()">
+    <div class="modal-buttons">
+      <button class="modal-btn cancel-btn" onclick="closeNoteModal()">Cancel</button>
+      <button class="modal-btn save-btn" onclick="saveNote()">Save</button>
     </div>
+  </div>
+</div>
 
-    <!-- App -->
-    <div id="appContainer" class="app-container">
-        <div class="recorder-section">
-            <button id="recordButton" class="record-button" onclick="toggleRecording()">
-                <svg id="micIcon" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                <svg id="stopIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="6" width="12" height="12"/></svg>
-            </button>
-            <div id="waveformContainer" class="waveform-container"><canvas id="waveform"></canvas></div>
-            <div id="recordingTimer" class="recording-timer" style="display:none">0:00</div>
-        </div>
-        <div id="messagesList" class="messages-list"></div>
-    </div>
+<!-- FIREBASE SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
-    <!-- Note modal -->
-    <div id="noteModal" class="note-modal" onclick="if(event.target.id==='noteModal')closeNoteModal()">
-        <div class="note-modal-content">
-            <h2>Add Note</h2>
-            <input id="noteInput" class="note-input" type="text" placeholder="Enter a title for this message..." onkeypress="if(event.key==='Enter')saveNote()">
-            <div class="modal-buttons"><button class="modal-btn cancel-btn" onclick="closeNoteModal()">Cancel</button><button class="modal-btn save-btn" onclick="saveNote()">Save</button></div>
-        </div>
-    </div>
+<script>
+/* =========  FIREBASE INIT  ========= */
+const firebaseConfig = {
+  apiKey:  "AIzaSyCR3y8knbFlkZeE_osJorlgI35oh4gm3JM",
+  authDomain: "moon-messages.firebaseapp.com",
+  projectId:   "moon-messages",
+  storageBucket:"moon-messages.firebasestorage.app",
+  messagingSenderId:"541321527834",
+  appId:"1:541321527834:web:b06a6417ef9c7915d787a3"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(), db=firebase.firestore(), storage=firebase.storage();
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+/* =========  GLOBALS  ========= */
+let mediaRecorder=null,audioChunks=[],audioCtx=null,analyser=null,src=null,animId=null;
+let recordingStart=0,timerInt=null;         // timer
+let currentAudio=null,currentId=null;       // playback
+let editId=null;                            // note modal
+const BARS=60; let capHeights=new Array(BARS).fill(0);
 
-    <script>
-    /* --------------------------------------------------
-       Firebase init
-    -------------------------------------------------- */
-    const firebaseConfig = {
-        apiKey:"AIzaSyCR3y8knbFlkZeE_osJorlgI35oh4gm3JM",
-        authDomain:"moon-messages.firebaseapp.com",
-        projectId:"moon-messages",
-        storageBucket: "moon-messages.firebasestorage.app",
-        messagingSenderId:"541321527834",
-        appId:"1:541321527834:web:b06a6417ef9c7915d787a3"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth=firebase.auth();
-    const db=firebase.firestore();
-    const storage=firebase.storage();
-
-    /* --------------------------------------------------
-       Globals
-    -------------------------------------------------- */
-    let mediaRecorder=null,audioChunks=[],audioContext=null,analyser=null,micSource=null,animationId=null;
-    let recordingStartTime=0,timerInterval=null,currentAudio=null,currentMessageId=null,currentEditingMessageId=null;
-    const CAPTURE_BARS=40; let capturedWaveform=new Array(CAPTURE_BARS).fill(0);
-
-    /* --------------------------------------------------
-       Password gate
-    -------------------------------------------------- */
-    async function checkPassword(e){e.preventDefault();const pwd=document.getElementById('passwordInput').value.trim();const err=document.getElementById('passwordError');try{
-        err.textContent='Checking...'; await auth.signInAnonymously();
-        const doc=await db.collection('config').doc('app').get();
-        if(!doc.exists){await db.collection('config').doc('app').set({password:'102624',createdAt:firebase.firestore.FieldValue.serverTimestamp()});err.textContent='Set default pass 102624';return;}
-        if(pwd===doc.data().password){document.getElementById('passwordScreen').style.display='none';document.getElementById('appContainer').classList.add('active');loadMessages();startRealtimeListener();}
-        else{err.textContent='Incorrect password';document.getElementById('passwordInput').value='';await auth.signOut();setTimeout(()=>err.textContent='',3000);} }
-        catch(e){console.error(e);err.textContent='Error: '+e.message;await auth.signOut();}}
-
-    /* --------------------------------------------------
-       Recorder controls
-    -------------------------------------------------- */
-    function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?startRecording():stopRecording();}
-
-    async function startRecording(){
-        try{
-            const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-            capturedWaveform=new Array(CAPTURE_BARS).fill(0);
-            audioContext=new(window.AudioContext||window.webkitAudioContext)();
-            analyser=audioContext.createAnalyser(); analyser.fftSize=2048; analyser.smoothingTimeConstant=.8;
-            micSource=audioContext.createMediaStreamSource(stream); micSource.connect(analyser);
-            mediaRecorder=new MediaRecorder(stream); audioChunks=[];
-            mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
-            mediaRecorder.onstop=async()=>{
-                const blob=new Blob(audioChunks,{type:'audio/webm'}); await uploadAudio(blob,capturedWaveform);
-                stream.getTracks().forEach(t=>t.stop()); if(audioContext)audioContext.close(); };
-            mediaRecorder.start(); recordingStartTime=Date.now(); updateRecordingUI(true); startTimer(); setTimeout(drawWaveform,100);
-        }catch(e){alert('Mic error: '+e.message);} }
-
-    function stopRecording(){if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();updateRecordingUI(false);stopTimer();if(animationId)cancelAnimationFrame(animationId);}}
-
-    function updateRecordingUI(rec){const btn=document.getElementById('recordButton'),mic=document.getElementById('micIcon'),stop=document.getElementById('stopIcon'),wf=document.getElementById('waveformContainer'),timer=document.getElementById('recordingTimer');
-        if(rec){btn.classList.add('recording');mic.style.display='none';stop.style.display='block';wf.classList.add('active');timer.style.display='block';}
-        else{btn.classList.remove('recording');mic.style.display='block';stop.style.display='none';wf.classList.remove('active');timer.style.display='none';}}
-
-    /* Live waveform draw + capture peaks */
-    function drawWaveform(){ if(!analyser)return; const canvas=document.getElementById('waveform');const ctx=canvas.getContext('2d'); const rect=canvas.getBoundingClientRect(); canvas.width=rect.width; canvas.height=rect.height; const buffer=new Uint8Array(analyser.frequencyBinCount);
-        const draw=()=>{
-            if(!mediaRecorder||mediaRecorder.state!=='recording')return; animationId=requestAnimationFrame(draw);
-            analyser.getByteTimeDomainData(buffer);
-            ctx.fillStyle='rgba(67,79,93,.95)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.lineWidth=2; ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.beginPath(); const slice=canvas.width/buffer.length; let x=0;
-            for(let i=0;i<buffer.length;i++){const v=buffer[i]/128.0; const y=v*canvas.height/2; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); x+=slice; }
-            ctx.lineTo(canvas.width,canvas.height/2); ctx.stroke();
-            analyser.getByteFrequencyData(buffer);
-            const barWidth=(canvas.width/buffer.length)*2.5; x=0;
-            for(let i=0;i<CAPTURE_BARS;i++){const start=Math.floor(i*(buffer.length/CAPTURE_BARS));const end=Math.floor((i+1)*(buffer.length/CAPTURE_BARS)); let sum=0; for(let j=start;j<end;j++){sum+=buffer[j];}
-                const avg=sum/(end-start); const barH=(avg/255)*canvas.height*.8; ctx.fillStyle=`rgba(255,255,255,${0.1+(avg/255)*0.2})`; ctx.fillRect(x,canvas.height-barH,barWidth,barH);
-                const percent=Math.max(20,Math.min(80,(barH/canvas.height)*100)); capturedWaveform[i]=Math.max(capturedWaveform[i],percent); x+=barWidth+1; }
-        };
-        draw(); }
-
-    /* Timer */
-    function startTimer(){timerInterval=setInterval(()=>{const el=Math.floor((Date.now()-recordingStartTime)/1000);const m=Math.floor(el/60),s=el%60;document.getElementById('recordingTimer').textContent=`${m}:${s.toString().padStart(2,'0')}`},100)}
-    function stopTimer(){clearInterval(timerInterval);}
-
-    /* Upload + save */
-    async function uploadAudio(blob,waveform){try{
-        const dur=Math.floor((Date.now()-recordingStartTime)/1000); const name=`voice-messages/${Date.now()}.webm`;
-        const ref=storage.ref(name); const snap=await ref.put(blob); const url=await snap.ref.getDownloadURL();
-        await db.collection('messages').add({audioUrl:url,duration:dur,createdAt:firebase.firestore.FieldValue.serverTimestamp(),title:null,playbackProgress:0,waveformData:waveform});
-    }catch(e){alert('Upload error: '+e.message);} }
-
-    /* Messages -------------------------------------------------- */
-    function formatDuration(s){const m=Math.floor(s/60);const ss=(s%60).toString().padStart(2,'0');return `${m}:${ss}`;}
-
-    async function loadMessages(){const snap=await db.collection('messages').orderBy('createdAt','desc').get();displayMessages(snap);}    
-    function startRealtimeListener(){db.collection('messages').orderBy('createdAt','desc').onSnapshot(displayMessages);}    
-
-    function displayMessages(snap){const list=document.getElementById('messagesList');list.innerHTML=''; snap.forEach(doc=>list.appendChild(createMessageCard(doc.id,doc.data())));}    
-
-    function createMessageCard(id,m){const card=document.createElement('div');card.className='message-card';card.onclick=()=>playMessage(id,m);
-        const date=m.createdAt?m.createdAt.toDate():new Date();const ds=date.toLocaleDateString()+" "+date.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-        card.innerHTML=`<div class="message-title ${m.title?'':'untitled'}">${m.title||'<span class="blink">Add Note</span>'}</div>
-            <div class="message-meta"><span>${ds}</span><span>${formatDuration(m.duration)}</span></div>
-            <div class="message-waveform" id="waveform-${id}"><div class="waveform-progress" style="width:${m.playbackProgress||0}%"></div></div>
-            <button class="write-note-btn" onclick="event.stopPropagation();openNoteModal('${id}')"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>`;
-        if(m.waveformData)generateStaticWaveform(`waveform-${id}`,m.waveformData); else{
-            const wf=generateFallbackWaveform(); generateStaticWaveform(`waveform-${id}`,wf); db.collection('messages').doc(id).update({waveformData:wf}); }
-        return card; }
-
-    function generateFallbackWaveform(){const arr=[];for(let i=0;i<CAPTURE_BARS;i++){const base=30+Math.sin(i*.3)*20+Math.random()*30;arr.push(Math.max(20,Math.min(80,base)));}return arr;}
-
-    function generateStaticWaveform(containerId,data){const c=document.getElementById(containerId); if(!c)return; const prog=c.querySelector('.waveform-progress'); c.innerHTML=''; if(prog)c.appendChild(prog); const bars=document.createElement('div'); bars.className='waveform-bars'; data.forEach(h=>{const b=document.createElement('div'); b.className='waveform-bar'; b.style.height=`${h}%`; bars.appendChild(b);}); c.insertBefore(bars,c.firstChild);}    
-
-    /* Playback */
-    let progressInt=null;
-    function playMessage(id,m){ if(currentAudio&&currentMessageId===id){ if(currentAudio.paused){currentAudio.play();startProgress(id);} else{currentAudio.pause();stopProgress();} return; }
-        if(currentAudio){currentAudio.pause();stopProgress();}
-        currentMessageId=id; const a=new Audio(m.audioUrl); currentAudio=a;
-        a.addEventListener('loadedmetadata',()=>{if(m.playbackProgress&&m.playbackProgress<100) a.currentTime=(m.playbackProgress/100)*a.duration;});
-        a.addEventListener('play',()=>startProgress(id)); a.addEventListener('pause',async()=>{stopProgress();if(a.duration)await updatePlayback(id,(a.currentTime/a.duration)*100);} );
-        a.addEventListener('ended',async()=>{stopProgress();await updatePlayback(id,100); currentAudio=null; currentMessageId=null;});
-        a.play().catch(console.error);
+/* =========  PASSWORD FLOW  ========= */
+async function checkPassword(e){
+  e.preventDefault();
+  const pwd=document.getElementById('passwordInput').value.trim();
+  const err=document.getElementById('passwordError');
+  try{
+    err.textContent='Checking…'; await auth.signInAnonymously();
+    const doc=await db.collection('config').doc('app').get();
+    if(!doc.exists){await db.collection('config').doc('app').set({password:'102624'});err.textContent='Default pass set: 102624';return;}
+    if(pwd===doc.data().password){
+      document.getElementById('passwordScreen').style.display='none';
+      document.getElementById('appContainer').classList.add('active');
+      loadMessages(); startRealtime();
+    } else {
+      err.textContent='Incorrect'; document.getElementById('passwordInput').value='';
+      await auth.signOut(); setTimeout(()=>err.textContent='',2500);
     }
+  }catch(x){err.textContent=x.message;await auth.signOut();}
+}
 
-    function startProgress(id){stopProgress(); progressInt=setInterval(()=>{if(currentAudio&&!currentAudio.paused&&currentAudio.duration){const p=(currentAudio.currentTime/currentAudio.duration)*100;updateProgressUI(id,p);}},50);}    
-    function stopProgress(){if(progressInt){clearInterval(progressInt);progressInt=null;}}
-    function updateProgressUI(id,p){document.querySelectorAll('.message-card').forEach(card=>{if(card.onclick&&card.onclick.toString().includes(id)){const bar=card.querySelector('.waveform-progress'); if(bar)bar.style.width=`${p}%`;}});}
-    async function updatePlayback(id,p){updateProgressUI(id,p); try{await db.collection('messages').doc(id).update({playbackProgress:p,lastUpdated:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){console.error(e);}}
+/* =========  RECORDING ========= */
+function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?startRec():stopRec();}
+async function startRec(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    capHeights=new Array(BARS).fill(0);
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
+    src=audioCtx.createMediaStreamSource(stream); src.connect(analyser);
+    mediaRecorder=new MediaRecorder(stream); audioChunks=[];
+    mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+    mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());audioCtx.close();uploadAudio();}
+    mediaRecorder.start(); recordingStart=Date.now();
+    updateRecUI(true); startTimer(); setTimeout(drawLive,100);
+  }catch(x){alert('Mic error: '+x.message);}
+}
+function stopRec(){if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();updateRecUI(false);stopTimer();cancelAnimationFrame(animId);}}
+function updateRecUI(rec){
+  recordButton.classList.toggle('recording',rec);
+  micIcon.style.display=rec?'none':'block'; stopIcon.style.display=rec?'block':'none';
+  waveformContainer.classList.toggle('active',rec);
+  recordingTimer.style.display=rec?'block':'none';
+}
+function startTimer(){timerInt=setInterval(()=>{const s=Math.floor((Date.now()-recordingStart)/1000);recordingTimer.textContent=`${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`},200)}
+function stopTimer(){clearInterval(timerInt)}
 
-    /* Note modal */
-    function openNoteModal(id){currentEditingMessageId=id; document.getElementById('noteModal').classList.add('active'); document.getElementById('noteInput').focus();}
-    function closeNoteModal(){document.getElementById('noteModal').classList.remove('active'); document.getElementById('noteInput').value=''; currentEditingMessageId=null;}
-    async function saveNote(){const title=document.getElementById('noteInput').value.trim(); if(title&&currentEditingMessageId){try{await db.collection('messages').doc(currentEditingMessageId).update({title}); closeNoteModal();}catch(e){alert('Save error:'+e.message);}} }
-    </script>
+/* live waveform + capture */
+function drawLive(){
+  const cvs=waveform, ctx=cvs.getContext('2d');
+  const {width:w,height:h}=cvs.getBoundingClientRect(); cvs.width=w; cvs.height=h;
+  const buf=new Uint8Array(analyser.fftSize);
+  (function loop(){
+    if(!mediaRecorder||mediaRecorder.state!=='recording')return;
+    animId=requestAnimationFrame(loop);
+    analyser.getByteTimeDomainData(buf);
+    ctx.fillStyle='rgba(67,79,93,.95)'; ctx.fillRect(0,0,w,h);
+    ctx.lineWidth=2; ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.beginPath();
+    const slice=w/buf.length; let x=0; buf.forEach((v,i)=>{const y=(v/128)*h/2;i?ctx.lineTo(x,y):ctx.moveTo(x,y);x+=slice});ctx.lineTo(w,h/2);ctx.stroke();
+
+    /* capture per-bucket peak for saved preview */
+    const bucket= Math.floor(buf.length/BARS);
+    for(let i=0;i<BARS;i++){
+      let sum=0; for(let j=0;j<bucket;j++){sum+=Math.abs(buf[i*bucket+j]-128);}
+      capHeights[i]=Math.max(capHeights[i], Math.min(98,Math.max(6,(sum/bucket)/128*100)));
+    }
+  })();
+}
+
+/* upload */
+async function uploadAudio(){
+  const blob=new Blob(audioChunks,{type:'audio/webm'});
+  const dur=Math.floor((Date.now()-recordingStart)/1000);
+  const name=`voice-messages/${Date.now()}.webm`;
+  try{
+    const snap=await storage.ref(name).put(blob);
+    const url=await snap.ref.getDownloadURL();
+    await db.collection('messages').add({audioUrl:url,duration:dur,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      title:null,playbackProgress:0,waveformData:capHeights});
+  }catch(x){alert('Upload error: '+x.message);}
+}
+
+/* =========  MESSAGES ========= */
+async function loadMessages(){
+  const snap=await db.collection('messages').orderBy('createdAt','desc').get();render(snap);
+}
+function startRealtime(){
+  db.collection('messages').orderBy('createdAt','desc').onSnapshot(render);
+}
+function render(snap){
+  messagesList.innerHTML=''; snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data())));
+}
+function card(id,m){
+  const c=document.createElement('div'); c.className='message-card'; c.onclick=()=>play(id,m);
+  const dt=m.createdAt?m.createdAt.toDate():new Date();
+  c.innerHTML=`<div class="message-title ${m.title?'':'untitled'}">${m.title||'<span class="blink">Add Note</span>'}</div>
+  <div class="message-meta"><span>${dt.toLocaleDateString()} ${dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+  <span>${Math.floor(m.duration/60)}:${(m.duration%60).toString().padStart(2,'0')}</span></div>
+  <div class="message-waveform" id="wave-${id}"><div class="waveform-progress" style="width:${m.playbackProgress||0}%"></div></div>
+  <button class="write-note-btn" onclick="event.stopPropagation();openNote('${id}')">
+    <svg viewBox=\"0 0 24 24\"><path d=\"M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z\"/></svg>
+  </button>`;
+  drawStatic(`wave-${id}`,m.waveformData||capHeights);
+  return c;
+}
+function drawStatic(containerId,data){
+  const box=document.getElementById(containerId); if(!box)return;
+  const prog=box.querySelector('.waveform-progress'); box.innerHTML=''; if(prog)box.appendChild(prog);
+  const bars=document.createElement('div'); bars.className='waveform-bars';
+  (data||[]).forEach(h=>{const b=document.createElement('div');b.className='waveform-bar';b.style.height=h+'%';bars.appendChild(b)});
+  box.insertBefore(bars,prog);
+}
+
+/* =========  PLAYBACK ========= */
+let progInt=null;
+function play(id,m){
+  if(currentAudio&&currentId===id){currentAudio.paused?currentAudio.play():currentAudio.pause();return;}
+  if(currentAudio){currentAudio.pause();clearInterval(progInt);}
+  currentId=id; currentAudio=new Audio(m.audioUrl);
+  currentAudio.addEventListener('loadedmetadata',()=>{if(m.playbackProgress)currentAudio.currentTime=(m.playbackProgress/100)*currentAudio.duration});
+  currentAudio.addEventListener('play',()=>{progInt=setInterval(()=>updateBar(id),80)});
+  currentAudio.addEventListener('pause',()=>{clearInterval(progInt);saveProgress(id)});
+  currentAudio.addEventListener('ended',()=>{clearInterval(progInt);saveProgress(id,100);currentAudio=null;currentId=null});
+  currentAudio.play();
+}
+function updateBar(id){
+  const p=(currentAudio.currentTime/currentAudio.duration)*100;
+  document.querySelectorAll('.message-waveform').forEach(w=>{if(w.id===`wave-${id}`)w.querySelector('.waveform-progress').style.width=p+'%'});
+}
+async function saveProgress(id,force){
+  if(!currentAudio)return;
+  const p=force!==undefined?force:(currentAudio.currentTime/currentAudio.duration)*100;
+  await db.collection('messages').doc(id).update({playbackProgress:p});
+}
+
+/* =========  NOTES ========= */
+function openNote(id){editId=id;noteModal.classList.add('active');noteInput.focus();}
+function closeNoteModal(){noteModal.classList.remove('active');noteInput.value='';editId=null;}
+async function saveNote(){
+  const t=noteInput.value.trim(); if(!t||!editId)return;
+  await db.collection('messages').doc(editId).update({title:t}); closeNoteModal();
+}
+</script>
 </body>
 </html>
