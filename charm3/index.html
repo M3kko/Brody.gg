@@ -72,12 +72,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 .write-note-btn{position:absolute;top:20px;right:20px;background:none;border:none;cursor:pointer;opacity:.7;transition:.3s}
 .write-note-btn:hover{opacity:1}.write-note-btn svg{width:20px;height:20px;fill:#fff}
 
-.message-waveform{margin-top:15px;height:44px;background:rgba(255,255,255,.04);border-radius:5px;position:relative;overflow:hidden}
-.waveform-bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:2px;padding:0 2px;pointer-events:none;}
-.waveform-bar{flex:1;min-width:2px;border-radius:2px;background:rgba(255,255,255,.35);transition: background .1s linear;}
-/* THIS IS THE NEW STYLE FOR THE PLAYED BARS */
-.waveform-bar.played{background:rgba(255,255,255,.9);}
-/* THE OLD .waveform-progress IS GONE */
+/* ===== NEW STYLES FOR STATIC WAVEFORM ===== */
+.message-waveform{margin-top:15px;height:44px;background:rgba(0,0,0,.15);border-radius:5px;position:relative;overflow:hidden;}
+.waveform-bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:2px;padding:0 2px;}
+.waveform-bar{flex:1;min-width:2px;background:rgba(255,255,255,.4);border-radius:1px;transition:background .2s ease-out;}
+.waveform-bar.played{background: #fff;}
+/* ===== END NEW STYLES ===== */
+
 
 /* modal */
 .note-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100}
@@ -154,7 +155,7 @@ const auth=firebase.auth(), db=firebase.firestore(), storage=firebase.storage();
 let mediaRecorder=null, audioChunks=[], audioCtx=null, analyser=null, src=null, animId=null;
 let recordingStart=0, timerInt=null, captureInt=null;
 let capHeights=[];
-let currentAudio=null, currentId=null;
+let currentAudio=null, currentId=null, playbackInterval=null;
 let editId=null;
 
 /* =========  PASSWORD FLOW  ========= */
@@ -182,7 +183,7 @@ function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?st
 async function startRec(){
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    capHeights=[];
+    capHeights=[]; // Clear heights for new recording
     audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
     src=audioCtx.createMediaStreamSource(stream); src.connect(analyser);
@@ -214,67 +215,40 @@ function updateRecUI(rec){
 function startTimer(){timerInt=setInterval(()=>{const s=Math.floor((Date.now()-recordingStart)/1000);recordingTimer.textContent=`${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`},200)}
 function stopTimer(){clearInterval(timerInt)}
 
-/* ===== CAPTURE FRAME - MODIFIED FOR BETTER VISUALS ===== */
 function captureFrame() {
     if (!analyser) return;
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     analyser.getByteTimeDomainData(dataArray);
     let sum = 0;
-    for (let i = 0; i < bufferLength; i++) {
-        sum += Math.abs(dataArray[i] - 128); // deviation from silence
-    }
+    for (let i = 0; i < bufferLength; i++) { sum += Math.abs(dataArray[i] - 128); }
     const avg = sum / bufferLength;
-
-    // --- VISUALIZATION MODIFICATION ---
-    // The original multiplier (1.5) was too low, resulting in a flat waveform.
-    // I've increased it to 8 to "exaggerate" the highs and lows as you asked,
-    // making the visual representation much more reactive and spiky.
     const height = Math.min(100, 5 + avg * 8); 
-
     capHeights.push(height);
 }
-
-/* ===== LIVE WAVEFORM DRAWING - MODIFIED FOR BETTER VISUALS ===== */
 function drawLive(){
   const cvs=document.getElementById('waveform'), ctx=cvs.getContext('2d');
   const {width:w,height:h}=cvs.getBoundingClientRect(); cvs.width=w; cvs.height=h;
-
-  // Added a glow effect for a nicer look.
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 8;
-
-  const bufferLength = analyser.fftSize;
-  const dataArray = new Uint8Array(bufferLength);
-  
+  ctx.shadowColor = '#fff'; ctx.shadowBlur = 8;
+  const bufferLength = analyser.fftSize; const dataArray = new Uint8Array(bufferLength);
   const loop = () => {
     if(!mediaRecorder||mediaRecorder.state!=='recording') return;
     animId=requestAnimationFrame(loop);
     analyser.getByteTimeDomainData(dataArray);
-    
-    // Clear the canvas with an opaque color to prevent smearing
-    ctx.fillStyle='rgba(67, 79, 93, 1)'; 
-    ctx.fillRect(0,0,w,h);
-
-    // Made the line thicker and solid white for more impact
-    ctx.lineWidth=3; 
-    ctx.strokeStyle='rgba(255,255,255,1)'; 
-    
+    ctx.fillStyle='rgba(67, 79, 93, 1)'; ctx.fillRect(0,0,w,h);
+    ctx.lineWidth=3; ctx.strokeStyle='rgba(255,255,255,1)'; 
     ctx.beginPath();
-    const sliceWidth = w * 1.0 / bufferLength;
-    let x = 0;
+    const sliceWidth = w * 1.0 / bufferLength; let x = 0;
     for(let i=0; i<bufferLength; i++) {
-        const v = dataArray[i]/128.0; 
-        const y = v*h/2;
-        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-        x+=sliceWidth;
+        const v = dataArray[i]/128.0; const y = v*h/2;
+        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y); x+=sliceWidth;
     }
     ctx.lineTo(w, h/2); ctx.stroke();
   };
   loop();
 }
 
-/* upload */
+/* ===== UPLOAD - MODIFIED TO SAVE WAVEFORM DATA ===== */
 async function uploadAudio(){
   const blob=new Blob(audioChunks,{type:'audio/webm'});
   const dur=Math.floor((Date.now()-recordingStart)/1000);
@@ -282,12 +256,19 @@ async function uploadAudio(){
   try{
     const snap=await storage.ref(name).put(blob);
     const url=await snap.ref.getDownloadURL();
-    await db.collection('messages').add({audioUrl:url,duration:dur,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      title:null,playbackProgress:0,waveformData:capHeights});
+    // Here we add the 'waveformData' array to our Firestore document
+    await db.collection('messages').add({
+        audioUrl: url,
+        duration: dur,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        title: null,
+        playbackProgress: 0,
+        waveformData: capHeights // <-- THE MAGIC!
+    });
   }catch(x){alert('Upload error: '+x.message);}
 }
 
-/* =========  MESSAGES ========= */
+/* =========  MESSAGES - MODIFIED TO RENDER WAVEFORMS ========= */
 async function loadMessages(){
   const snap=await db.collection('messages').orderBy('createdAt','desc').get();render(snap);
 }
@@ -295,118 +276,112 @@ function startRealtime(){
   db.collection('messages').orderBy('createdAt','desc').onSnapshot(render);
 }
 function render(snap){
-  messagesList.innerHTML=''; snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data())));
+  messagesList.innerHTML=''; 
+  snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data())));
 }
 
 function card(id,m){
-  const c=document.createElement('div'); c.className='message-card'; c.onclick=()=>play(id,m);
+  const c=document.createElement('div'); c.className='message-card'; c.onclick=()=>playAudio(id, m);
   const dt=m.createdAt?m.createdAt.toDate():new Date();
-  c.innerHTML=`<div class="message-title ${m.title?'':'untitled'}">${m.title||'<span class="blink">Add Note</span>'}</div>
-  <div class="message-meta"><span>${dt.toLocaleDateString()} ${dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
-  <span>${Math.floor(m.duration/60)}:${(m.duration%60).toString().padStart(2,'0')}</span></div>
-  <div class="message-waveform" id="wave-${id}"></div>
-  <button class="write-note-btn" onclick="event.stopPropagation();openNote('${id}')">
-    <svg viewBox=\"0 0 24 24\"><path d=\"M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z\"/></svg>
-  </button>`;
-  drawStatic(`wave-${id}`, m.waveformData || []);
+  
+  // Added the message-waveform div, which will be the container for the bars
+  c.innerHTML=`
+    <div class="message-title ${m.title?'':'untitled'}">${m.title||'<span class="blink">Add Note</span>'}</div>
+    <div class="message-meta">
+      <span>${dt.toLocaleDateString()} ${dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+      <span>${Math.floor(m.duration/60)}:${(m.duration%60).toString().padStart(2,'0')}</span>
+    </div>
+    <div class="message-waveform" id="wave-${id}"></div>
+    <button class="write-note-btn" onclick="event.stopPropagation();openNote('${id}')">
+      <svg viewBox=\"0 0 24 24\"><path d=\"M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z\"/></svg>
+    </button>`;
+
+  // After creating the card, call a function to draw the static waveform inside it.
+  // Use a timeout of 0 to ensure the element exists in the DOM before drawing.
+  setTimeout(() => drawStaticWaveform(`wave-${id}`, m.waveformData), 0);
+  
   return c;
 }
 
-function drawStatic(containerId,data){
-  const box=document.getElementById(containerId); if(!box)return;
-  box.innerHTML = ''; // Clear previous content
-  const bars=document.createElement('div'); bars.className='waveform-bars';
-  (data||[]).forEach(h=>{const b=document.createElement('div');b.className='waveform-bar';b.style.height=h+'%';bars.appendChild(b)});
-  box.appendChild(bars);
+// This new function creates the bars inside the message card
+function drawStaticWaveform(containerId, data) {
+    const container = document.getElementById(containerId);
+    if (!container || !data || data.length === 0) {
+        if (container) container.innerHTML = ''; // Clear if no data
+        return;
+    }
+    const barsContainer = document.createElement('div');
+    barsContainer.className = 'waveform-bars';
+    data.forEach(height => {
+        const bar = document.createElement('div');
+        bar.className = 'waveform-bar';
+        bar.style.height = `${height}%`;
+        barsContainer.appendChild(bar);
+    });
+    container.innerHTML = ''; // Clear previous content
+    container.appendChild(barsContainer);
 }
 
-/* =========  PLAYBACK (HEAVILY REVISED) ========= */
-let progInt=null;
-function resetAllBars() {
-    document.querySelectorAll('.waveform-bar.played').forEach(bar => {
-        bar.classList.remove('played');
-    });
+
+/* =========  PLAYBACK - REWRITTEN FOR INTERACTIVITY ========= */
+function stopCurrentAudio() {
+    if(currentAudio) {
+        currentAudio.pause();
+        clearInterval(playbackInterval);
+        currentAudio = null;
+        currentId = null;
+    }
+    // Reset all waveforms to their initial state
+    document.querySelectorAll('.waveform-bar.played').forEach(b => b.classList.remove('played'));
 }
-function play(id,m){
-    // If clicking the currently playing message, toggle pause/play
-    if(currentAudio && currentId === id){
-        currentAudio.paused ? currentAudio.play() : currentAudio.pause();
+
+function playAudio(id, messageData) {
+    if (currentId === id) { // Toggling play/pause on the same track
+        if (currentAudio.paused) {
+            currentAudio.play();
+        } else {
+            currentAudio.pause();
+        }
         return;
     }
 
-    // If another message is playing, stop it
-    if(currentAudio){
-        currentAudio.pause();
-        clearInterval(progInt);
-    }
+    stopCurrentAudio(); // Stop any other track before playing a new one
+
+    currentId = id;
+    currentAudio = new Audio(messageData.audioUrl);
+
+    currentAudio.addEventListener('play', () => {
+        playbackInterval = setInterval(() => updatePlaybackVisuals(id), 50);
+    });
+
+    currentAudio.addEventListener('pause', () => {
+        clearInterval(playbackInterval);
+    });
+
+    currentAudio.addEventListener('ended', () => {
+        stopCurrentAudio();
+    });
     
-    // Before starting a new track, reset the visuals of all other tracks
-    resetAllBars();
-
-    currentId=id;
-    currentAudio=new Audio(m.audioUrl);
-    
-    currentAudio.addEventListener('loadedmetadata',()=>{
-        // Only seek if there's meaningful progress to restore
-        if(m.playbackProgress > 1 && m.playbackProgress < 99) {
-            currentAudio.currentTime=(m.playbackProgress/100)*currentAudio.duration
-        }
-    });
-
-    currentAudio.addEventListener('play',()=>{
-        clearInterval(progInt); // Ensure no old timers are running
-        progInt=setInterval(()=>updateBar(id), 50); // Update visuals frequently
-    });
-
-    currentAudio.addEventListener('pause',()=>{
-        clearInterval(progInt);
-        saveProgress(id);
-    });
-
-    currentAudio.addEventListener('ended',()=>{
-        clearInterval(progInt);
-        const waveContainer = document.getElementById(`wave-${id}`);
-        if(waveContainer) {
-            waveContainer.querySelectorAll('.waveform-bar').forEach(bar => bar.classList.add('played'));
-        }
-        saveProgress(id,0); // Reset progress in DB to 0 on end
-        currentAudio=null;
-        currentId=null;
-    });
-
     currentAudio.play();
 }
 
-function updateBar(id){
+function updatePlaybackVisuals(id) {
     if (!currentAudio || currentAudio.paused) return;
 
     const percentage = (currentAudio.currentTime / currentAudio.duration) * 100;
     const waveContainer = document.getElementById(`wave-${id}`);
     if (!waveContainer) return;
-
+    
     const allBars = waveContainer.querySelectorAll('.waveform-bar');
     if (allBars.length === 0) return;
 
     const barsToPlay = Math.floor((percentage / 100) * allBars.length);
 
     allBars.forEach((bar, index) => {
-        if (index < barsToPlay) {
-            bar.classList.add('played');
-        } else {
-            bar.classList.remove('played');
-        }
+        bar.classList.toggle('played', index < barsToPlay);
     });
 }
 
-async function saveProgress(id,force){
-    if(!currentAudio && force === undefined) return;
-    const p = force !== undefined ? force : (currentAudio.currentTime / currentAudio.duration)*100;
-    if(p > 0.5 && p < 99.5){
-        await db.collection('messages').doc(id).update({playbackProgress:p});
-    } else {
-        await db.collection('messages').doc(id).update({playbackProgress:0});
-    }
-}
 
 /* =========  NOTES ========= */
 function openNote(id){editId=id;noteModal.classList.add('active');noteInput.focus();}
