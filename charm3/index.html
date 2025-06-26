@@ -1,11 +1,4 @@
-.message-title span.blink {
-            animation: textBlink 1.5s ease-in-out infinite;
-        }
-
-        @keyframes textBlink {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,7 +17,6 @@
             min-height: 100vh;
             color: white;
             overflow-x: hidden;
-            position: relative;
         }
 
         /* Password Screen */
@@ -80,7 +72,6 @@
 
         .submit-button:hover {
             background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
         }
 
         .password-error {
@@ -88,89 +79,6 @@
             margin-top: 15px;
             font-size: 14px;
             min-height: 20px;
-        }
-
-        /* Background elements */
-        .moon {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 200px;
-            background: url('https://via.placeholder.com/200x200/FFE5B4/FFE5B4?text=MOON') no-repeat center;
-            background-size: contain;
-            z-index: 1;
-        }
-
-        .star {
-            position: fixed;
-            background-size: contain;
-            z-index: 1;
-        }
-
-        .star-1 { 
-            top: 10%; 
-            left: 15%; 
-            width: 25px; 
-            height: 25px; 
-            background: url('https://via.placeholder.com/25x25/FFFFFF/FFFFFF?text=Star1') no-repeat center;
-        }
-        
-        .star-2 { 
-            top: 20%; 
-            left: 85%; 
-            width: 30px; 
-            height: 30px; 
-            background: url('https://via.placeholder.com/30x30/FFFFFF/FFFFFF?text=Star2') no-repeat center;
-        }
-        
-        .star-3 { 
-            top: 35%; 
-            left: 10%; 
-            width: 20px; 
-            height: 20px; 
-            background: url('https://via.placeholder.com/20x20/FFFFFF/FFFFFF?text=Star3') no-repeat center;
-        }
-        
-        .star-4 { 
-            top: 45%; 
-            left: 92%; 
-            width: 28px; 
-            height: 28px; 
-            background: url('https://via.placeholder.com/28x28/FFFFFF/FFFFFF?text=Star4') no-repeat center;
-        }
-        
-        .star-5 { 
-            top: 60%; 
-            left: 5%; 
-            width: 35px; 
-            height: 35px; 
-            background: url('https://via.placeholder.com/35x35/FFFFFF/FFFFFF?text=Star5') no-repeat center;
-        }
-        
-        .star-6 { 
-            top: 75%; 
-            left: 88%; 
-            width: 22px; 
-            height: 22px; 
-            background: url('https://via.placeholder.com/22x22/FFFFFF/FFFFFF?text=Star6') no-repeat center;
-        }
-        
-        .star-7 { 
-            top: 85%; 
-            left: 25%; 
-            width: 26px; 
-            height: 26px; 
-            background: url('https://via.placeholder.com/26x26/FFFFFF/FFFFFF?text=Star7') no-repeat center;
-        }
-        
-        .star-8 { 
-            top: 50%; 
-            left: 70%; 
-            width: 24px; 
-            height: 24px; 
-            background: url('https://via.placeholder.com/24x24/FFFFFF/FFFFFF?text=Star8') no-repeat center;
         }
 
         /* Main App */
@@ -189,7 +97,7 @@
 
         /* Recorder Section */
         .recorder-section {
-            margin-top: 120px;
+            margin-top: 50px;
             text-align: center;
             margin-bottom: 40px;
         }
@@ -229,7 +137,7 @@
             height: 30px;
         }
 
-        /* Waveform */
+        /* Live Waveform */
         .waveform-container {
             height: 60px;
             background: rgba(255, 255, 255, 0.1);
@@ -282,6 +190,15 @@
             font-style: italic;
         }
 
+        .message-title.blink {
+            animation: textBlink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes textBlink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
         .message-meta {
             font-size: 14px;
             color: rgba(255, 255, 255, 0.7);
@@ -304,15 +221,6 @@
             opacity: 1;
         }
 
-        .write-note-btn.blink {
-            animation: blink 1.5s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 50%, 100% { opacity: 0.7; }
-            25%, 75% { opacity: 1; }
-        }
-
         .write-note-btn svg {
             width: 20px;
             height: 20px;
@@ -326,17 +234,6 @@
             border-radius: 5px;
             position: relative;
             overflow: hidden;
-        }
-
-        .waveform-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.25);
-            width: 0%;
-            transition: none;
-            z-index: 2;
         }
 
         .waveform-bars {
@@ -356,14 +253,11 @@
             background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
             min-width: 2px;
+            transition: background 0.2s ease;
         }
 
-        .message-waveform canvas {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
+        .waveform-bar.played {
+            background: rgba(255, 255, 255, 0.35);
         }
 
         /* Note Modal */
@@ -446,17 +340,6 @@
     </style>
 </head>
 <body>
-    <!-- Background Elements -->
-    <div class="moon"></div>
-    <div class="star star-1"></div>
-    <div class="star star-2"></div>
-    <div class="star star-3"></div>
-    <div class="star star-4"></div>
-    <div class="star star-5"></div>
-    <div class="star star-6"></div>
-    <div class="star star-7"></div>
-    <div class="star star-8"></div>
-
     <!-- Password Screen -->
     <div class="password-screen" id="passwordScreen">
         <div class="password-container">
@@ -540,6 +423,7 @@
         let currentEditingMessageId = null;
         let currentAudio = null;
         let currentMessageId = null;
+        let recordingWaveformData = [];
 
         // Password check
         async function checkPassword(event) {
@@ -549,18 +433,13 @@
             const errorDiv = document.getElementById('passwordError');
             
             try {
-                errorDiv.textContent = 'Checking password...';
-                
-                // Sign in anonymously first to get access
                 await auth.signInAnonymously();
                 
-                // Get password from Firebase
                 const configDoc = await db.collection('config').doc('app').get();
                 
                 if (!configDoc.exists) {
-                    // First time setup - create password
                     await db.collection('config').doc('app').set({
-                        password: '102624', // Default password
+                        password: '102624',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     errorDiv.textContent = 'Initial setup complete. Default password: 102624';
@@ -568,11 +447,8 @@
                 }
                 
                 const appPassword = configDoc.data().password;
-                console.log('Password from Firebase:', appPassword); // Debug
-                console.log('Password entered:', input); // Debug
                 
                 if (input === appPassword) {
-                    errorDiv.textContent = 'Access granted!';
                     document.getElementById('passwordScreen').style.display = 'none';
                     document.getElementById('appContainer').classList.add('active');
                     loadMessages();
@@ -580,7 +456,6 @@
                 } else {
                     errorDiv.textContent = 'Incorrect password';
                     document.getElementById('passwordInput').value = '';
-                    // Sign out since password was wrong
                     await auth.signOut();
                     setTimeout(() => {
                         errorDiv.textContent = '';
@@ -612,11 +487,13 @@
                 microphone = audioContext.createMediaStreamSource(stream);
                 microphone.connect(analyser);
                 
-                // Configure analyser
                 analyser.fftSize = 2048;
                 analyser.smoothingTimeConstant = 0.8;
                 analyser.minDecibels = -90;
                 analyser.maxDecibels = -10;
+                
+                // Reset waveform data
+                recordingWaveformData = [];
                 
                 // Setup media recorder
                 mediaRecorder = new MediaRecorder(stream);
@@ -640,7 +517,6 @@
                 updateRecordingUI(true);
                 startTimer();
                 
-                // Start waveform animation after a small delay
                 setTimeout(() => drawWaveform(), 100);
             } catch (error) {
                 alert('Error accessing microphone: ' + error.message);
@@ -686,7 +562,6 @@
             
             const canvasCtx = canvas.getContext('2d');
             
-            // Set canvas size to match container
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
@@ -703,56 +578,37 @@
                 
                 animationId = requestAnimationFrame(draw);
                 
-                // Get waveform data
-                analyser.getByteTimeDomainData(dataArray);
-
-                // Clear canvas with semi-transparent background
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Capture waveform data periodically
+                if (recordingWaveformData.length < 100) {
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    const average = sum / bufferLength;
+                    const normalized = Math.min(100, (average / 255) * 100 * 3);
+                    recordingWaveformData.push(Math.max(20, normalized));
+                }
+                
+                // Clear canvas
                 canvasCtx.fillStyle = 'rgba(67, 79, 93, 0.95)';
                 canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Set up line style
-                canvasCtx.lineWidth = 2;
-                canvasCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-                canvasCtx.beginPath();
-
-                const sliceWidth = canvas.width / bufferLength;
+                // Draw frequency bars
+                const barWidth = (canvas.width / bufferLength) * 2.5;
                 let x = 0;
 
-                // Draw the waveform
                 for (let i = 0; i < bufferLength; i++) {
-                    const v = dataArray[i] / 128.0;
-                    const y = v * canvas.height / 2;
-
-                    if (i === 0) {
-                        canvasCtx.moveTo(x, y);
-                    } else {
-                        canvasCtx.lineTo(x, y);
-                    }
-
-                    x += sliceWidth;
-                }
-
-                canvasCtx.lineTo(canvas.width, canvas.height / 2);
-                canvasCtx.stroke();
-
-                // Also draw frequency bars for visual effect
-                analyser.getByteFrequencyData(dataArray);
-                
-                const barWidth = (canvas.width / bufferLength) * 2.5;
-                let barHeight;
-                x = 0;
-
-                for (let i = 0; i < bufferLength; i++) {
-                    barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
+                    const barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
                     
-                    canvasCtx.fillStyle = `rgba(255, 255, 255, ${0.1 + (dataArray[i] / 255) * 0.2})`;
+                    canvasCtx.fillStyle = `rgba(255, 255, 255, ${0.1 + (dataArray[i] / 255) * 0.3})`;
                     canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
                     
                     x += barWidth + 1;
                 }
             }
 
-            // Start the animation
             draw();
         }
 
@@ -780,20 +636,59 @@
                 const uploadTask = await storageRef.put(audioBlob);
                 const downloadURL = await uploadTask.ref.getDownloadURL();
                 
+                // Process waveform data to 40 bars
+                const processedWaveform = processWaveformData(recordingWaveformData);
+                
                 // Save metadata to Firestore
-                const waveformData = generateWaveformData();
                 await db.collection('messages').add({
                     audioUrl: downloadURL,
                     duration: duration,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     title: null,
                     playbackProgress: 0,
-                    waveformData: waveformData
+                    playbackTime: 0,
+                    waveformData: processedWaveform
                 });
+
+                // Reset recording waveform data
+                recordingWaveformData = [];
 
             } catch (error) {
                 alert('Error uploading: ' + error.message);
             }
+        }
+
+        function processWaveformData(rawData) {
+            const targetBars = 40;
+            const processed = [];
+            
+            if (rawData.length === 0) {
+                // Generate default waveform if no data
+                for (let i = 0; i < targetBars; i++) {
+                    const height = 30 + Math.random() * 40;
+                    processed.push(Math.min(80, height));
+                }
+                return processed;
+            }
+            
+            const chunkSize = rawData.length / targetBars;
+            
+            for (let i = 0; i < targetBars; i++) {
+                const start = Math.floor(i * chunkSize);
+                const end = Math.floor((i + 1) * chunkSize);
+                let sum = 0;
+                let count = 0;
+                
+                for (let j = start; j < end && j < rawData.length; j++) {
+                    sum += rawData[j];
+                    count++;
+                }
+                
+                const average = count > 0 ? sum / count : 30;
+                processed.push(Math.min(80, Math.max(20, average)));
+            }
+            
+            return processed;
         }
 
         function startRealtimeListener() {
@@ -831,33 +726,29 @@
             const date = message.createdAt ? message.createdAt.toDate() : new Date();
             const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
-            // Check if this is a new message without a title
             const shouldBlink = !message.title;
             
             card.innerHTML = `
-                <div class="message-title ${!message.title ? 'untitled' : ''}">${message.title || '<span class="blink">Write Note</span>'}</div>
+                <div class="message-title ${!message.title ? 'untitled blink' : ''}">${message.title || 'Write Note'}</div>
                 <div class="message-meta">
                     <span>${dateStr}</span>
                     <span>${formatDuration(message.duration)}</span>
                 </div>
-                <div class="message-waveform" id="waveform-${id}">
-                    <div class="waveform-progress" style="width: ${message.playbackProgress || 0}%"></div>
-                </div>
-                <button class="write-note-btn ${shouldBlink ? 'blink' : ''}" onclick="event.stopPropagation(); openNoteModal('${id}')">
+                <div class="message-waveform" id="waveform-${id}"></div>
+                <button class="write-note-btn" onclick="event.stopPropagation(); openNoteModal('${id}')">
                     <svg viewBox="0 0 24 24">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                     </svg>
                 </button>
             `;
             
-            // Generate or load waveform
-            if (message.waveformData) {
-                generateStaticWaveform(`waveform-${id}`, message.waveformData);
+            // Generate static waveform with current progress
+            if (message.waveformData && Array.isArray(message.waveformData)) {
+                generateStaticWaveform(`waveform-${id}`, message.waveformData, message.playbackProgress || 0);
             } else {
-                // Generate new waveform and save it
-                const waveformData = generateWaveformData();
-                generateStaticWaveform(`waveform-${id}`, waveformData);
-                // Save waveform data to Firebase
+                // Generate and save default waveform
+                const waveformData = generateDefaultWaveform();
+                generateStaticWaveform(`waveform-${id}`, waveformData, message.playbackProgress || 0);
                 db.collection('messages').doc(id).update({
                     waveformData: waveformData
                 }).catch(console.error);
@@ -866,13 +757,11 @@
             return card;
         }
 
-        function generateWaveformData() {
+        function generateDefaultWaveform() {
             const barCount = 40;
             const waveformData = [];
             
-            // Generate more realistic waveform pattern
             for (let i = 0; i < barCount; i++) {
-                // Create varying heights with some pattern
                 const base = 30;
                 const variation = Math.sin(i * 0.3) * 20 + Math.random() * 30;
                 const height = Math.max(20, Math.min(80, base + variation));
@@ -882,31 +771,29 @@
             return waveformData;
         }
 
-        function generateStaticWaveform(containerId, waveformData) {
+        function generateStaticWaveform(containerId, waveformData, progress = 0) {
             const container = document.getElementById(containerId);
             if (!container) return;
             
-            // Clear any existing content except progress bar
-            const progressBar = container.querySelector('.waveform-progress');
             container.innerHTML = '';
-            if (progressBar) {
-                container.appendChild(progressBar);
-            }
             
-            // Create bars container
             const barsContainer = document.createElement('div');
             barsContainer.className = 'waveform-bars';
             
             const barCount = waveformData.length;
+            const playedBars = Math.floor((progress / 100) * barCount);
             
             for (let i = 0; i < barCount; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'waveform-bar';
+                if (i < playedBars) {
+                    bar.classList.add('played');
+                }
                 bar.style.height = `${waveformData[i]}%`;
                 barsContainer.appendChild(bar);
             }
             
-            container.insertBefore(barsContainer, container.firstChild);
+            container.appendChild(barsContainer);
         }
 
         let progressUpdateInterval = null;
@@ -928,6 +815,11 @@
             if (currentAudio) {
                 currentAudio.pause();
                 stopProgressAnimation();
+                // Save progress of previous audio
+                if (currentMessageId) {
+                    const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+                    await updatePlaybackProgress(currentMessageId, progress, currentAudio.currentTime);
+                }
                 currentAudio = null;
             }
 
@@ -935,11 +827,11 @@
             const audio = new Audio(message.audioUrl);
             currentAudio = audio;
 
-            // Set up all event listeners before playing
+            // Set up event listeners
             audio.addEventListener('loadedmetadata', () => {
-                if (message.playbackProgress && message.playbackProgress < 100 && message.playbackProgress > 0) {
-                    const targetTime = (message.playbackProgress / 100) * audio.duration;
-                    audio.currentTime = targetTime;
+                // Restore playback position
+                if (message.playbackTime && message.playbackTime > 0 && message.playbackTime < audio.duration) {
+                    audio.currentTime = message.playbackTime;
                 }
             });
 
@@ -951,13 +843,13 @@
                 stopProgressAnimation();
                 if (audio.duration && audio.currentTime > 0) {
                     const progress = (audio.currentTime / audio.duration) * 100;
-                    await updatePlaybackProgress(messageId, progress);
+                    await updatePlaybackProgress(messageId, progress, audio.currentTime);
                 }
             });
 
             audio.addEventListener('ended', async () => {
                 stopProgressAnimation();
-                await updatePlaybackProgress(messageId, 100);
+                await updatePlaybackProgress(messageId, 100, 0);
                 currentAudio = null;
                 currentMessageId = null;
             });
@@ -971,14 +863,14 @@
         }
 
         function startProgressAnimation(messageId) {
-            stopProgressAnimation(); // Clear any existing interval
+            stopProgressAnimation();
             
             progressUpdateInterval = setInterval(() => {
                 if (currentAudio && !currentAudio.paused && currentAudio.duration) {
                     const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
                     updatePlaybackProgressUI(messageId, progress);
                 }
-            }, 50); // Update every 50ms for smooth animation
+            }, 50);
         }
 
         function stopProgressAnimation() {
@@ -989,26 +881,29 @@
         }
 
         function updatePlaybackProgressUI(messageId, progress) {
-            // Update UI only (no Firebase call for smooth animation)
-            const cards = document.querySelectorAll('.message-card');
-            cards.forEach(card => {
-                if (card.onclick && card.onclick.toString().includes(messageId)) {
-                    const progressBar = card.querySelector('.waveform-progress');
-                    if (progressBar) {
-                        progressBar.style.width = `${progress}%`;
-                    }
+            const container = document.getElementById(`waveform-${messageId}`);
+            if (!container) return;
+            
+            const bars = container.querySelectorAll('.waveform-bar');
+            const totalBars = bars.length;
+            const playedBars = Math.floor((progress / 100) * totalBars);
+            
+            bars.forEach((bar, index) => {
+                if (index < playedBars) {
+                    bar.classList.add('played');
+                } else {
+                    bar.classList.remove('played');
                 }
             });
         }
 
-        async function updatePlaybackProgress(messageId, progress) {
-            // Update UI
+        async function updatePlaybackProgress(messageId, progress, currentTime) {
             updatePlaybackProgressUI(messageId, progress);
             
-            // Update Firebase
             try {
                 await db.collection('messages').doc(messageId).update({
                     playbackProgress: progress,
+                    playbackTime: currentTime || 0,
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 });
             } catch (error) {
@@ -1048,14 +943,13 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
-        // Close modal on background click
+        // Modal event listeners
         document.getElementById('noteModal').addEventListener('click', (e) => {
             if (e.target.id === 'noteModal') {
                 closeNoteModal();
             }
         });
 
-        // Handle Enter key in note modal
         document.getElementById('noteInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 saveNote();
