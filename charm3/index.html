@@ -1,18 +1,11 @@
-function createMessageCard(id, message) {
-            const card = document.createElement('div');
-            card.className = 'message-card';
-            card.onclick = () => playMessage(id, message);
-            
-            const date = message.createdAt ? message.createdAt.toDate() : new Date();
-            const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            const shouldBlink = !message.title;
-            
-            card.innerHTML = `
-                <div class="message-title ${!message.title ? 'untitled blink' : ''}">${message.title || 'Write Note'}</div>
-                <div class="message-meta">
-                    <span>${dateStr}</span>
-                    <!DOCTYPE html>
+.message-title span.blink {
+            animation: textBlink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes textBlink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -31,6 +24,7 @@ function createMessageCard(id, message) {
             min-height: 100vh;
             color: white;
             overflow-x: hidden;
+            position: relative;
         }
 
         /* Password Screen */
@@ -86,6 +80,7 @@ function createMessageCard(id, message) {
 
         .submit-button:hover {
             background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
         .password-error {
@@ -93,6 +88,89 @@ function createMessageCard(id, message) {
             margin-top: 15px;
             font-size: 14px;
             min-height: 20px;
+        }
+
+        /* Background elements */
+        .moon {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: url('https://via.placeholder.com/200x200/FFE5B4/FFE5B4?text=MOON') no-repeat center;
+            background-size: contain;
+            z-index: 1;
+        }
+
+        .star {
+            position: fixed;
+            background-size: contain;
+            z-index: 1;
+        }
+
+        .star-1 { 
+            top: 10%; 
+            left: 15%; 
+            width: 25px; 
+            height: 25px; 
+            background: url('https://via.placeholder.com/25x25/FFFFFF/FFFFFF?text=Star1') no-repeat center;
+        }
+        
+        .star-2 { 
+            top: 20%; 
+            left: 85%; 
+            width: 30px; 
+            height: 30px; 
+            background: url('https://via.placeholder.com/30x30/FFFFFF/FFFFFF?text=Star2') no-repeat center;
+        }
+        
+        .star-3 { 
+            top: 35%; 
+            left: 10%; 
+            width: 20px; 
+            height: 20px; 
+            background: url('https://via.placeholder.com/20x20/FFFFFF/FFFFFF?text=Star3') no-repeat center;
+        }
+        
+        .star-4 { 
+            top: 45%; 
+            left: 92%; 
+            width: 28px; 
+            height: 28px; 
+            background: url('https://via.placeholder.com/28x28/FFFFFF/FFFFFF?text=Star4') no-repeat center;
+        }
+        
+        .star-5 { 
+            top: 60%; 
+            left: 5%; 
+            width: 35px; 
+            height: 35px; 
+            background: url('https://via.placeholder.com/35x35/FFFFFF/FFFFFF?text=Star5') no-repeat center;
+        }
+        
+        .star-6 { 
+            top: 75%; 
+            left: 88%; 
+            width: 22px; 
+            height: 22px; 
+            background: url('https://via.placeholder.com/22x22/FFFFFF/FFFFFF?text=Star6') no-repeat center;
+        }
+        
+        .star-7 { 
+            top: 85%; 
+            left: 25%; 
+            width: 26px; 
+            height: 26px; 
+            background: url('https://via.placeholder.com/26x26/FFFFFF/FFFFFF?text=Star7') no-repeat center;
+        }
+        
+        .star-8 { 
+            top: 50%; 
+            left: 70%; 
+            width: 24px; 
+            height: 24px; 
+            background: url('https://via.placeholder.com/24x24/FFFFFF/FFFFFF?text=Star8') no-repeat center;
         }
 
         /* Main App */
@@ -111,7 +189,7 @@ function createMessageCard(id, message) {
 
         /* Recorder Section */
         .recorder-section {
-            margin-top: 50px;
+            margin-top: 120px;
             text-align: center;
             margin-bottom: 40px;
         }
@@ -151,7 +229,7 @@ function createMessageCard(id, message) {
             height: 30px;
         }
 
-        /* Live Waveform */
+        /* Waveform */
         .waveform-container {
             height: 60px;
             background: rgba(255, 255, 255, 0.1);
@@ -204,15 +282,6 @@ function createMessageCard(id, message) {
             font-style: italic;
         }
 
-        .message-title.blink {
-            animation: textBlink 1.5s ease-in-out infinite;
-        }
-
-        @keyframes textBlink {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
         .message-meta {
             font-size: 14px;
             color: rgba(255, 255, 255, 0.7);
@@ -235,6 +304,15 @@ function createMessageCard(id, message) {
             opacity: 1;
         }
 
+        .write-note-btn.blink {
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 0.7; }
+            25%, 75% { opacity: 1; }
+        }
+
         .write-note-btn svg {
             width: 20px;
             height: 20px;
@@ -248,6 +326,17 @@ function createMessageCard(id, message) {
             border-radius: 5px;
             position: relative;
             overflow: hidden;
+        }
+
+        .waveform-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.25);
+            width: 0%;
+            transition: none;
+            z-index: 2;
         }
 
         .waveform-bars {
@@ -267,12 +356,14 @@ function createMessageCard(id, message) {
             background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
             min-width: 2px;
-            transition: background 0.2s ease;
         }
 
-        .waveform-bar.played {
-            background: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        .message-waveform canvas {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         /* Note Modal */
@@ -355,6 +446,17 @@ function createMessageCard(id, message) {
     </style>
 </head>
 <body>
+    <!-- Background Elements -->
+    <div class="moon"></div>
+    <div class="star star-1"></div>
+    <div class="star star-2"></div>
+    <div class="star star-3"></div>
+    <div class="star star-4"></div>
+    <div class="star star-5"></div>
+    <div class="star star-6"></div>
+    <div class="star star-7"></div>
+    <div class="star star-8"></div>
+
     <!-- Password Screen -->
     <div class="password-screen" id="passwordScreen">
         <div class="password-container">
@@ -389,9 +491,6 @@ function createMessageCard(id, message) {
         </div>
 
         <div class="messages-list" id="messagesList"></div>
-        
-        <!-- Debug button (remove after testing) -->
-        <button onclick="testWaveformAnimation()" style="margin: 20px auto; display: block; padding: 10px 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 5px; color: white; cursor: pointer;">Test Waveform Animation</button>
     </div>
 
     <!-- Note Modal -->
@@ -441,7 +540,6 @@ function createMessageCard(id, message) {
         let currentEditingMessageId = null;
         let currentAudio = null;
         let currentMessageId = null;
-        let recordingWaveformData = [];
 
         // Password check
         async function checkPassword(event) {
@@ -451,13 +549,18 @@ function createMessageCard(id, message) {
             const errorDiv = document.getElementById('passwordError');
             
             try {
+                errorDiv.textContent = 'Checking password...';
+                
+                // Sign in anonymously first to get access
                 await auth.signInAnonymously();
                 
+                // Get password from Firebase
                 const configDoc = await db.collection('config').doc('app').get();
                 
                 if (!configDoc.exists) {
+                    // First time setup - create password
                     await db.collection('config').doc('app').set({
-                        password: '102624',
+                        password: '102624', // Default password
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     errorDiv.textContent = 'Initial setup complete. Default password: 102624';
@@ -465,27 +568,19 @@ function createMessageCard(id, message) {
                 }
                 
                 const appPassword = configDoc.data().password;
+                console.log('Password from Firebase:', appPassword); // Debug
+                console.log('Password entered:', input); // Debug
                 
                 if (input === appPassword) {
+                    errorDiv.textContent = 'Access granted!';
                     document.getElementById('passwordScreen').style.display = 'none';
                     document.getElementById('appContainer').classList.add('active');
-                    console.log('App started, loading messages...');
-                    await loadMessages();
+                    loadMessages();
                     startRealtimeListener();
-                    
-                    // Test the waveform visualization
-                    console.log('Testing waveform visualization...');
-                    setTimeout(() => {
-                        const testBars = document.querySelectorAll('.waveform-bar');
-                        console.log('Found', testBars.length, 'waveform bars in the UI');
-                        if (testBars.length > 0) {
-                            console.log('First bar height:', testBars[0].style.height);
-                            console.log('Bar classes:', testBars[0].className);
-                        }
-                    }, 1000);
                 } else {
                     errorDiv.textContent = 'Incorrect password';
                     document.getElementById('passwordInput').value = '';
+                    // Sign out since password was wrong
                     await auth.signOut();
                     setTimeout(() => {
                         errorDiv.textContent = '';
@@ -509,39 +604,22 @@ function createMessageCard(id, message) {
 
         async function startRecording() {
             try {
-                // Check browser support
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    throw new Error('Your browser does not support audio recording');
-                }
-                
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 
                 // Setup audio context for waveform
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContextClass) {
-                    throw new Error('Web Audio API not supported');
-                }
-                
-                audioContext = new AudioContextClass();
-                console.log('Audio context created, sample rate:', audioContext.sampleRate);
-                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(stream);
                 microphone.connect(analyser);
                 
-                analyser.fftSize = 256; // Smaller for better performance
+                // Configure analyser
+                analyser.fftSize = 2048;
                 analyser.smoothingTimeConstant = 0.8;
                 analyser.minDecibels = -90;
                 analyser.maxDecibels = -10;
                 
-                console.log('Analyser configured, FFT size:', analyser.fftSize);
-                
-                // Reset waveform data
-                recordingWaveformData = [];
-                
                 // Setup media recorder
-                const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
-                mediaRecorder = new MediaRecorder(stream, { mimeType });
+                mediaRecorder = new MediaRecorder(stream);
                 audioChunks = [];
 
                 mediaRecorder.ondataavailable = (event) => {
@@ -549,7 +627,7 @@ function createMessageCard(id, message) {
                 };
 
                 mediaRecorder.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks, { type: mimeType });
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     await uploadAudio(audioBlob);
                     stream.getTracks().forEach(track => track.stop());
                     if (audioContext) {
@@ -562,13 +640,12 @@ function createMessageCard(id, message) {
                 updateRecordingUI(true);
                 startTimer();
                 
+                // Start waveform animation after a small delay
                 setTimeout(() => drawWaveform(), 100);
             } catch (error) {
-                console.error('Recording error:', error);
                 alert('Error accessing microphone: ' + error.message);
             }
         }
-        
 
         function stopRecording() {
             if (mediaRecorder && mediaRecorder.state === 'recording') {
@@ -609,6 +686,7 @@ function createMessageCard(id, message) {
             
             const canvasCtx = canvas.getContext('2d');
             
+            // Set canvas size to match container
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
@@ -617,7 +695,6 @@ function createMessageCard(id, message) {
             
             const bufferLength = analyser.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
-            let captureCounter = 0;
 
             function draw() {
                 if (!mediaRecorder || mediaRecorder.state !== 'recording') {
@@ -626,45 +703,56 @@ function createMessageCard(id, message) {
                 
                 animationId = requestAnimationFrame(draw);
                 
-                analyser.getByteFrequencyData(dataArray);
-                
-                // Capture waveform data every few frames
-                captureCounter++;
-                if (captureCounter % 5 === 0 && recordingWaveformData.length < 200) {
-                    let sum = 0;
-                    let max = 0;
-                    const sampleSize = Math.floor(bufferLength / 4); // Sample lower frequencies
-                    for (let i = 0; i < sampleSize; i++) {
-                        sum += dataArray[i];
-                        max = Math.max(max, dataArray[i]);
-                    }
-                    const average = sum / sampleSize;
-                    // Use maximum value for better visualization
-                    const normalized = Math.min(100, Math.max(20, (max / 255) * 100));
-                    if (normalized > 20) { // Only capture if there's actual sound
-                        recordingWaveformData.push(normalized);
-                        console.log('Captured waveform point:', normalized, 'Total points:', recordingWaveformData.length);
-                    }
-                }
-                
-                // Clear canvas
+                // Get waveform data
+                analyser.getByteTimeDomainData(dataArray);
+
+                // Clear canvas with semi-transparent background
                 canvasCtx.fillStyle = 'rgba(67, 79, 93, 0.95)';
                 canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Draw frequency bars
-                const barWidth = (canvas.width / bufferLength) * 2.5;
+                // Set up line style
+                canvasCtx.lineWidth = 2;
+                canvasCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                canvasCtx.beginPath();
+
+                const sliceWidth = canvas.width / bufferLength;
                 let x = 0;
 
+                // Draw the waveform
                 for (let i = 0; i < bufferLength; i++) {
-                    const barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
+                    const v = dataArray[i] / 128.0;
+                    const y = v * canvas.height / 2;
+
+                    if (i === 0) {
+                        canvasCtx.moveTo(x, y);
+                    } else {
+                        canvasCtx.lineTo(x, y);
+                    }
+
+                    x += sliceWidth;
+                }
+
+                canvasCtx.lineTo(canvas.width, canvas.height / 2);
+                canvasCtx.stroke();
+
+                // Also draw frequency bars for visual effect
+                analyser.getByteFrequencyData(dataArray);
+                
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let barHeight;
+                x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
                     
-                    canvasCtx.fillStyle = `rgba(255, 255, 255, ${0.1 + (dataArray[i] / 255) * 0.3})`;
+                    canvasCtx.fillStyle = `rgba(255, 255, 255, ${0.1 + (dataArray[i] / 255) * 0.2})`;
                     canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
                     
                     x += barWidth + 1;
                 }
             }
 
+            // Start the animation
             draw();
         }
 
@@ -692,81 +780,20 @@ function createMessageCard(id, message) {
                 const uploadTask = await storageRef.put(audioBlob);
                 const downloadURL = await uploadTask.ref.getDownloadURL();
                 
-                // Process waveform data to 40 bars
-                console.log('Raw waveform data length:', recordingWaveformData.length);
-                const processedWaveform = processWaveformData(recordingWaveformData);
-                console.log('Processed waveform:', processedWaveform);
-                
                 // Save metadata to Firestore
+                const waveformData = generateWaveformData();
                 await db.collection('messages').add({
                     audioUrl: downloadURL,
                     duration: duration,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     title: null,
                     playbackProgress: 0,
-                    playbackTime: 0,
-                    waveformData: processedWaveform
+                    waveformData: waveformData
                 });
 
-                // Reset recording waveform data
-                recordingWaveformData = [];
-                console.log('Audio uploaded successfully');
-
             } catch (error) {
-                console.error('Upload error:', error);
                 alert('Error uploading: ' + error.message);
             }
-        }
-
-        function processWaveformData(rawData) {
-            const targetBars = 40;
-            const processed = [];
-            
-            console.log('Processing waveform data. Raw length:', rawData.length);
-            
-            // If no data was captured during recording, generate a realistic waveform
-            if (rawData.length === 0) {
-                console.log('No raw data captured, generating waveform based on recording duration');
-                // Generate a more realistic waveform pattern
-                for (let i = 0; i < targetBars; i++) {
-                    // Create a speech-like pattern
-                    const position = i / targetBars;
-                    let height = 30;
-                    
-                    // Add variation for speech patterns
-                    if (position > 0.1 && position < 0.3) height += 30; // Beginning
-                    if (position > 0.4 && position < 0.6) height += 40; // Middle
-                    if (position > 0.7 && position < 0.85) height += 35; // Near end
-                    
-                    // Add randomness
-                    height += Math.random() * 20 - 10;
-                    height = Math.max(20, Math.min(80, height));
-                    
-                    processed.push(height);
-                }
-                return processed;
-            }
-            
-            // Process captured data
-            const chunkSize = rawData.length / targetBars;
-            
-            for (let i = 0; i < targetBars; i++) {
-                const start = Math.floor(i * chunkSize);
-                const end = Math.floor((i + 1) * chunkSize);
-                let sum = 0;
-                let count = 0;
-                
-                for (let j = start; j < end && j < rawData.length; j++) {
-                    sum += rawData[j];
-                    count++;
-                }
-                
-                const average = count > 0 ? sum / count : 30;
-                processed.push(Math.min(80, Math.max(20, average)));
-            }
-            
-            console.log('Processed waveform sample:', processed.slice(0, 5));
-            return processed;
         }
 
         function startRealtimeListener() {
@@ -778,17 +805,11 @@ function createMessageCard(id, message) {
         }
 
         async function loadMessages() {
-            console.log('Loading messages from Firebase...');
-            try {
-                const snapshot = await db.collection('messages')
-                    .orderBy('createdAt', 'desc')
-                    .get();
-                
-                console.log('Loaded', snapshot.size, 'messages');
-                displayMessages(snapshot);
-            } catch (error) {
-                console.error('Error loading messages:', error);
-            }
+            const snapshot = await db.collection('messages')
+                .orderBy('createdAt', 'desc')
+                .get();
+            
+            displayMessages(snapshot);
         }
 
         function displayMessages(snapshot) {
@@ -799,11 +820,6 @@ function createMessageCard(id, message) {
                 const message = doc.data();
                 const messageCard = createMessageCard(doc.id, message);
                 messagesList.appendChild(messageCard);
-                
-                // Update waveform visualization if message has progress
-                if (message.playbackProgress && message.playbackProgress > 0) {
-                    updatePlaybackProgressUI(doc.id, message.playbackProgress);
-                }
             });
         }
 
@@ -815,15 +831,18 @@ function createMessageCard(id, message) {
             const date = message.createdAt ? message.createdAt.toDate() : new Date();
             const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
+            // Check if this is a new message without a title
             const shouldBlink = !message.title;
             
             card.innerHTML = `
-                <div class="message-title ${!message.title ? 'untitled blink' : ''}">${message.title || 'Write Note'}</div>
+                <div class="message-title ${!message.title ? 'untitled' : ''}">${message.title || '<span class="blink">Write Note</span>'}</div>
                 <div class="message-meta">
                     <span>${dateStr}</span>
-                    <span>${formatDuration(message.duration || 0)}</span>
+                    <span>${formatDuration(message.duration)}</span>
                 </div>
-                <div class="message-waveform" id="waveform-${id}"></div>
+                <div class="message-waveform" id="waveform-${id}">
+                    <div class="waveform-progress" style="width: ${message.playbackProgress || 0}%"></div>
+                </div>
                 <button class="write-note-btn" onclick="event.stopPropagation(); openNoteModal('${id}')">
                     <svg viewBox="0 0 24 24">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
@@ -831,75 +850,68 @@ function createMessageCard(id, message) {
                 </button>
             `;
             
-            // Generate static waveform with current progress
-            let waveformData = message.waveformData;
-            
-            // Validate waveform data
-            if (!waveformData || !Array.isArray(waveformData) || waveformData.length === 0) {
-                console.log('Invalid or missing waveform data for message:', id);
-                waveformData = generateDefaultWaveform();
-                // Update Firebase with generated waveform
+            // Generate or load waveform
+            if (message.waveformData) {
+                generateStaticWaveform(`waveform-${id}`, message.waveformData);
+            } else {
+                // Generate new waveform and save it
+                const waveformData = generateWaveformData();
+                generateStaticWaveform(`waveform-${id}`, waveformData);
+                // Save waveform data to Firebase
                 db.collection('messages').doc(id).update({
                     waveformData: waveformData
                 }).catch(console.error);
             }
             
-            generateStaticWaveform(`waveform-${id}`, waveformData, message.playbackProgress || 0);
-            
             return card;
         }
 
-        function generateDefaultWaveform() {
+        function generateWaveformData() {
             const barCount = 40;
             const waveformData = [];
             
+            // Generate more realistic waveform pattern
             for (let i = 0; i < barCount; i++) {
+                // Create varying heights with some pattern
                 const base = 30;
                 const variation = Math.sin(i * 0.3) * 20 + Math.random() * 30;
                 const height = Math.max(20, Math.min(80, base + variation));
                 waveformData.push(height);
             }
             
-            console.log('Generated default waveform:', waveformData.slice(0, 5), '...');
             return waveformData;
         }
 
-        function generateStaticWaveform(containerId, waveformData, progress = 0) {
+        function generateStaticWaveform(containerId, waveformData) {
             const container = document.getElementById(containerId);
-            if (!container) {
-                console.error('Container not found:', containerId);
-                return;
+            if (!container) return;
+            
+            // Clear any existing content except progress bar
+            const progressBar = container.querySelector('.waveform-progress');
+            container.innerHTML = '';
+            if (progressBar) {
+                container.appendChild(progressBar);
             }
             
-            console.log(`Generating waveform for ${containerId}, bars: ${waveformData.length}, progress: ${progress}%`);
-            
-            container.innerHTML = '';
-            
+            // Create bars container
             const barsContainer = document.createElement('div');
             barsContainer.className = 'waveform-bars';
             
             const barCount = waveformData.length;
-            const playedBars = Math.floor((progress / 100) * barCount);
             
             for (let i = 0; i < barCount; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'waveform-bar';
-                if (i < playedBars) {
-                    bar.classList.add('played');
-                }
                 bar.style.height = `${waveformData[i]}%`;
                 barsContainer.appendChild(bar);
             }
             
-            container.appendChild(barsContainer);
-            console.log(`Created ${barCount} bars, ${playedBars} marked as played`);
+            container.insertBefore(barsContainer, container.firstChild);
         }
 
         let progressUpdateInterval = null;
 
         async function playMessage(messageId, message) {
-            console.log('Playing message:', messageId, 'Current progress:', message.playbackProgress);
-            
             // Check if this message is already playing
             if (currentAudio && currentMessageId === messageId) {
                 if (currentAudio.paused) {
@@ -916,11 +928,6 @@ function createMessageCard(id, message) {
             if (currentAudio) {
                 currentAudio.pause();
                 stopProgressAnimation();
-                // Save progress of previous audio
-                if (currentMessageId) {
-                    const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
-                    await updatePlaybackProgress(currentMessageId, progress, currentAudio.currentTime);
-                }
                 currentAudio = null;
             }
 
@@ -928,34 +935,29 @@ function createMessageCard(id, message) {
             const audio = new Audio(message.audioUrl);
             currentAudio = audio;
 
-            // Set up event listeners
+            // Set up all event listeners before playing
             audio.addEventListener('loadedmetadata', () => {
-                console.log('Audio loaded, duration:', audio.duration);
-                // Restore playback position
-                if (message.playbackTime && message.playbackTime > 0 && message.playbackTime < audio.duration) {
-                    audio.currentTime = message.playbackTime;
-                    console.log('Restored position to:', message.playbackTime);
+                if (message.playbackProgress && message.playbackProgress < 100 && message.playbackProgress > 0) {
+                    const targetTime = (message.playbackProgress / 100) * audio.duration;
+                    audio.currentTime = targetTime;
                 }
             });
 
             audio.addEventListener('play', () => {
-                console.log('Audio playing');
                 startProgressAnimation(messageId);
             });
 
             audio.addEventListener('pause', async () => {
-                console.log('Audio paused at:', audio.currentTime);
                 stopProgressAnimation();
                 if (audio.duration && audio.currentTime > 0) {
                     const progress = (audio.currentTime / audio.duration) * 100;
-                    await updatePlaybackProgress(messageId, progress, audio.currentTime);
+                    await updatePlaybackProgress(messageId, progress);
                 }
             });
 
             audio.addEventListener('ended', async () => {
-                console.log('Audio ended');
                 stopProgressAnimation();
-                await updatePlaybackProgress(messageId, 100, 0);
+                await updatePlaybackProgress(messageId, 100);
                 currentAudio = null;
                 currentMessageId = null;
             });
@@ -969,15 +971,14 @@ function createMessageCard(id, message) {
         }
 
         function startProgressAnimation(messageId) {
-            stopProgressAnimation();
+            stopProgressAnimation(); // Clear any existing interval
             
             progressUpdateInterval = setInterval(() => {
                 if (currentAudio && !currentAudio.paused && currentAudio.duration) {
                     const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
-                    console.log('Progress update:', progress.toFixed(2) + '%');
                     updatePlaybackProgressUI(messageId, progress);
                 }
-            }, 50);
+            }, 50); // Update every 50ms for smooth animation
         }
 
         function stopProgressAnimation() {
@@ -988,34 +989,26 @@ function createMessageCard(id, message) {
         }
 
         function updatePlaybackProgressUI(messageId, progress) {
-            const container = document.getElementById(`waveform-${messageId}`);
-            if (!container) {
-                console.error('Waveform container not found for message:', messageId);
-                return;
-            }
-            
-            const bars = container.querySelectorAll('.waveform-bar');
-            const totalBars = bars.length;
-            const playedBars = Math.floor((progress / 100) * totalBars);
-            
-            console.log(`Updating UI - Progress: ${progress}%, Bars: ${playedBars}/${totalBars}`);
-            
-            bars.forEach((bar, index) => {
-                if (index < playedBars) {
-                    bar.classList.add('played');
-                } else {
-                    bar.classList.remove('played');
+            // Update UI only (no Firebase call for smooth animation)
+            const cards = document.querySelectorAll('.message-card');
+            cards.forEach(card => {
+                if (card.onclick && card.onclick.toString().includes(messageId)) {
+                    const progressBar = card.querySelector('.waveform-progress');
+                    if (progressBar) {
+                        progressBar.style.width = `${progress}%`;
+                    }
                 }
             });
         }
 
-        async function updatePlaybackProgress(messageId, progress, currentTime) {
+        async function updatePlaybackProgress(messageId, progress) {
+            // Update UI
             updatePlaybackProgressUI(messageId, progress);
             
+            // Update Firebase
             try {
                 await db.collection('messages').doc(messageId).update({
                     playbackProgress: progress,
-                    playbackTime: currentTime || 0,
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 });
             } catch (error) {
@@ -1055,50 +1048,19 @@ function createMessageCard(id, message) {
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
-        // Modal event listeners
+        // Close modal on background click
         document.getElementById('noteModal').addEventListener('click', (e) => {
             if (e.target.id === 'noteModal') {
                 closeNoteModal();
             }
         });
 
+        // Handle Enter key in note modal
         document.getElementById('noteInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 saveNote();
             }
         });
-        
-        // Test function for debugging (remove after testing)
-        function testWaveformAnimation() {
-            console.log('Testing waveform animation...');
-            const containers = document.querySelectorAll('.message-waveform');
-            console.log('Found', containers.length, 'waveform containers');
-            
-            containers.forEach((container, index) => {
-                const bars = container.querySelectorAll('.waveform-bar');
-                console.log(`Container ${index}: ${bars.length} bars`);
-                
-                // Animate bars progressively
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    const playedBars = Math.floor((progress / 100) * bars.length);
-                    
-                    bars.forEach((bar, i) => {
-                        if (i < playedBars) {
-                            bar.classList.add('played');
-                        } else {
-                            bar.classList.remove('played');
-                        }
-                    });
-                    
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        console.log('Animation complete for container', index);
-                    }
-                }, 100);
-            });
-        }
     </script>
 </body>
 </html>
