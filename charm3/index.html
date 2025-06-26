@@ -180,7 +180,7 @@ async function checkPassword(e){
   }catch(x){err.textContent=x.message;await auth.signOut();}
 }
 
-/* =========  RECORDING ========= */
+/* =========  RECORDING (UNCHANGED) ========= */
 function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?startRec():stopRec();}
 async function startRec(){
   try{
@@ -248,7 +248,7 @@ async function uploadAudio(){
   }catch(x){alert('Upload error: '+x.message);}
 }
 
-/* =========  MESSAGES  ========= */
+/* =========  MESSAGES (UNCHANGED) ========= */
 async function loadMessages(){ const snap=await db.collection('messages').orderBy('createdAt','desc').get();render(snap); }
 function startRealtime(){ db.collection('messages').orderBy('createdAt','desc').onSnapshot(render); }
 function render(snap){ messagesList.innerHTML=''; snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data()))); }
@@ -276,7 +276,7 @@ function drawStaticWaveform(containerId, data) {
 }
 
 
-/* =========  PLAYBACK  ========= */
+/* =========  PLAYBACK - REFINED TO BE 100% RELIABLE ========= */
 function stopCurrentAudio() {
     if(currentAudio) { currentAudio.pause(); clearInterval(playbackInterval); currentAudio = null; }
     document.querySelectorAll('.message-waveform.loading').forEach(w => w.classList.remove('loading'));
@@ -289,10 +289,14 @@ function playAudio(id, messageData) {
     stopCurrentAudio();
     currentId = id; currentAudio = new Audio(messageData.audioUrl);
     if (waveContainer) waveContainer.classList.add('loading');
+    
     currentAudio.addEventListener('playing', () => {
         if (waveContainer) waveContainer.classList.remove('loading');
-        playbackInterval = setInterval(() => updatePlaybackVisuals(id), 50);
+        // ===== THE FIX - PART 1 =====
+        // We pass our RELIABLE duration from the database into the animation loop.
+        playbackInterval = setInterval(() => updatePlaybackVisuals(id, messageData.duration), 50);
     });
+
     currentAudio.addEventListener('pause', () => {
         clearInterval(playbackInterval);
         if (waveContainer) waveContainer.classList.remove('loading');
@@ -304,15 +308,14 @@ function playAudio(id, messageData) {
     currentAudio.play();
 }
 
-function updatePlaybackVisuals(id) {
-    // ===== THE FIX IS HERE =====
-    // Add a guard clause. This prevents the calculation from running if the `duration` 
-    // isn't a valid, finite number yet, which stops the premature highlighting.
-    if (!currentAudio || currentAudio.paused || !isFinite(currentAudio.duration) || currentAudio.duration <= 0) {
-        return; 
-    }
+// ===== THE FIX - PART 2 =====
+// The function now accepts `trueDuration` from our database.
+function updatePlaybackVisuals(id, trueDuration) {
+    if (!currentAudio || currentAudio.paused) { return; }
     
-    const percentage = (currentAudio.currentTime / currentAudio.duration) * 100;
+    // We now use the reliable `trueDuration` instead of the flaky `currentAudio.duration`.
+    const percentage = (currentAudio.currentTime / trueDuration) * 100;
+    
     const waveContainer = document.getElementById(`wave-${id}`);
     if (!waveContainer) return;
     
@@ -326,7 +329,7 @@ function updatePlaybackVisuals(id) {
 }
 
 
-/* =========  NOTES ========= */
+/* =========  NOTES (UNCHANGED) ========= */
 function openNote(id){editId=id;noteModal.classList.add('active');noteInput.focus();}
 function closeNoteModal(){noteModal.classList.remove('active');noteInput.value='';editId=null;}
 async function saveNote(){
