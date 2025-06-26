@@ -77,13 +77,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 .waveform-bar{flex:1;min-width:2px;background:rgba(255,255,255,.4);border-radius:1px;transition:background .2s ease-out;}
 .waveform-bar.played{background: #fff;}
 
-/* ===== NEW: Style for loading state ===== */
 .message-waveform.loading .waveform-bars {
-  opacity: 0.5; /* Fade out bars to indicate buffering */
-  animation: pulse 1.5s infinite ease-in-out;
+  opacity: 0.5; animation: pulse 1.5s infinite ease-in-out;
 }
 @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
-/* ===== End new styles ===== */
 
 /* modal */
 .note-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100}
@@ -188,45 +185,36 @@ function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?st
 async function startRec(){
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    capHeights=[]; // Clear heights for new recording
-    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    capHeights=[]; audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
     src=audioCtx.createMediaStreamSource(stream); src.connect(analyser);
     mediaRecorder=new MediaRecorder(stream); audioChunks=[];
     mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
     mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());if(audioCtx.state!=='closed')audioCtx.close();uploadAudio();}
     mediaRecorder.start(); recordingStart=Date.now();
-    updateRecUI(true);
-    startTimer();
-    drawLive();
+    updateRecUI(true); startTimer(); drawLive();
     captureInt = setInterval(captureFrame, 100);
   }catch(x){alert('Mic error: '+x.message);}
 }
 function stopRec(){
     if(mediaRecorder&&mediaRecorder.state==='recording'){
-        mediaRecorder.stop();
-        updateRecUI(false);
-        stopTimer();
-        clearInterval(captureInt);
-        cancelAnimationFrame(animId);
+        mediaRecorder.stop(); updateRecUI(false); stopTimer();
+        clearInterval(captureInt); cancelAnimationFrame(animId);
     }
 }
 function updateRecUI(rec){
   recordButton.classList.toggle('recording',rec);
   micIcon.style.display=rec?'none':'block'; stopIcon.style.display=rec?'block':'none';
-  waveformContainer.classList.toggle('active',rec);
-  recordingTimer.style.display=rec?'block':'none';
+  waveformContainer.classList.toggle('active',rec); recordingTimer.style.display=rec?'block':'none';
 }
 function startTimer(){timerInt=setInterval(()=>{const s=Math.floor((Date.now()-recordingStart)/1000);recordingTimer.textContent=`${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`},200)}
 function stopTimer(){clearInterval(timerInt)}
 function captureFrame() {
     if (!analyser) return;
     const bufferLength = analyser.frequencyBinCount; const dataArray = new Uint8Array(bufferLength);
-    analyser.getByteTimeDomainData(dataArray);
-    let sum = 0;
+    analyser.getByteTimeDomainData(dataArray); let sum = 0;
     for (let i = 0; i < bufferLength; i++) { sum += Math.abs(dataArray[i] - 128); }
-    const avg = sum / bufferLength;
-    const height = Math.min(100, 5 + avg * 8); 
+    const avg = sum / bufferLength; const height = Math.min(100, 5 + avg * 8); 
     capHeights.push(height);
 }
 function drawLive(){
@@ -237,9 +225,8 @@ function drawLive(){
   const loop = () => {
     if(!mediaRecorder||mediaRecorder.state!=='recording') return;
     animId=requestAnimationFrame(loop);
-    analyser.getByteTimeDomainData(dataArray);
-    ctx.fillStyle='rgba(67, 79, 93, 1)'; ctx.fillRect(0,0,w,h);
-    ctx.lineWidth=3; ctx.strokeStyle='rgba(255,255,255,1)'; 
+    analyser.getByteTimeDomainData(dataArray); ctx.fillStyle='rgba(67, 79, 93, 1)';
+    ctx.fillRect(0,0,w,h); ctx.lineWidth=3; ctx.strokeStyle='rgba(255,255,255,1)'; 
     ctx.beginPath();
     const sliceWidth = w * 1.0 / bufferLength; let x = 0;
     for(let i=0; i<bufferLength; i++) {
@@ -250,7 +237,6 @@ function drawLive(){
   };
   loop();
 }
-
 async function uploadAudio(){
   const blob=new Blob(audioChunks,{type:'audio/webm'});
   const dur=Math.floor((Date.now()-recordingStart)/1000);
@@ -263,16 +249,9 @@ async function uploadAudio(){
 }
 
 /* =========  MESSAGES  ========= */
-async function loadMessages(){
-  const snap=await db.collection('messages').orderBy('createdAt','desc').get();render(snap);
-}
-function startRealtime(){
-  db.collection('messages').orderBy('createdAt','desc').onSnapshot(render);
-}
-function render(snap){
-  messagesList.innerHTML=''; 
-  snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data())));
-}
+async function loadMessages(){ const snap=await db.collection('messages').orderBy('createdAt','desc').get();render(snap); }
+function startRealtime(){ db.collection('messages').orderBy('createdAt','desc').onSnapshot(render); }
+function render(snap){ messagesList.innerHTML=''; snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data()))); }
 function card(id,m){
   const c=document.createElement('div'); c.className='message-card'; c.onclick=()=>playAudio(id, m);
   const dt=m.createdAt?m.createdAt.toDate():new Date();
@@ -297,69 +276,49 @@ function drawStaticWaveform(containerId, data) {
 }
 
 
-/* =========  PLAYBACK - REFINED TO FIX DELAY ========= */
+/* =========  PLAYBACK  ========= */
 function stopCurrentAudio() {
-    if(currentAudio) {
-        currentAudio.pause();
-        clearInterval(playbackInterval);
-        currentAudio = null;
-    }
-    // Clean up loading and playing states from all cards
+    if(currentAudio) { currentAudio.pause(); clearInterval(playbackInterval); currentAudio = null; }
     document.querySelectorAll('.message-waveform.loading').forEach(w => w.classList.remove('loading'));
     document.querySelectorAll('.waveform-bar.played').forEach(b => b.classList.remove('played'));
     currentId = null;
 }
-
 function playAudio(id, messageData) {
     const waveContainer = document.getElementById(`wave-${id}`);
-    
-    if (currentId === id) { // Toggling play/pause on the same track
-        if (currentAudio.paused) {
-            currentAudio.play();
-        } else {
-            currentAudio.pause();
-        }
-        return;
-    }
-
-    stopCurrentAudio(); // Stop any other track before playing a new one
-
-    currentId = id;
-    currentAudio = new Audio(messageData.audioUrl);
-    
+    if (currentId === id) { currentAudio.paused ? currentAudio.play() : currentAudio.pause(); return; }
+    stopCurrentAudio();
+    currentId = id; currentAudio = new Audio(messageData.audioUrl);
     if (waveContainer) waveContainer.classList.add('loading');
-
-    // **THE FIX:** Listen for the 'playing' event, not the 'play' event.
-    // 'playing' fires after buffering is done and sound actually starts.
     currentAudio.addEventListener('playing', () => {
         if (waveContainer) waveContainer.classList.remove('loading');
         playbackInterval = setInterval(() => updatePlaybackVisuals(id), 50);
     });
-
     currentAudio.addEventListener('pause', () => {
         clearInterval(playbackInterval);
         if (waveContainer) waveContainer.classList.remove('loading');
     });
-
     currentAudio.addEventListener('ended', () => {
-        // Let all bars be marked as played for a moment, then stop.
-        if (waveContainer) {
-            waveContainer.querySelectorAll('.waveform-bar').forEach(bar => bar.classList.add('played'));
-        }
+        if (waveContainer) waveContainer.querySelectorAll('.waveform-bar').forEach(bar => bar.classList.add('played'));
         setTimeout(() => stopCurrentAudio(), 300);
     });
-    
     currentAudio.play();
 }
 
 function updatePlaybackVisuals(id) {
-    if (!currentAudio || currentAudio.paused) return;
+    // ===== THE FIX IS HERE =====
+    // Add a guard clause. This prevents the calculation from running if the `duration` 
+    // isn't a valid, finite number yet, which stops the premature highlighting.
+    if (!currentAudio || currentAudio.paused || !isFinite(currentAudio.duration) || currentAudio.duration <= 0) {
+        return; 
+    }
+    
     const percentage = (currentAudio.currentTime / currentAudio.duration) * 100;
     const waveContainer = document.getElementById(`wave-${id}`);
     if (!waveContainer) return;
     
     const allBars = waveContainer.querySelectorAll('.waveform-bar');
     if (allBars.length === 0) return;
+
     const barsToPlay = Math.floor((percentage / 100) * allBars.length);
     allBars.forEach((bar, index) => {
         bar.classList.toggle('played', index < barsToPlay);
