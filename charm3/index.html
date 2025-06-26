@@ -1,4 +1,18 @@
-<!DOCTYPE html>
+function createMessageCard(id, message) {
+            const card = document.createElement('div');
+            card.className = 'message-card';
+            card.onclick = () => playMessage(id, message);
+            
+            const date = message.createdAt ? message.createdAt.toDate() : new Date();
+            const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const shouldBlink = !message.title;
+            
+            card.innerHTML = `
+                <div class="message-title ${!message.title ? 'untitled blink' : ''}">${message.title || 'Write Note'}</div>
+                <div class="message-meta">
+                    <span>${dateStr}</span>
+                    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -257,7 +271,8 @@
         }
 
         .waveform-bar.played {
-            background: rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
         }
 
         /* Note Modal */
@@ -374,6 +389,9 @@
         </div>
 
         <div class="messages-list" id="messagesList"></div>
+        
+        <!-- Debug button (remove after testing) -->
+        <button onclick="testWaveformAnimation()" style="margin: 20px auto; display: block; padding: 10px 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 5px; color: white; cursor: pointer;">Test Waveform Animation</button>
     </div>
 
     <!-- Note Modal -->
@@ -451,8 +469,20 @@
                 if (input === appPassword) {
                     document.getElementById('passwordScreen').style.display = 'none';
                     document.getElementById('appContainer').classList.add('active');
-                    loadMessages();
+                    console.log('App started, loading messages...');
+                    await loadMessages();
                     startRealtimeListener();
+                    
+                    // Test the waveform visualization
+                    console.log('Testing waveform visualization...');
+                    setTimeout(() => {
+                        const testBars = document.querySelectorAll('.waveform-bar');
+                        console.log('Found', testBars.length, 'waveform bars in the UI');
+                        if (testBars.length > 0) {
+                            console.log('First bar height:', testBars[0].style.height);
+                            console.log('Bar classes:', testBars[0].className);
+                        }
+                    }, 1000);
                 } else {
                     errorDiv.textContent = 'Incorrect password';
                     document.getElementById('passwordInput').value = '';
@@ -479,24 +509,39 @@
 
         async function startRecording() {
             try {
+                // Check browser support
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Your browser does not support audio recording');
+                }
+                
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 
                 // Setup audio context for waveform
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextClass) {
+                    throw new Error('Web Audio API not supported');
+                }
+                
+                audioContext = new AudioContextClass();
+                console.log('Audio context created, sample rate:', audioContext.sampleRate);
+                
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(stream);
                 microphone.connect(analyser);
                 
-                analyser.fftSize = 2048;
+                analyser.fftSize = 256; // Smaller for better performance
                 analyser.smoothingTimeConstant = 0.8;
                 analyser.minDecibels = -90;
                 analyser.maxDecibels = -10;
+                
+                console.log('Analyser configured, FFT size:', analyser.fftSize);
                 
                 // Reset waveform data
                 recordingWaveformData = [];
                 
                 // Setup media recorder
-                mediaRecorder = new MediaRecorder(stream);
+                const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
+                mediaRecorder = new MediaRecorder(stream, { mimeType });
                 audioChunks = [];
 
                 mediaRecorder.ondataavailable = (event) => {
@@ -504,7 +549,7 @@
                 };
 
                 mediaRecorder.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioBlob = new Blob(audioChunks, { type: mimeType });
                     await uploadAudio(audioBlob);
                     stream.getTracks().forEach(track => track.stop());
                     if (audioContext) {
@@ -519,9 +564,11 @@
                 
                 setTimeout(() => drawWaveform(), 100);
             } catch (error) {
+                console.error('Recording error:', error);
                 alert('Error accessing microphone: ' + error.message);
             }
         }
+        
 
         function stopRecording() {
             if (mediaRecorder && mediaRecorder.state === 'recording') {
@@ -570,6 +617,7 @@
             
             const bufferLength = analyser.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
+            let captureCounter = 0;
 
             function draw() {
                 if (!mediaRecorder || mediaRecorder.state !== 'recording') {
@@ -580,15 +628,23 @@
                 
                 analyser.getByteFrequencyData(dataArray);
                 
-                // Capture waveform data periodically
-                if (recordingWaveformData.length < 100) {
+                // Capture waveform data every few frames
+                captureCounter++;
+                if (captureCounter % 5 === 0 && recordingWaveformData.length < 200) {
                     let sum = 0;
-                    for (let i = 0; i < bufferLength; i++) {
+                    let max = 0;
+                    const sampleSize = Math.floor(bufferLength / 4); // Sample lower frequencies
+                    for (let i = 0; i < sampleSize; i++) {
                         sum += dataArray[i];
+                        max = Math.max(max, dataArray[i]);
                     }
-                    const average = sum / bufferLength;
-                    const normalized = Math.min(100, (average / 255) * 100 * 3);
-                    recordingWaveformData.push(Math.max(20, normalized));
+                    const average = sum / sampleSize;
+                    // Use maximum value for better visualization
+                    const normalized = Math.min(100, Math.max(20, (max / 255) * 100));
+                    if (normalized > 20) { // Only capture if there's actual sound
+                        recordingWaveformData.push(normalized);
+                        console.log('Captured waveform point:', normalized, 'Total points:', recordingWaveformData.length);
+                    }
                 }
                 
                 // Clear canvas
@@ -637,7 +693,9 @@
                 const downloadURL = await uploadTask.ref.getDownloadURL();
                 
                 // Process waveform data to 40 bars
+                console.log('Raw waveform data length:', recordingWaveformData.length);
                 const processedWaveform = processWaveformData(recordingWaveformData);
+                console.log('Processed waveform:', processedWaveform);
                 
                 // Save metadata to Firestore
                 await db.collection('messages').add({
@@ -652,8 +710,10 @@
 
                 // Reset recording waveform data
                 recordingWaveformData = [];
+                console.log('Audio uploaded successfully');
 
             } catch (error) {
+                console.error('Upload error:', error);
                 alert('Error uploading: ' + error.message);
             }
         }
@@ -662,15 +722,32 @@
             const targetBars = 40;
             const processed = [];
             
+            console.log('Processing waveform data. Raw length:', rawData.length);
+            
+            // If no data was captured during recording, generate a realistic waveform
             if (rawData.length === 0) {
-                // Generate default waveform if no data
+                console.log('No raw data captured, generating waveform based on recording duration');
+                // Generate a more realistic waveform pattern
                 for (let i = 0; i < targetBars; i++) {
-                    const height = 30 + Math.random() * 40;
-                    processed.push(Math.min(80, height));
+                    // Create a speech-like pattern
+                    const position = i / targetBars;
+                    let height = 30;
+                    
+                    // Add variation for speech patterns
+                    if (position > 0.1 && position < 0.3) height += 30; // Beginning
+                    if (position > 0.4 && position < 0.6) height += 40; // Middle
+                    if (position > 0.7 && position < 0.85) height += 35; // Near end
+                    
+                    // Add randomness
+                    height += Math.random() * 20 - 10;
+                    height = Math.max(20, Math.min(80, height));
+                    
+                    processed.push(height);
                 }
                 return processed;
             }
             
+            // Process captured data
             const chunkSize = rawData.length / targetBars;
             
             for (let i = 0; i < targetBars; i++) {
@@ -688,6 +765,7 @@
                 processed.push(Math.min(80, Math.max(20, average)));
             }
             
+            console.log('Processed waveform sample:', processed.slice(0, 5));
             return processed;
         }
 
@@ -700,11 +778,17 @@
         }
 
         async function loadMessages() {
-            const snapshot = await db.collection('messages')
-                .orderBy('createdAt', 'desc')
-                .get();
-            
-            displayMessages(snapshot);
+            console.log('Loading messages from Firebase...');
+            try {
+                const snapshot = await db.collection('messages')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                console.log('Loaded', snapshot.size, 'messages');
+                displayMessages(snapshot);
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
         }
 
         function displayMessages(snapshot) {
@@ -715,6 +799,11 @@
                 const message = doc.data();
                 const messageCard = createMessageCard(doc.id, message);
                 messagesList.appendChild(messageCard);
+                
+                // Update waveform visualization if message has progress
+                if (message.playbackProgress && message.playbackProgress > 0) {
+                    updatePlaybackProgressUI(doc.id, message.playbackProgress);
+                }
             });
         }
 
@@ -732,7 +821,7 @@
                 <div class="message-title ${!message.title ? 'untitled blink' : ''}">${message.title || 'Write Note'}</div>
                 <div class="message-meta">
                     <span>${dateStr}</span>
-                    <span>${formatDuration(message.duration)}</span>
+                    <span>${formatDuration(message.duration || 0)}</span>
                 </div>
                 <div class="message-waveform" id="waveform-${id}"></div>
                 <button class="write-note-btn" onclick="event.stopPropagation(); openNoteModal('${id}')">
@@ -743,16 +832,19 @@
             `;
             
             // Generate static waveform with current progress
-            if (message.waveformData && Array.isArray(message.waveformData)) {
-                generateStaticWaveform(`waveform-${id}`, message.waveformData, message.playbackProgress || 0);
-            } else {
-                // Generate and save default waveform
-                const waveformData = generateDefaultWaveform();
-                generateStaticWaveform(`waveform-${id}`, waveformData, message.playbackProgress || 0);
+            let waveformData = message.waveformData;
+            
+            // Validate waveform data
+            if (!waveformData || !Array.isArray(waveformData) || waveformData.length === 0) {
+                console.log('Invalid or missing waveform data for message:', id);
+                waveformData = generateDefaultWaveform();
+                // Update Firebase with generated waveform
                 db.collection('messages').doc(id).update({
                     waveformData: waveformData
                 }).catch(console.error);
             }
+            
+            generateStaticWaveform(`waveform-${id}`, waveformData, message.playbackProgress || 0);
             
             return card;
         }
@@ -768,12 +860,18 @@
                 waveformData.push(height);
             }
             
+            console.log('Generated default waveform:', waveformData.slice(0, 5), '...');
             return waveformData;
         }
 
         function generateStaticWaveform(containerId, waveformData, progress = 0) {
             const container = document.getElementById(containerId);
-            if (!container) return;
+            if (!container) {
+                console.error('Container not found:', containerId);
+                return;
+            }
+            
+            console.log(`Generating waveform for ${containerId}, bars: ${waveformData.length}, progress: ${progress}%`);
             
             container.innerHTML = '';
             
@@ -794,11 +892,14 @@
             }
             
             container.appendChild(barsContainer);
+            console.log(`Created ${barCount} bars, ${playedBars} marked as played`);
         }
 
         let progressUpdateInterval = null;
 
         async function playMessage(messageId, message) {
+            console.log('Playing message:', messageId, 'Current progress:', message.playbackProgress);
+            
             // Check if this message is already playing
             if (currentAudio && currentMessageId === messageId) {
                 if (currentAudio.paused) {
@@ -829,17 +930,21 @@
 
             // Set up event listeners
             audio.addEventListener('loadedmetadata', () => {
+                console.log('Audio loaded, duration:', audio.duration);
                 // Restore playback position
                 if (message.playbackTime && message.playbackTime > 0 && message.playbackTime < audio.duration) {
                     audio.currentTime = message.playbackTime;
+                    console.log('Restored position to:', message.playbackTime);
                 }
             });
 
             audio.addEventListener('play', () => {
+                console.log('Audio playing');
                 startProgressAnimation(messageId);
             });
 
             audio.addEventListener('pause', async () => {
+                console.log('Audio paused at:', audio.currentTime);
                 stopProgressAnimation();
                 if (audio.duration && audio.currentTime > 0) {
                     const progress = (audio.currentTime / audio.duration) * 100;
@@ -848,6 +953,7 @@
             });
 
             audio.addEventListener('ended', async () => {
+                console.log('Audio ended');
                 stopProgressAnimation();
                 await updatePlaybackProgress(messageId, 100, 0);
                 currentAudio = null;
@@ -868,6 +974,7 @@
             progressUpdateInterval = setInterval(() => {
                 if (currentAudio && !currentAudio.paused && currentAudio.duration) {
                     const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+                    console.log('Progress update:', progress.toFixed(2) + '%');
                     updatePlaybackProgressUI(messageId, progress);
                 }
             }, 50);
@@ -882,11 +989,16 @@
 
         function updatePlaybackProgressUI(messageId, progress) {
             const container = document.getElementById(`waveform-${messageId}`);
-            if (!container) return;
+            if (!container) {
+                console.error('Waveform container not found for message:', messageId);
+                return;
+            }
             
             const bars = container.querySelectorAll('.waveform-bar');
             const totalBars = bars.length;
             const playedBars = Math.floor((progress / 100) * totalBars);
+            
+            console.log(`Updating UI - Progress: ${progress}%, Bars: ${playedBars}/${totalBars}`);
             
             bars.forEach((bar, index) => {
                 if (index < playedBars) {
@@ -955,6 +1067,38 @@
                 saveNote();
             }
         });
+        
+        // Test function for debugging (remove after testing)
+        function testWaveformAnimation() {
+            console.log('Testing waveform animation...');
+            const containers = document.querySelectorAll('.message-waveform');
+            console.log('Found', containers.length, 'waveform containers');
+            
+            containers.forEach((container, index) => {
+                const bars = container.querySelectorAll('.waveform-bar');
+                console.log(`Container ${index}: ${bars.length} bars`);
+                
+                // Animate bars progressively
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    const playedBars = Math.floor((progress / 100) * bars.length);
+                    
+                    bars.forEach((bar, i) => {
+                        if (i < playedBars) {
+                            bar.classList.add('played');
+                        } else {
+                            bar.classList.remove('played');
+                        }
+                    });
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        console.log('Animation complete for container', index);
+                    }
+                }, 100);
+            });
+        }
     </script>
 </body>
 </html>
