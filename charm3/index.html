@@ -214,7 +214,7 @@ function updateRecUI(rec){
 function startTimer(){timerInt=setInterval(()=>{const s=Math.floor((Date.now()-recordingStart)/1000);recordingTimer.textContent=`${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`},200)}
 function stopTimer(){clearInterval(timerInt)}
 
-/* capture frame for static visualization */
+/* ===== CAPTURE FRAME - MODIFIED FOR BETTER VISUALS ===== */
 function captureFrame() {
     if (!analyser) return;
     const bufferLength = analyser.frequencyBinCount;
@@ -222,29 +222,50 @@ function captureFrame() {
     analyser.getByteTimeDomainData(dataArray);
     let sum = 0;
     for (let i = 0; i < bufferLength; i++) {
-        sum += Math.abs(dataArray[i] - 128);
+        sum += Math.abs(dataArray[i] - 128); // deviation from silence
     }
     const avg = sum / bufferLength;
-    const height = Math.min(100, 5 + avg * 1.5);
+
+    // --- VISUALIZATION MODIFICATION ---
+    // The original multiplier (1.5) was too low, resulting in a flat waveform.
+    // I've increased it to 8 to "exaggerate" the highs and lows as you asked,
+    // making the visual representation much more reactive and spiky.
+    const height = Math.min(100, 5 + avg * 8); 
+
     capHeights.push(height);
 }
 
-/* live waveform drawing */
+/* ===== LIVE WAVEFORM DRAWING - MODIFIED FOR BETTER VISUALS ===== */
 function drawLive(){
   const cvs=document.getElementById('waveform'), ctx=cvs.getContext('2d');
   const {width:w,height:h}=cvs.getBoundingClientRect(); cvs.width=w; cvs.height=h;
+
+  // Added a glow effect for a nicer look.
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 8;
+
   const bufferLength = analyser.fftSize;
   const dataArray = new Uint8Array(bufferLength);
+  
   const loop = () => {
     if(!mediaRecorder||mediaRecorder.state!=='recording') return;
     animId=requestAnimationFrame(loop);
     analyser.getByteTimeDomainData(dataArray);
-    ctx.fillStyle='rgba(67,79,93,.95)'; ctx.fillRect(0,0,w,h);
-    ctx.lineWidth=2; ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.beginPath();
+    
+    // Clear the canvas with an opaque color to prevent smearing
+    ctx.fillStyle='rgba(67, 79, 93, 1)'; 
+    ctx.fillRect(0,0,w,h);
+
+    // Made the line thicker and solid white for more impact
+    ctx.lineWidth=3; 
+    ctx.strokeStyle='rgba(255,255,255,1)'; 
+    
+    ctx.beginPath();
     const sliceWidth = w * 1.0 / bufferLength;
     let x = 0;
     for(let i=0; i<bufferLength; i++) {
-        const v = dataArray[i]/128.0; const y = v*h/2;
+        const v = dataArray[i]/128.0; 
+        const y = v*h/2;
         i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
         x+=sliceWidth;
     }
@@ -276,7 +297,7 @@ function startRealtime(){
 function render(snap){
   messagesList.innerHTML=''; snap.forEach(doc=>messagesList.appendChild(card(doc.id,doc.data())));
 }
-// CARD FUNCTION IS NOW SIMPLIFIED
+
 function card(id,m){
   const c=document.createElement('div'); c.className='message-card'; c.onclick=()=>play(id,m);
   const dt=m.createdAt?m.createdAt.toDate():new Date();
