@@ -1,4 +1,3 @@
-<!-- Night Messages 🌙  — single-file, ready to run (26 Jun 2025) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,7 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 .write-note-btn:hover{opacity:1}.write-note-btn svg{width:20px;height:20px;fill:#fff}
 
 .message-waveform{margin-top:15px;height:44px;background:rgba(255,255,255,.04);border-radius:5px;position:relative;overflow:hidden}
-.waveform-bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:1px;padding:0 2px;pointer-events:none}
+.waveform-bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:2px;padding:0 2px;pointer-events:none}
 .waveform-bar{flex:1;min-width:2px;border-radius:2px;background:rgba(255,255,255,.35)}
 .waveform-progress{position:absolute;inset:0;width:0%;background:rgba(0,0,0,.35);mix-blend-mode:hard-light;z-index:2}
 
@@ -91,12 +90,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 </style>
 </head>
 <body>
-<!-- BG ART -->
 <div class="moon"></div>
 <div class="star star-1"></div><div class="star star-2"></div><div class="star star-3"></div><div class="star star-4"></div>
 <div class="star star-5"></div><div class="star star-6"></div><div class="star star-7"></div><div class="star star-8"></div>
 
-<!-- PASSWORD -->
 <div id="passwordScreen" class="password-screen">
   <div class="password-container">
     <h1>🌙 Enter Password</h1>
@@ -108,7 +105,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="appContainer" class="app-container">
   <div class="recorder-section">
     <button id="recordButton" class="record-button" onclick="toggleRecording()">
@@ -123,7 +119,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   <div id="messagesList" class="messages-list"></div>
 </div>
 
-<!-- NOTE MODAL -->
 <div id="noteModal" class="note-modal" onclick="if(event.target.id==='noteModal')closeNoteModal()">
   <div class="note-modal-content">
     <h2>Add Note</h2>
@@ -135,7 +130,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   </div>
 </div>
 
-<!-- FIREBASE SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -144,22 +138,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 <script>
 /* =========  FIREBASE INIT  ========= */
 const firebaseConfig = {
-  apiKey:  "AIzaSyCR3y8knbFlkZeE_osJorlgI35oh4gm3JM",
+  apiKey: "AIzaSyCR3y8knbFlkZeE_osJorlgI35oh4gm3JM",
   authDomain: "moon-messages.firebaseapp.com",
-  projectId:   "moon-messages",
-  storageBucket:"moon-messages.firebasestorage.app",
-  messagingSenderId:"541321527834",
-  appId:"1:541321527834:web:b06a6417ef9c7915d787a3"
+  projectId: "moon-messages",
+  storageBucket: "moon-messages.appspot.com",
+  messagingSenderId: "541321527834",
+  appId: "1:541321527834:web:b06a6417ef9c7915d787a3"
 };
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(), db=firebase.firestore(), storage=firebase.storage();
 
 /* =========  GLOBALS  ========= */
-let mediaRecorder=null,audioChunks=[],audioCtx=null,analyser=null,src=null,animId=null;
-let recordingStart=0,timerInt=null;         // timer
-let currentAudio=null,currentId=null;       // playback
-let editId=null;                            // note modal
-const BARS=60; let capHeights=new Array(BARS).fill(0);
+let mediaRecorder=null, audioChunks=[], audioCtx=null, analyser=null, src=null, animId=null;
+let recordingStart=0, timerInt=null, captureInt=null; // timer and capture interval
+let capHeights=[]; // holds the captured waveform data
+let currentAudio=null, currentId=null;                // playback
+let editId=null;                                     // note modal
 
 /* =========  PASSWORD FLOW  ========= */
 async function checkPassword(e){
@@ -186,18 +180,29 @@ function toggleRecording(){(!mediaRecorder||mediaRecorder.state==='inactive')?st
 async function startRec(){
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    capHeights=new Array(BARS).fill(0);
+    capHeights=[]; // Reset captured heights for new recording
     audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
     src=audioCtx.createMediaStreamSource(stream); src.connect(analyser);
     mediaRecorder=new MediaRecorder(stream); audioChunks=[];
     mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
-    mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());audioCtx.close();uploadAudio();}
+    mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());if(audioCtx.state!=='closed')audioCtx.close();uploadAudio();}
     mediaRecorder.start(); recordingStart=Date.now();
-    updateRecUI(true); startTimer(); setTimeout(drawLive,100);
+    updateRecUI(true);
+    startTimer();
+    drawLive(); // Start live visualization
+    captureInt = setInterval(captureFrame, 100); // Start capturing data for static viz
   }catch(x){alert('Mic error: '+x.message);}
 }
-function stopRec(){if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();updateRecUI(false);stopTimer();cancelAnimationFrame(animId);}}
+function stopRec(){
+    if(mediaRecorder&&mediaRecorder.state==='recording'){
+        mediaRecorder.stop();
+        updateRecUI(false);
+        stopTimer();
+        clearInterval(captureInt); // Stop capturing
+        cancelAnimationFrame(animId);
+    }
+}
 function updateRecUI(rec){
   recordButton.classList.toggle('recording',rec);
   micIcon.style.display=rec?'none':'block'; stopIcon.style.display=rec?'block':'none';
@@ -207,26 +212,46 @@ function updateRecUI(rec){
 function startTimer(){timerInt=setInterval(()=>{const s=Math.floor((Date.now()-recordingStart)/1000);recordingTimer.textContent=`${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`},200)}
 function stopTimer(){clearInterval(timerInt)}
 
-/* live waveform + capture */
+/* capture frame for static visualization */
+function captureFrame() {
+    if (!analyser) return;
+    const bufferLength = analyser.frequencyBinCount; // half of fftSize
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(dataArray);
+
+    let sum = 0;
+    for (let i = 0; i < bufferLength; i++) {
+        sum += Math.abs(dataArray[i] - 128); // absolute deviation from center
+    }
+    const avg = sum / bufferLength;
+    // Scale to a percentage, with a minimum height for silence
+    const height = Math.min(100, 5 + avg * 1.5);
+    capHeights.push(height);
+}
+
+/* live waveform drawing */
 function drawLive(){
-  const cvs=waveform, ctx=cvs.getContext('2d');
+  const cvs=document.getElementById('waveform'), ctx=cvs.getContext('2d');
   const {width:w,height:h}=cvs.getBoundingClientRect(); cvs.width=w; cvs.height=h;
-  const buf=new Uint8Array(analyser.fftSize);
-  (function loop(){
-    if(!mediaRecorder||mediaRecorder.state!=='recording')return;
+  const bufferLength = analyser.fftSize;
+  const dataArray = new Uint8Array(bufferLength);
+
+  const loop = () => {
+    if(!mediaRecorder||mediaRecorder.state!=='recording') return;
     animId=requestAnimationFrame(loop);
-    analyser.getByteTimeDomainData(buf);
+    analyser.getByteTimeDomainData(dataArray);
     ctx.fillStyle='rgba(67,79,93,.95)'; ctx.fillRect(0,0,w,h);
     ctx.lineWidth=2; ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.beginPath();
-    const slice=w/buf.length; let x=0; buf.forEach((v,i)=>{const y=(v/128)*h/2;i?ctx.lineTo(x,y):ctx.moveTo(x,y);x+=slice});ctx.lineTo(w,h/2);ctx.stroke();
-
-    /* capture per-bucket peak for saved preview */
-    const bucket= Math.floor(buf.length/BARS);
-    for(let i=0;i<BARS;i++){
-      let sum=0; for(let j=0;j<bucket;j++){sum+=Math.abs(buf[i*bucket+j]-128);}
-      capHeights[i]=Math.max(capHeights[i], Math.min(98,Math.max(6,(sum/bucket)/128*100)));
+    const sliceWidth = w * 1.0 / bufferLength;
+    let x = 0;
+    for(let i=0; i<bufferLength; i++) {
+        const v = dataArray[i]/128.0; const y = v*h/2;
+        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+        x+=sliceWidth;
     }
-  })();
+    ctx.lineTo(w, h/2); ctx.stroke();
+  };
+  loop();
 }
 
 /* upload */
@@ -262,12 +287,17 @@ function card(id,m){
   <button class="write-note-btn" onclick="event.stopPropagation();openNote('${id}')">
     <svg viewBox=\"0 0 24 24\"><path d=\"M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z\"/></svg>
   </button>`;
-  drawStatic(`wave-${id}`,m.waveformData||capHeights);
+  drawStatic(`wave-${id}`,m.waveformData||[]);
   return c;
 }
+
 function drawStatic(containerId,data){
   const box=document.getElementById(containerId); if(!box)return;
-  const prog=box.querySelector('.waveform-progress'); box.innerHTML=''; if(prog)box.appendChild(prog);
+  // Preserve the progress bar
+  const prog=box.querySelector('.waveform-progress');
+  // Clear only old bars, not the progress bar
+  const oldBars=box.querySelector('.waveform-bars'); if(oldBars)oldBars.remove();
+
   const bars=document.createElement('div'); bars.className='waveform-bars';
   (data||[]).forEach(h=>{const b=document.createElement('div');b.className='waveform-bar';b.style.height=h+'%';bars.appendChild(b)});
   box.insertBefore(bars,prog);
@@ -277,22 +307,28 @@ function drawStatic(containerId,data){
 let progInt=null;
 function play(id,m){
   if(currentAudio&&currentId===id){currentAudio.paused?currentAudio.play():currentAudio.pause();return;}
-  if(currentAudio){currentAudio.pause();clearInterval(progInt);}
+  if(currentAudio){currentAudio.pause();clearInterval(progInt);saveProgress(currentId)}
   currentId=id; currentAudio=new Audio(m.audioUrl);
-  currentAudio.addEventListener('loadedmetadata',()=>{if(m.playbackProgress)currentAudio.currentTime=(m.playbackProgress/100)*currentAudio.duration});
+  currentAudio.addEventListener('loadedmetadata',()=>{if(m.playbackProgress>0&&m.playbackProgress<100)currentAudio.currentTime=(m.playbackProgress/100)*currentAudio.duration});
   currentAudio.addEventListener('play',()=>{progInt=setInterval(()=>updateBar(id),80)});
   currentAudio.addEventListener('pause',()=>{clearInterval(progInt);saveProgress(id)});
-  currentAudio.addEventListener('ended',()=>{clearInterval(progInt);saveProgress(id,100);currentAudio=null;currentId=null});
+  currentAudio.addEventListener('ended',()=>{clearInterval(progInt);updateBar(id, 100);saveProgress(id,0);currentAudio=null;currentId=null;});
   currentAudio.play();
 }
-function updateBar(id){
-  const p=(currentAudio.currentTime/currentAudio.duration)*100;
-  document.querySelectorAll('.message-waveform').forEach(w=>{if(w.id===`wave-${id}`)w.querySelector('.waveform-progress').style.width=p+'%'});
+function updateBar(id, forcePercent){
+    const p = forcePercent !== undefined ? forcePercent : (currentAudio.currentTime/currentAudio.duration)*100;
+    const waveContainer = document.getElementById(`wave-${id}`);
+    if(waveContainer) waveContainer.querySelector('.waveform-progress').style.width=p+'%';
 }
 async function saveProgress(id,force){
-  if(!currentAudio)return;
+  if(!currentAudio && force === undefined)return;
   const p=force!==undefined?force:(currentAudio.currentTime/currentAudio.duration)*100;
-  await db.collection('messages').doc(id).update({playbackProgress:p});
+  // Don't save progress if it's at the very beginning or end
+  if(p > 0.5 && p < 99.5){
+    await db.collection('messages').doc(id).update({playbackProgress:p});
+  } else {
+     await db.collection('messages').doc(id).update({playbackProgress:0});
+  }
 }
 
 /* =========  NOTES ========= */
