@@ -7,6 +7,13 @@ A bracelet I made for my girlfriend that allows her to open a random message in 
 - FPC NFC Tag - NTAG213 - 10 mm Circle
 - Gold chain
 - 4 Gold charms
-Image: 
-![image](https://github.com/user-attachments/assets/96a40e0b-f187-4e40-b505-8b40c33efaa0)
+Image:
+
+
+
+
+
+
+![image](https://github.com/user-attachments/assets/866a237e-db5d-4777-b402-494ed732c2bc)
+
 
