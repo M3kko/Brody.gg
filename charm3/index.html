@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Moon Messages 🌙</title>
 <style>
-
-
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 background:#434f5d;color:#fff;min-height:100vh;overflow-x:hidden;position:relative}
@@ -56,7 +54,6 @@ color:#fff;border-radius:10px;cursor:pointer;transition:.3s}
 .app-container{display:none;padding:20px;max-width:600px;margin:0 auto;z-index:10; position:relative;}
 .app-container.active{display:block}
 
-
 .recorder-section{
     margin-top: 300px; 
     text-align:center;
@@ -92,7 +89,6 @@ color:#fff;border-radius:10px;cursor:pointer;transition:.3s}
     .star-7{top:85%; left:25%; width:70px; height:70px;}
     .star-8{top:65%; right:20%; width:55px; height:55px;}
 }
-
 
 /* general styles */
 .record-button{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -135,11 +131,19 @@ color:#fff;border:2px solid rgba(255,255,255,.32);border-radius:10px;margin:20px
 .modal-btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;font-size:1rem;transition:.3s}
 .save-btn{background:rgba(255,255,255,.25);color:#fff}.save-btn:hover{background:rgba(255,255,255,.35)}
 .cancel-btn{background:rgba(255,255,255,.14);color:rgba(255,255,255,.7)}.cancel-btn:hover{background:rgba(255,255,255,.22)}
+
+/* Config notice */
+.config-notice{background:#ff6b6b;color:#fff;padding:20px;text-align:center;font-size:1.1rem}
+.config-notice code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:3px}
 </style>
 </head>
 <body>
 
-    <!-- html begin -->
+<!-- html begin -->
+<div class="config-notice">
+    ⚠️ Firebase configuration needed! Create a <code>config.js</code> file with your Firebase credentials.
+</div>
+
 <div class="moon"></div><div class="star star-1"></div><div class="star star-2"></div><div class="star star-3"></div><div class="star star-4"></div><div class="star star-5"></div><div class="star star-6"></div><div class="star star-7"></div><div class="star star-8"></div>
 <div id="passwordScreen" class="password-screen"><div class="password-container"><h1>🌙 Enter Password</h1><form onsubmit="checkPassword(event)"><input id="passwordInput" class="password-input" type="password" placeholder="••••••••" autofocus><br><button class="submit-button" type="submit">Enter</button></form><div id="passwordError" class="password-error"></div></div></div>
 <div id="appContainer" class="app-container"><div class="recorder-section"><button id="recordButton" class="record-button" onclick="toggleRecording()"><svg id="micIcon" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg><svg id="stopIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="6" width="12" height="12"/></svg></button><div id="waveformContainer" class="waveform-container"><canvas id="waveform"></canvas></div><div id="recordingTimer" class="recording-timer" style="display:none">0:00</div></div><div id="messagesList" class="messages-list"></div></div>
@@ -149,12 +153,18 @@ color:#fff;border:2px solid rgba(255,255,255,.32);border-radius:10px;margin:20px
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="config.js"></script>
 
 <script>
 // javascript begin
 
-/* firebase */
-const firebaseConfig = {apiKey:"AIzaSyCR3y8knbFlkZeE_osJorlgI35oh4gm3JM",authDomain:"moon-messages.firebaseapp.com",projectId:"moon-messages",storageBucket:"moon-messages.firebasestorage.app",messagingSenderId:"541321527834",appId:"1:541321527834:web:b06a6417ef9c7915d787a3"};
+/* firebase initialization */
+// Check if config exists
+if (typeof firebaseConfig === 'undefined') {
+    document.querySelector('.config-notice').innerHTML += '<br>See instructions below for setup.';
+    throw new Error('Firebase config not found. Please create config.js file.');
+}
+
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(), db=firebase.firestore(), storage=firebase.storage();
 let mediaRecorder=null, audioChunks=[], audioCtx=null, analyser=null, src=null, animId=null;
@@ -323,6 +333,11 @@ function updatePlaybackVisuals(id, trueDuration) {
     if (allBars.length === 0) return;
     const barsToPlay = Math.floor((percentage / 100) * allBars.length);
     allBars.forEach((bar, index) => { bar.classList.toggle('played', index < barsToPlay); });
+}
+
+// Hide config notice if properly configured
+if (typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey) {
+    document.querySelector('.config-notice').style.display = 'none';
 }
 </script>
 </body>
