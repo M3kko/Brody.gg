@@ -1,8 +1,8 @@
 {
     "rewrites": [
       {
-        "source": "/charm1",          
-        "destination": "/api/charm-roulette"  
+        "source": "/charm1",
+        "destination": "/charms/api/charm-roulette"
       }
     ],
     "redirects": [
