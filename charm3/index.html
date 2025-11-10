@@ -154,10 +154,10 @@ color:#fff;border:2px solid rgba(255,255,255,.32);border-radius:10px;margin:20px
 /* firebase */
 firebase.initializeApp(firebaseConfig);
 
-// Initialize App Check with reCAPTCHA v3
+// Initialize App Check with reCAPTCHA Enterprise
 const appCheck = firebase.appCheck();
 appCheck.activate(
-  '6Lc2DAgsAAAAAOSQezxetN8TccsTiacSi-c88xpC',
+  new firebase.appCheck.ReCaptchaEnterpriseProvider('6Lc2DAgsAAAAAOSQezxetN8TccsTiacSi-c88xpC'),
   true // Set to true for development/testing, false for production after testing
 );
 
