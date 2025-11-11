@@ -10,10 +10,6 @@
       {
         "source": "/charm3",
         "destination": "/charms/charm3/index.html"
-      },
-      {
-        "source": "/charm4",
-        "destination": "/charms/charm4/index.html"
       }
     ],
     "redirects": [
