@@ -18,24 +18,19 @@ const latestThought = thoughts.sort((a, b) =>
             <p class="subtitle">Welcome to my home on the internet. I hope you enjoy your stay :)</p>
         </header>
 
-        {latestThought && (
-            <section class="latest-thought">
+        <section class="three-columns">
+            <div class="column">
                 <h2>Recent Thoughts</h2>
-                <article class="thought-preview">
-                    <a href={`/${latestThought.slug}`}>
-                        <h3>{latestThought.data.title}</h3>
-                        <p>{latestThought.data.description}</p>
-                        <time datetime={latestThought.data.date.toISOString()}>
-                            {latestThought.data.date.toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}
-                        </time>
-                    </a>
-                </article>
-            </section>
-        )}
+            </div>
+
+            <div class="column">
+                <h2>Projects & Experiments</h2>
+            </div>
+
+            <div class="column">
+                <h2>Like what I'm doing? You should subscribe to my newsletter.</h2>
+            </div>
+        </section>
     </main>
 </Layout>
 
@@ -81,5 +76,26 @@ const latestThought = thoughts.sort((a, b) =>
     .thought-preview time {
         font-size: 0.875rem;
         opacity: 0.5;
+    }
+
+    .three-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem; 
+        margin-top: 5rem;
+    }
+
+    .column h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+
+    @media (max-width: 768px) {
+        .three-columns {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
     }
 </style>

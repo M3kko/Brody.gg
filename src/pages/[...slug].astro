@@ -18,7 +18,6 @@ const { Content } = await thought.render();
     <main class="container">
         <article class="thought-post">
             <header class="thought-header">
-                <a href="/thoughts" class="back-link">← Back to Thoughts</a>
                 <h1>{thought.data.title}</h1>
                 <p class="thought-description">{thought.data.description}</p>
                 <time datetime={thought.data.date.toISOString()}>
@@ -47,20 +46,6 @@ const { Content } = await thought.render();
         padding: 2rem 0;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
-    }
-
-    .back-link {
-        display: inline-block;
-        color: var(--text);
-        text-decoration: none;
-        opacity: 0.5;
-        margin-bottom: 1rem;
-        font-size: 0.875rem;
-        transition: opacity 0.3s ease;
-    }
-
-    .back-link:hover {
-        opacity: 1;
     }
 
     .thought-header h1 {

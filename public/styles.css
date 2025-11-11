@@ -30,11 +30,8 @@ body {
     transform: translateX(-50%);
     max-width: 1200px;
     width: 100%;
-    padding: 0 14rem;
+    padding: 0 2rem;
     z-index: 100;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
 }
 
 .nav-menu {
@@ -42,6 +39,7 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
+    margin-left: calc(66.666% + 1.333rem);
 }
 
 .nav-link {
@@ -83,8 +81,12 @@ body {
     transition: color 0.3s ease;
     position: fixed;
     top: 2rem;
-    left: calc(50% - 600px + 2rem);
+    left: calc(50% - 600px + 3rem);
     z-index: 100;
+}
+
+.logo img {
+    transition: transform 0.5s ease;
 }
 
 .logo:hover {
@@ -94,7 +96,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 3rem;
 }
 
 .hero {
@@ -122,6 +124,9 @@ body {
     line-height: 1.5;
 }
 
+.blog-post .logo img {
+    transform: rotate(-90deg);
+}
 
 @media (max-width: 768px) {
     .nav {
@@ -139,6 +144,7 @@ body {
     .logo img {
         width: 36px;
         height: 36px;
+        transition: transform 0.3s ease;
     }
 
     .container {
