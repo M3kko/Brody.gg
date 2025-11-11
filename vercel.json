@@ -6,6 +6,14 @@
       {
         "source": "/charm1",
         "destination": "/charms/api/charm-roulette"
+      },
+      {
+        "source": "/charm3",
+        "destination": "/charms/charm3/index.html"
+      },
+      {
+        "source": "/charm4",
+        "destination": "/charms/charm4/index.html"
       }
     ],
     "redirects": [
