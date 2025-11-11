@@ -16,13 +16,13 @@ const sortedThoughts = thoughts.sort((a, b) =>
     <main class="container">
         <header class="hero">
             <h1>Thoughts</h1>
-            <p class="subtitle">My musings on technology, life, and everything in between</p>
+            <p class="subtitle">Thoughts I think</p>
         </header>
 
         <section class="thoughts-list">
             {sortedThoughts.map((thought) => (
                 <article class="thought-card">
-                    <a href={`/thoughts/${thought.slug}`}>
+                    <a href={`/${thought.slug}`}>
                         <h2>{thought.data.title}</h2>
                         <p class="thought-description">{thought.data.description}</p>
                         <time datetime={thought.data.date.toISOString()}>

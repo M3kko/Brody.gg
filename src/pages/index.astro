@@ -22,7 +22,7 @@ const latestThought = thoughts.sort((a, b) =>
             <section class="latest-thought">
                 <h2>Latest Thought</h2>
                 <article class="thought-preview">
-                    <a href={`/thoughts/${latestThought.slug}`}>
+                    <a href={`/${latestThought.slug}`}>
                         <h3>{latestThought.data.title}</h3>
                         <p>{latestThought.data.description}</p>
                         <time datetime={latestThought.data.date.toISOString()}>
