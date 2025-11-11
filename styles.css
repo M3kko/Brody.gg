@@ -110,10 +110,29 @@ body {
 
 
 @media (max-width: 768px) {
+    .nav {
+        padding: 1rem;
+    }
+
+    .nav-menu {
+        gap: 0.25rem;
+    }
+    
+    .nav-link {
+        font-size: 1rem;
+    }
+
+    .logo img {
+        width: 36px;
+        height: 36px;
+    }
+
     .container {
-        padding: 0 1.5rem;}
+        padding: 0 2rem;
+    }
     
     .hero {
-        padding-top: 10rem;}
+        padding-top: 10rem;
+    }
 }
 
