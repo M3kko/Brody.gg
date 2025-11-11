@@ -6,7 +6,7 @@
     "rewrites": [
       {
         "source": "/charm1",
-        "destination": "/charms/api/charm-roulette.js"
+        "destination": "/api/charm-roulette"
       },
       {
         "source": "/charm3",
