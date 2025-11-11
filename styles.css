@@ -49,13 +49,17 @@ body {
     position: relative;
 }
 
-.nav-indicator {
-    position: absolute;
+.nav-triangle {
+    padding: 0;
+    line-height: 0;
+    opacity: 1 !important;
+}
+
+.nav-triangle img {
     width: 24px;
     height: 24px;
-    top: -24px;
-    left: 50%;
-    transform: translateX(-50%) rotate(180deg);
+    transform: rotate(180deg);
+    display: block;
 }
 
 .nav-link:hover {
