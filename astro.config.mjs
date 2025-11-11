@@ -7,6 +7,6 @@ export default defineConfig({
   outDir: './dist',
   publicDir: './public',
   build: {
-    format: 'file'
+    format: 'directory'
   }
 });
