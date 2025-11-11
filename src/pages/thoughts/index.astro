@@ -1,0 +1,84 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const thoughts = await getCollection('thoughts', ({ data }) => {
+  return data.draft !== true;
+});
+
+// Sort by date, newest first
+const sortedThoughts = thoughts.sort((a, b) =>
+  b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<Layout title="Thoughts - Broderick">
+    <main class="container">
+        <header class="hero">
+            <h1>Thoughts</h1>
+            <p class="subtitle">My musings on technology, life, and everything in between</p>
+        </header>
+
+        <section class="thoughts-list">
+            {sortedThoughts.map((thought) => (
+                <article class="thought-card">
+                    <a href={`/thoughts/${thought.slug}`}>
+                        <h2>{thought.data.title}</h2>
+                        <p class="thought-description">{thought.data.description}</p>
+                        <time datetime={thought.data.date.toISOString()}>
+                            {thought.data.date.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </time>
+                    </a>
+                </article>
+            ))}
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .thoughts-list {
+        max-width: 800px;
+        margin: 2rem 0;
+    }
+
+    .thought-card {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .thought-card:last-child {
+        border-bottom: none;
+    }
+
+    .thought-card a {
+        text-decoration: none;
+        color: var(--text);
+        display: block;
+        transition: opacity 0.3s ease;
+    }
+
+    .thought-card a:hover {
+        opacity: 0.7;
+    }
+
+    .thought-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .thought-description {
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    time {
+        font-size: 0.875rem;
+        opacity: 0.5;
+    }
+</style>

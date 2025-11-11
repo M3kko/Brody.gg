@@ -1,0 +1,38 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="logo">
+            <img src="/assets/svg/triangle.svg" alt="Logo" width="48" height="48">
+        </a>
+
+        <div class="nav-menu">
+            <a href="/" class="nav-link nav-triangle active">
+                <img src="/assets/svg/triangle.svg" alt="Home">
+            </a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#projects" class="nav-link">Projects</a>
+            <a href="/thoughts" class="nav-link">Thoughts</a>
+            <a href="/experiments" class="nav-link">Experiments</a>
+        </div>
+    </nav>
+
+    <slot />
+
+    <script src="/script.js" is:inline></script>
+</body>
+</html>
