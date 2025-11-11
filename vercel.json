@@ -10,7 +10,7 @@
       },
       {
         "source": "/charm3",
-        "destination": "/charms/charm3/index.html"
+        "destination": "/charms/charm3/"
       }
     ],
     "redirects": [
