@@ -20,7 +20,7 @@ const latestThought = thoughts.sort((a, b) =>
 
         {latestThought && (
             <section class="latest-thought">
-                <h2>Latest Thought</h2>
+                <h2>Recent Thoughts</h2>
                 <article class="thought-preview">
                     <a href={`/${latestThought.slug}`}>
                         <h3>{latestThought.data.title}</h3>
@@ -41,7 +41,7 @@ const latestThought = thoughts.sort((a, b) =>
 
 <style>
     .latest-thought {
-        margin-top: 4rem;
+        margin-top: 0rem;
         max-width: 600px;
     }
 

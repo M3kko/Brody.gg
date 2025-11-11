@@ -25,27 +25,29 @@ body {
 
 .nav {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 2rem;
-    z-index: 100;
+    top: 16rem;
+    left: 50%;
+    transform: translateX(-50%);
     max-width: 1200px;
-    margin: 0 auto;
     width: 100%;
+    padding: 0 14rem;
+    z-index: 100;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
 }
 
 .nav-menu {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: 0;
 }
 
 .nav-link {
     color: var(--text);
     text-decoration: none;
-    font-size: 1.125rem;
+    font-size: 1.5rem;
     opacity: 0.5;
     transition: opacity 0.3s ease;
     font-weight: 400;
@@ -56,11 +58,12 @@ body {
     padding: 0;
     line-height: 0;
     opacity: 1 !important;
+    margin-left: -0.5rem;
 }
 
 .nav-triangle img {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     transform: rotate(180deg);
     display: block;
 }
@@ -78,7 +81,10 @@ body {
     display: inline-block;
     color: var(--text);
     transition: color 0.3s ease;
-    position: absolute
+    position: fixed;
+    top: 2rem;
+    left: calc(50% - 600px + 2rem);
+    z-index: 100;
 }
 
 .logo:hover {
@@ -92,7 +98,7 @@ body {
 }
 
 .hero {
-    min-height: 100vh;
+    min-height: 55vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
