@@ -12,6 +12,24 @@ export async function getStaticPaths() {
 
 const { thought } = Astro.props;
 const { Content, headings } = await thought.render();
+
+// Helper function to add ordinal suffix
+function getOrdinalSuffix(day: number) {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1: return 'st';
+    case 2: return 'nd';
+    case 3: return 'rd';
+    default: return 'th';
+  }
+}
+
+function formatDateWithOrdinal(date: Date) {
+  const month = date.toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' });
+  const day = date.getUTCDate();
+  const year = date.getUTCFullYear();
+  return `${month} ${day}${getOrdinalSuffix(day)}, ${year}`;
+}
 ---
 
 <Layout title={`${thought.data.title} - Broderick`} description={thought.data.description}>
@@ -32,12 +50,7 @@ const { Content, headings } = await thought.render();
             <header class="thought-header">
                 <h1>{thought.data.title}</h1>
                 <time datetime={thought.data.date.toISOString()}>
-                    {thought.data.date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        timeZone: 'UTC'
-                    })}
+                    {formatDateWithOrdinal(thought.data.date)}
                 </time>
             </header>
 
@@ -45,66 +58,148 @@ const { Content, headings } = await thought.render();
                 <Content />
             </div>
         </article>
+
+        <div class="toc-spacer"></div>
     </main>
+
+    <script>
+        function highlightFirstSection() {
+            const firstTocItem = document.querySelector('.toc nav li');
+            if (firstTocItem && !document.querySelector('.toc nav li.active')) {
+                firstTocItem.classList.add('active');
+            }
+        }
+
+        highlightFirstSection();
+
+        document.addEventListener('astro:page-load', highlightFirstSection);
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    const id = entry.target.getAttribute('id');
+                    const tocLink = document.querySelector(`.toc nav a[href="#${id}"]`);
+                    if (tocLink) {
+                        const tocItem = tocLink.closest('li');
+                        if (entry.isIntersecting) {
+                            document.querySelectorAll('.toc li').forEach(li => li.classList.remove('active'));
+                            tocItem?.classList.add('active');
+                        }
+                    }
+                });
+            },
+            { rootMargin: '-100px 0px -66% 0px' }
+        );
+
+        document.querySelectorAll('.thought-content h1, .thought-content h2, .thought-content h3').forEach((heading) => {
+            observer.observe(heading);
+        });
+    </script>
 </Layout>
 
 <style>
     .blog-container {
-        display: grid;
-        grid-template-columns: 200px 1fr 200px;
-        gap: 3rem;
-        max-width: 1400px;
-        position: relative;
+        max-width: 100%;
+        padding: 0;
     }
 
     .toc {
-        position: sticky;
-        top: 2rem;
-        height: fit-content;
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: all 0.3s ease;
+        z-index: 50;
+        padding: 1rem;
+        width: 60px;
+        min-height: 100px;
+    }
+
+    .toc:hover {
+        background: var(--bg);
+        border: 1px solid var(--text);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: auto;
+        min-width: 250px;
     }
 
     .toc nav ul {
         list-style: none;
         padding: 0;
         margin: 0;
+        counter-reset: toc-counter;
     }
 
     .toc nav li {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
+        position: relative;
+        counter-increment: toc-counter;
     }
 
-    .toc nav a {
+    .toc:not(:hover) nav li::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 2px;
+        background: var(--text);
+        opacity: 0.3;
+    }
+
+    .toc:not(:hover) nav li.active::after {
+        background: var(--accent);
+        opacity: 1;
+        width: 40px;
+    }
+
+    .toc:not(:hover) nav a {
+        opacity: 0;
+        pointer-events: none;
+        font-size: 0;
+    }
+
+    .toc:hover nav a {
         color: var(--text);
         text-decoration: none;
-        fonte-sizes: 0.875rem;
-        opacity: 0.5;
-        transition: opacity 0.3s ease;
+        font-size: 0.875rem;
+        opacity: 0.7;
         display: block;
+        transition: all 0.2s ease;
+        pointer-events: auto;
     }
 
-    .toc nav a:hover {
+
+    .toc:hover nav a:hover {
+        color: var(--accent);
         opacity: 1;
     }
 
     .toc-3{
         padding-left: 1rem;
+        font-size: 0.8rem;
     }
 
-    .toc-spacer: {
+    .toc-spacer {
+        display: none;
     }
 
     .thought-post {
-        max-width: 800px;
-        margin 0;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 6rem;
     }
 
     .thought-header {
-        padding: 2rem 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 12rem 0 2rem 0;
+        margin-bottom: 2rem;
     }
 
     .thought-header h1 {
-        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        font-size: clamp(2rem, 4.56vw, 2.85rem);
         font-weight: 600;
         line-height: 1.2;
         margin-bottom: 0.5rem;
@@ -138,6 +233,7 @@ const { Content, headings } = await thought.render();
 
     .thought-content :global(p) {
         margin-bottom: 1rem;
+        font-size: 20px;
     }
 
     .thought-content :global(ul),
@@ -148,10 +244,51 @@ const { Content, headings } = await thought.render();
 
     .thought-content :global(li) {
         margin-bottom: 0.5rem;
+        font-size: 20px;
+    }
+
+    .thought-content :global(code) {
+        background: rgba(0,0,0,0.05);
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
     }
 
     .thought-content :global(pre) {
-        
-
+        background: rgba(0,0,0,0.05);
+        padding: 1rem;
+        border-radius: 5px;
+        overflow-x: auto;
+        margin-bottom: 1rem;
     }
+
+    .thought-content :global(pre code) {
+        background: none;
+        padding: 0;
+    }
+
+    .thought-content :global(a) {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .thought-content :global(a:hover) {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 1024px) {
+        .blog-container {
+            grid-template-columns: 1fr;
+        }
+
+        .toc {
+            display: none;
+        }
+
+        .toc-spacer {
+             display: none;
+        }
+    }
+    
 </style>

@@ -1,12 +1,32 @@
+@font-face {
+    font-family: 'OCR-B';
+    src: url('/assets/svg/fonts/OCR-B.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Instrument Serif';
+    src: url('/assets/svg/fonts/instrumentserif-italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Baloo';
+    src: url('/assets/svg/fonts/Baloo-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
 :root {
     --bg: #F5F1E8;
     --text: #1a1a1a;
     --accent: #FF0000;
-}
-
-[data-theme="dark"] {
-    --bg: #1a1a1a;
-    --text: #F5F1E8;
 }
 
 *{
@@ -20,7 +40,6 @@ body {
     background-color: var(--bg);
     color: var(--text);
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .nav {
@@ -78,7 +97,6 @@ body {
 .logo {
     display: inline-block;
     color: var(--text);
-    transition: color 0.3s ease;
     position: fixed;
     top: 2rem;
     left: calc(50% - 600px + 3rem);
@@ -155,3 +173,28 @@ body {
         padding-top: 10rem;
     }
 }
+
+.experiments .hero h1 {
+    font-family: 'OCR-B', monospace;
+    letter-spacing: -0.05em;
+    font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+}
+
+.experiments h2 {
+    font-family: 'OCR-B', monospace;
+    letter-spacing: -0.05em;
+}
+
+.experiments-code {
+    font-family: 'OCR-B', monospace;
+}
+
+.projects .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+}
+
+.about .hero h1 {
+    font-family: 'Baloo', cursive;
+}
+
