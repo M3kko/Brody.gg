@@ -3,9 +3,10 @@ import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
   title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 const currentPath = Astro.url.pathname;
 const isBlogPost = currentPath !== '/' && currentPath !== '/thoughts' && currentPath !== '/thoughts/' && currentPath !== '/about' && currentPath !== '/about/' && currentPath !== '/projects' && currentPath !== '/projects/' && currentPath !== '/experiments' && currentPath !== '/experiments/';
 ---
@@ -16,6 +17,7 @@ const isBlogPost = currentPath !== '/' && currentPath !== '/thoughts' && current
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
+    {description && <meta name="description" content={description} />}
     <link rel="stylesheet" href="/styles.css">
     <ViewTransitions />
 </head>
