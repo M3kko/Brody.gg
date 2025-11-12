@@ -1,7 +1,5 @@
-- Add content to About 
 - Add desc to Projects and Thoughts 
 - Add newsletter (beehiiv)
-- Add socials/contact on the about (third column, aligned or slightly aligned with nav.)
 - Add projects to projects (PeakFit, NoLimit (App + Website), College playbook, flappy tennis if I can find it, polyglot cafe.)
 - Add decision making journal experiment + decision making journal blog. 
 - Add 120hr game dev experiment + creating a song experiment
