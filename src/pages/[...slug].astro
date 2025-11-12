@@ -4,14 +4,22 @@ import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const thoughts = await getCollection('thoughts');
-  return thoughts.map((thought) => ({
-    params: { slug: thought.slug },
-    props: { thought },
-  }));
+  const projects = await getCollection('projects');
+  const experiments = await getCollection('experiments');
+
+  const allPosts = [
+    ...thoughts.map((entry) => ({ params: { slug: entry.slug }, props: { entry, collection: 'thoughts' } })),
+    ...projects.map((entry) => ({ params: { slug: entry.slug }, props: { entry, collection: 'projects' } })),
+    ...experiments.map((entry) => ({ params: { slug: entry.slug }, props: { entry, collection: 'experiments' } })),
+  ];
+
+  return allPosts;
 }
 
-const { thought } = Astro.props;
-const { Content, headings } = await thought.render();
+const { entry, collection } = Astro.props;
+const { Content, headings } = await entry.render();
+
+const backLink = collection === 'thoughts' ? '/thoughts' : collection === 'projects' ? '/projects' : '/experiments';
 
 // Helper function to add ordinal suffix
 function getOrdinalSuffix(day: number) {
@@ -32,7 +40,7 @@ function formatDateWithOrdinal(date: Date) {
 }
 ---
 
-<Layout title={`${thought.data.title} - Broderick`} description={thought.data.description}>
+<Layout title={`${entry.data.title} - Broderick`} description={entry.data.description} backLink={backLink}>
     <main class="container blog-container">
         <aside class="toc">
             <nav>
@@ -46,11 +54,11 @@ function formatDateWithOrdinal(date: Date) {
             </nav>
         </aside>
 
-        <article class="thought-post">
+        <article class="thought-post" class:list={[collection]}>
             <header class="thought-header">
-                <h1>{thought.data.title}</h1>
-                <time datetime={thought.data.date.toISOString()}>
-                    {formatDateWithOrdinal(thought.data.date)}
+                <h1>{entry.data.title}</h1>
+                <time datetime={entry.data.date.toISOString()}>
+                    {formatDateWithOrdinal(entry.data.date)}
                 </time>
             </header>
 
@@ -203,6 +211,17 @@ function formatDateWithOrdinal(date: Date) {
         font-weight: 600;
         line-height: 1.2;
         margin-bottom: 0.5rem;
+    }
+
+    .projects .thought-header h1 {
+        font-family: 'Instrument Serif', serif;
+        font-style: italic;
+    }
+
+    .experiments .thought-header h1 {
+        font-family: 'OCR-B', monospace;
+        letter-spacing: -0.05em;
+        font-size: clamp(1.6rem, 3.8vw, 2.3rem);
     }
 
     time {

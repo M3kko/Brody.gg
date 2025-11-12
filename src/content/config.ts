@@ -10,4 +10,24 @@ const thoughts = defineCollection({
   }),
 });
 
-export const collections = { thoughts };
+const projects = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.date(),
+    draft: z.boolean().optional().default(false),
+  }),
+});
+
+const experiments = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.date(),
+    draft: z.boolean().optional().default(false),
+  }),
+});
+
+export const collections = { thoughts, projects, experiments };

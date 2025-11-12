@@ -1,12 +1,25 @@
+@font-face {
+    font-family: 'OCR-B';
+    src: url('/assets/svg/fonts/OCR-B.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Instrument Serif';
+    src: url('/assets/svg/fonts/instrumentserif-italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+
+
 :root {
     --bg: #F5F1E8;
     --text: #1a1a1a;
     --accent: #FF0000;
-}
-
-[data-theme="dark"] {
-    --bg: #1a1a1a;
-    --text: #F5F1E8;
 }
 
 *{
@@ -20,32 +33,31 @@ body {
     background-color: var(--bg);
     color: var(--text);
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .nav {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 2rem;
-    z-index: 100;
+    top: 16rem;
+    left: 50%;
+    transform: translateX(-50%);
     max-width: 1200px;
-    margin: 0 auto;
     width: 100%;
+    padding: 0 2rem;
+    z-index: 100;
 }
 
 .nav-menu {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: 0;
+    margin-left: calc(66.666% + 1.333rem);
 }
 
 .nav-link {
     color: var(--text);
     text-decoration: none;
-    font-size: 1.125rem;
+    font-size: 1.5rem;
     opacity: 0.5;
     transition: opacity 0.3s ease;
     font-weight: 400;
@@ -56,11 +68,12 @@ body {
     padding: 0;
     line-height: 0;
     opacity: 1 !important;
+    margin-left: -0.5rem;
 }
 
 .nav-triangle img {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     transform: rotate(180deg);
     display: block;
 }
@@ -77,8 +90,14 @@ body {
 .logo {
     display: inline-block;
     color: var(--text);
-    transition: color 0.3s ease;
-    position: absolute
+    position: fixed;
+    top: 2rem;
+    left: calc(50% - 600px + 3rem);
+    z-index: 100;
+}
+
+.logo img {
+    transition: transform 0.5s ease;
 }
 
 .logo:hover {
@@ -88,11 +107,11 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 3rem;
 }
 
 .hero {
-    min-height: 100vh;
+    min-height: 55vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -104,7 +123,7 @@ body {
     font-weight: 600;
     line-height: 1.3;
     margin-bottom: 0.5rem;
-    letter-spacing: -0.05em;
+    letter-spacing: normal;
 }
 
 .hero .subtitle {
@@ -116,6 +135,9 @@ body {
     line-height: 1.5;
 }
 
+.blog-post .logo img {
+    transform: rotate(-90deg);
+}
 
 @media (max-width: 768px) {
     .nav {
@@ -133,6 +155,7 @@ body {
     .logo img {
         width: 36px;
         height: 36px;
+        transition: transform 0.3s ease;
     }
 
     .container {
@@ -143,3 +166,34 @@ body {
         padding-top: 10rem;
     }
 }
+
+.experiments .hero h1 {
+    font-family: 'OCR-B', monospace;
+    letter-spacing: -0.05em;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+}
+
+.experiments h2 {
+    font-family: 'OCR-B', monospace;
+    letter-spacing: -0.05em;
+}
+
+.experiments-code {
+    font-family: 'OCR-B', monospace;
+}
+
+.projects .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(2.2rem, 4.5vw, 2.7rem);
+}
+
+.thoughts .hero h1 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+}
+
+.about .hero h1 {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+}
+

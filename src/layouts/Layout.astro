@@ -4,9 +4,10 @@ import { ViewTransitions } from 'astro:transitions';
 interface Props {
   title: string;
   description?: string;
+  backLink?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, backLink } = Astro.props;
 const currentPath = Astro.url.pathname;
 const isBlogPost = currentPath !== '/' && currentPath !== '/thoughts' && currentPath !== '/thoughts/' && currentPath !== '/about' && currentPath !== '/about/' && currentPath !== '/projects' && currentPath !== '/projects/' && currentPath !== '/experiments' && currentPath !== '/experiments/';
 const isExperiments = currentPath === '/experiments' || currentPath === '/experiments/';
@@ -25,7 +26,7 @@ const isAbout = currentPath === '/about' || currentPath === '/about/';
     <ViewTransitions />
 </head>
 <body class={`${isBlogPost ? 'blog-post' : ''} ${isExperiments ? 'experiments' : ''} ${isProjects ? 'projects' : ''} ${isAbout ? 'about' : ''}`}>
-    <a href={isBlogPost ? '/thoughts' : '/'} class="logo">
+    <a href={backLink || (isBlogPost ? '/thoughts' : '/')} class="logo">
         <img src="/assets/svg/triangle.svg" alt="Logo" width="48" height="48">
     </a>
 

@@ -1,5 +1,5 @@
 ---
-title: "My First Thought"
+title: "My First Project"
 description: "This is an example blog post to show how the markdown system works"
 date: 2025-11-11
 draft: false
