@@ -1,22 +1,83 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects', ({ data }) => {
+    return data.draft !== true;
+}); 
+
+const sortedProjects = projects.sort((a, b) =>
+    b.data.date.getTime() - a.data.date.getTime()
+);
 ---
 
 <Layout title="Projects - Broderick">
     <main class="container">
         <header class="hero">
-            <h1>Projects</h1>
-            <p class="subtitle">Things I've built and worked on</p>
+            <p class="subtitle">Things I've built</p>
         </header>
 
         <section class="projects-list">
+            {sortedProjects.map((project) => (
+                <article class="project-card">
+                    <a href={`/${project.slug}`}>
+                          <h2>{project.data.title}</h2>
+                          <p class="project-description">{project.data.description}</p>
+                          <time datetime={project.data.date.toISOString()}>
+                              {project.data.date.toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  timeZone: 'UTC'
+                              })}
+                          </time>
+                      </a>
+                  </article>
+              ))}
         </section>
+
     </main>
 </Layout>
 
-<style>
+<style> 
     .projects-list {
-        margin-top: 2rem;
         max-width: 800px;
+        margin: 2rem 0;
     }
-</style>
+
+    .project-card {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .project-card:last-child {
+        border-bottom: none;
+    }
+
+    .project-card a {
+        text-decoration: none;
+        color: var(--text);
+        display: block;
+        transition: opacity 0.3s ease;
+    }
+
+    .project-card a:hover {
+        opacity: 0.7;
+    }
+
+    .project-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .project-description: {
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    time {
+        font-size 0.875rem;
+        opactity: 0.5;
+    }
