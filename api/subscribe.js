@@ -1,33 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
-// Check if environment variables are actually defined
-const supabaseUrl = process.env.PUBLIC_SUPABASE_URL ? process.env.PUBLIC_SUPABASE_URL.trim() : '';
-const supabaseKey = process.env.PUBLIC_SUPABASE_ANON_KEY ? process.env.PUBLIC_SUPABASE_ANON_KEY.trim() : '';
+const supabase = createClient(
+    process.env.PUBLIC_SUPABASE_URL.trim(),
+    process.env.PUBLIC_SUPABASE_ANON_KEY.trim()
+);
 
-// Validate that the key looks like a JWT
-const isValidJWT = supabaseKey && supabaseKey.split('.').length === 3;
-
-console.log('Supabase config debug:', {
-    urlLength: supabaseUrl.length,
-    urlStart: supabaseUrl.substring(0, 30),
-    keyLength: supabaseKey.length,
-    keyStart: supabaseKey.substring(0, 50),
-    isValidJWT: isValidJWT,
-    keyParts: supabaseKey ? supabaseKey.split('.').length : 0,
-});
-
-// Only create client if we have valid credentials
-if (!supabaseUrl || !supabaseKey) {
-    console.error('Missing Supabase credentials!', {
-        hasUrl: !!supabaseUrl,
-        hasKey: !!supabaseKey
-    });
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-const resend = new Resend(process.env.RESEND_API_KEY ? process.env.RESEND_API_KEY.trim() : '');
+const resend = new Resend(process.env.RESEND_API_KEY.trim());
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -35,35 +14,17 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Debug: List all env vars that start with PUBLIC_ or RESEND (remove in production!)
-        const relevantEnvVars = Object.keys(process.env).filter(key =>
-            key.includes('SUPABASE') || key.includes('RESEND') || key.startsWith('PUBLIC_')
-        );
-        console.log('Available relevant env vars:', relevantEnvVars);
-
-        // Log to check if env vars are loaded (remove in production)
-        console.log('ENV vars loaded:', {
-            hasSupabaseUrl: !!process.env.PUBLIC_SUPABASE_URL,
-            hasSupabaseKey: !!process.env.PUBLIC_SUPABASE_ANON_KEY,
-            hasResendKey: !!process.env.RESEND_API_KEY
-        });
-
         const { email } = req.body;
 
         if (!email || !email.includes('@')) {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        const { data: existing, error: selectError } = await supabase
+        const { data: existing } = await supabase
             .from('subscribers')
             .select('*')
             .eq('email', email)
             .single();
-
-        // Log Supabase error if any
-        if (selectError && selectError.code !== 'PGRST116') { // PGRST116 is "not found" which is ok
-            console.error('Supabase select error:', selectError);
-        }
 
         if (existing) {
             if (existing.verified) {
@@ -82,7 +43,6 @@ export default async function handler(req, res) {
             });
 
         if (dbError) {
-            console.error('Database error:', dbError);
             return res.status(500).json({ error: 'Failed to save email' });
         }
 
@@ -154,14 +114,12 @@ export default async function handler(req, res) {
         });
 
         if (emailError) {
-            console.error('Email sending error:', emailError);
             return res.status(500).json({ error: 'Failed to send verification email' });
         }
 
         return res.status(200).json({ message: 'Sent! Please check your inbox to verify your email' });
 
     } catch (error) {
-        console.error('Unexpected error:', error);
         return res.status(500).json({ error: 'Something went wrong' });
     }
 }

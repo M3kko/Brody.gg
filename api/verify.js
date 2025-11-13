@@ -1,10 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Trim environment variables to remove any accidental whitespace
-const supabaseUrl = process.env.PUBLIC_SUPABASE_URL ? process.env.PUBLIC_SUPABASE_URL.trim() : '';
-const supabaseKey = process.env.PUBLIC_SUPABASE_ANON_KEY ? process.env.PUBLIC_SUPABASE_ANON_KEY.trim() : '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(
+    process.env.PUBLIC_SUPABASE_URL.trim(),
+    process.env.PUBLIC_SUPABASE_ANON_KEY.trim()
+);
 
 export default async function handler(req, res) {
     // Only allow GET requests
@@ -42,13 +41,11 @@ export default async function handler(req, res) {
             .eq('verification_token', token);
 
         if (updateError) {
-            console.error('Database update error:', updateError);
             return res.redirect(302, '/verified?error=failed');
         }
 
         return res.redirect(302, '/verified');
     } catch (error) {
-        console.error('Verification error:', error);
         return res.redirect(302, '/?error=something-went-wrong');
     }
 }

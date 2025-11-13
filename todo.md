@@ -1,5 +1,4 @@
 - mobile friendly
-- Setup analytics
 - Click tracking
 
 
