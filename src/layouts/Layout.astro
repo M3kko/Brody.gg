@@ -1,5 +1,7 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
+import { Analytics } from '@vercel/analytics/astro';
+import { SpeedInsights } from '@vercel/speed-insights/astro';
 
 interface Props {
   title: string;
@@ -46,5 +48,7 @@ const isAbout = currentPath === '/about' || currentPath === '/about/';
     )}
 
     <slot />
+    <Analytics />
+    <SpeedInsights />
 </body>
 </html>
