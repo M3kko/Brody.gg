@@ -141,15 +141,35 @@ body {
 
 @media (max-width: 768px) {
     .nav {
-        padding: 1rem;
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        transform: none;
+        width: auto;
+        padding: 2rem 1rem;
+        max-width: none;
     }
 
     .nav-menu {
-        gap: 0.25rem;
+        margin-left: 0;
+        gap: 0.5rem;
+        align-items: flex-start;
     }
-    
+
     .nav-link {
-        font-size: 1rem;
+        font-size: 1.125rem;
+    }
+
+    .nav-triangle {
+        margin-left: 0;
+    }
+
+    .logo {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        left: auto;
     }
 
     .logo img {
@@ -161,10 +181,16 @@ body {
     .container {
         padding: 0 2rem;
     }
-    
+
     .hero {
-        padding-top: 10rem;
+        padding-top: 8rem;
+        min-height: auto;
     }
+
+    main {
+        padding-bottom: 200px;
+    }
+
 }
 
 .experiments .hero h1 {
