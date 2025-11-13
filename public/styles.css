@@ -178,9 +178,8 @@ body {
     .logo {
         position: absolute;
         top: 2rem;
-        left: 2rem;
+        left: 1.5rem;
         right: auto;
-        margin-left: -4px;
         padding: 0;
         display: block;
     }
