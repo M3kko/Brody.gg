@@ -53,14 +53,66 @@ export const POST: APIRoute = async ({ request }) => {
         const verificationUrl = `${request.headers.get('origin')}/api/verify?token=${verificationToken}`;
 
         const { error: emailError } = await resend.emails.send({
-            from: 'newsletter@news.brody.gg', 
+            from: 'Broderick <newsletter@news.brody.gg>',
             to: email,
             subject: 'Verify your newsletter subscription',
             html: `
-            <h2>Confirm your subscription</h2>
-            <p>Click the link below to verify your email and start receiving newsletters:</p>
-            <a href="${verificationUrl}">Verify Email</a>
-            <p>If you didn't request this, you can safely ignore this email.</p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+                body {
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  background-color: #F5F1E8;
+                  padding: 40px 20px;
+                }
+                .container {
+                  max-width: 500px;
+                  margin: 0 auto;
+                  background-color: white;
+                  padding: 40px;
+                  border-radius: 8px;
+                }
+                .logo {
+                  width: 48px;
+                  height: 48px;
+                  margin-bottom: 20px;
+                }
+                h2 {
+                  color: #1a1a1a;
+                  margin-bottom: 16px;
+                }
+                p {
+                  color: #1a1a1a;
+                  line-height: 1.6;
+                  margin-bottom: 24px;
+                }
+                .button {
+                  display: inline-block;
+                  background-color: #FF0000;
+                  color: white;
+                  padding: 12px 24px;
+                  text-decoration: none;
+                  border-radius: 6px;
+                  font-weight: 500;
+                }
+                .footer {
+                  margin-top: 24px;
+                  font-size: 14px;
+                  opacity: 0.7;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <img src="https://www.brody.gg/assets/svg/triangle.svg" alt="Logo" class="logo">
+                <h2>Confirm your subscription</h2>
+                <p>Click the button below to verify your email and start receiving newsletters:</p>
+                <a href="${verificationUrl}" class="button">Verify Email</a>
+                <p class="footer">If you didn't request this, you can safely ignore this email.</p>
+              </div>
+            </body>
+            </html>
             `,
         });
 
