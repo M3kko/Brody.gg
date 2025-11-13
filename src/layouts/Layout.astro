@@ -25,6 +25,8 @@ const isAbout = currentPath === '/about' || currentPath === '/about/';
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <link rel="icon" type="image/png" href="/assets/svg/favicon.png">
+    <link rel="preload" href="/assets/svg/fonts/OCR-B.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/assets/svg/fonts/instrumentserif-italic.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="/styles.css">
     <ViewTransitions />
 </head>
