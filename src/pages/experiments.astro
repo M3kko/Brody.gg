@@ -18,6 +18,18 @@ const sortedExperiments = experiments.sort((a, b) =>
             <p class="subtitle">My public lab where I subject myself to productivity trends, uncomfortable challenges, and random things my friends send me on reels at 2am. <br><br> If it works, I level up and add it to my daily life. If it fails... I try to permanently forget about it.  </p>
         </header>
 
+        <nav class="nav">
+            <div class="nav-menu">
+                <a href="/" class="nav-link nav-triangle">
+                    <img src="/assets/svg/triangle.svg" alt="Home">
+                </a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/projects" class="nav-link">Projects</a>
+                <a href="/thoughts" class="nav-link">Thoughts</a>
+                <a href="/experiments" class="nav-link active">Experiments</a>
+            </div>
+        </nav>
+
         <section class="experiments-list">
             {sortedExperiments.map((experiment) => ( 
                 <article class="experiment-card">

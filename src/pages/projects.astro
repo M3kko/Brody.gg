@@ -17,10 +17,22 @@ const sortedProjects = projects.sort((a, b) =>
             <h1>Projects</h1>
             <p class="subtitle">Here is the place where I keep all of my projects. Some of these are just for showcase, and others are case studies or tools that you can use for yourself.
                 <br><br>
-                
+
             </p>
-            
+
         </header>
+
+        <nav class="nav">
+            <div class="nav-menu">
+                <a href="/" class="nav-link nav-triangle">
+                    <img src="/assets/svg/triangle.svg" alt="Home">
+                </a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/projects" class="nav-link active">Projects</a>
+                <a href="/thoughts" class="nav-link">Thoughts</a>
+                <a href="/experiments" class="nav-link">Experiments</a>
+            </div>
+        </nav>
 
         <section class="projects-list">
             {sortedProjects.map((project) => (

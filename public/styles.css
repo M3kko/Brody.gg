@@ -176,7 +176,7 @@ body {
     }
 
     .logo {
-        position: static;
+        position: absolute;
         top: 2rem;
         left: 2rem;
         right: auto;

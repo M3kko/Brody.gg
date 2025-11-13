@@ -9,6 +9,18 @@ import Layout from '../layouts/Layout.astro';
             <p class="subtitle">Polymath, Engineer, Athlete</p>
         </header>
 
+        <nav class="nav">
+            <div class="nav-menu">
+                <a href="/" class="nav-link nav-triangle">
+                    <img src="/assets/svg/triangle.svg" alt="Home">
+                </a>
+                <a href="/about" class="nav-link active">About</a>
+                <a href="/projects" class="nav-link">Projects</a>
+                <a href="/thoughts" class="nav-link">Thoughts</a>
+                <a href="/experiments" class="nav-link">Experiments</a>
+            </div>
+        </nav>
+
         <section class="about-content">
             <div class="about-main">
                 <p>I love learning things, I would consider myself an extremely curious individual. When someone asks a question and 
@@ -108,18 +120,23 @@ import Layout from '../layouts/Layout.astro';
         box-shadow: 0 1px 0 0 var(--text);
     }
 
-    @media (max-widdth: 768px) {
+    @media (max-width: 768px) {
         .about-content {
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .about-main {
+            max-width: 100%;
+            order: 2;
         }
 
         .about-sidebar {
             position: static;
-            margin-top: 2rem;
+            width: 100%;
+            margin-bottom: 2rem;
+            order: 1;
         }
-
-
-
     }
 
 </style>

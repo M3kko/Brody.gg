@@ -37,6 +37,18 @@ function formatDateWithOrdinal(date: Date) {
             <p class="subtitle">Thoughts I think. Here is where I usually reflect on projects or experiments. Mostly short form, occasionally longer depending on the value I believe it has.  </p>
         </header>
 
+        <nav class="nav">
+            <div class="nav-menu">
+                <a href="/" class="nav-link nav-triangle">
+                    <img src="/assets/svg/triangle.svg" alt="Home">
+                </a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/projects" class="nav-link">Projects</a>
+                <a href="/thoughts" class="nav-link active">Thoughts</a>
+                <a href="/experiments" class="nav-link">Experiments</a>
+            </div>
+        </nav>
+
         <section class="thoughts-list">
             {sortedThoughts.map((thought) => (
                 <article class="thought-card">
