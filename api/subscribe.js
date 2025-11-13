@@ -1,58 +1,55 @@
-import type { APIRoute } from 'astro';
-import { createClient} from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
-export const prerender = false;
-
-const supabase = createClient (
-    import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+const supabase = createClient(
+    process.env.PUBLIC_SUPABASE_URL,
+    process.env.PUBLIC_SUPABASE_ANON_KEY
 );
 
-const resend = new Resend(import.meta.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const POST: APIRoute = async ({ request }) => {
+export default async function handler(req, res) {
+    // Only allow POST requests
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
     try {
-        const { email } = await request.json();
+        const { email } = req.body;
 
         if (!email || !email.includes('@')) {
-            return new Response(JSON.stringify({ error: 'Invalid email address' }), { status: 400 });
+            return res.status(400).json({ error: 'Invalid email address' });
         }
 
         const { data: existing } = await supabase
-        .from('subscribers')
-        .select('*')
-        .eq('email', email)
-        .single();
+            .from('subscribers')
+            .select('*')
+            .eq('email', email)
+            .single();
 
         if (existing) {
             if (existing.verified) {
-                return new Response(
-                    JSON.stringify({ error: 'Email already subscribed'}),
-                    { status: 400 }
-                );
+                return res.status(400).json({ error: 'Email already subscribed' });
             }
         }
 
         const verificationToken = crypto.randomUUID();
 
-        const {error: dbError} = await supabase
-        .from('subscribers')
-        .upsert({
-            email,
-            verification_token: verificationToken,
-            verified: false,
-        });
+        const { error: dbError } = await supabase
+            .from('subscribers')
+            .upsert({
+                email,
+                verification_token: verificationToken,
+                verified: false,
+            });
 
         if (dbError) {
             console.error('Database error:', dbError);
-            return new Response(
-                JSON.stringify({ error: 'Failed to save email'}),
-                { status: 500 }
-            );
+            return res.status(500).json({ error: 'Failed to save email' });
         }
 
-        const verificationUrl = `${request.headers.get('origin')}/api/verify?token=${verificationToken}`;
+        const origin = req.headers.origin || `https://${req.headers.host}`;
+        const verificationUrl = `${origin}/api/verify?token=${verificationToken}`;
 
         const { error: emailError } = await resend.emails.send({
             from: 'Broderick <newsletter@news.brody.gg>',
@@ -120,22 +117,13 @@ export const POST: APIRoute = async ({ request }) => {
 
         if (emailError) {
             console.error('Email sending error:', emailError);
-            return new Response(
-                JSON.stringify({ error: 'Failed to send verification email'}),
-                { status: 500 }
-            );
+            return res.status(500).json({ error: 'Failed to send verification email' });
         }
 
-        return new Response(
-            JSON.stringify({ message: 'Sent! Please check your inbox to verify your email' }),
-            { status: 200 }
-        );
+        return res.status(200).json({ message: 'Sent! Please check your inbox to verify your email' });
 
-    } catch (error) { 
+    } catch (error) {
         console.error('Unexpected error:', error);
-        return new Response(
-            JSON.stringify({ error: 'Something went wrong' }),
-            { status: 500 }
-        );
+        return res.status(500).json({ error: 'Something went wrong' });
     }
-    };
+}

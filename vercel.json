@@ -15,6 +15,14 @@
         "destination": "findmy://",
         "permanent": false
       }
-    ]
+    ],
+    "functions": {
+      "api/subscribe.js": {
+        "maxDuration": 10
+      },
+      "api/verify.js": {
+        "maxDuration": 10
+      }
+    }
   }
   
