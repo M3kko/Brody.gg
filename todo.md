@@ -1,4 +1,3 @@
-- Add newsletter signup
 - mobile friendly
 - Setup analytics
 - Click tracking
