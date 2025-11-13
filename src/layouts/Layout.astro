@@ -33,20 +33,6 @@ const isAbout = currentPath === '/about' || currentPath === '/about/';
         <img src="/assets/svg/triangle.svg" alt="Logo" width="48" height="48">
     </a>
 
-    {!isBlogPost && (
-        <nav class="nav">
-            <div class="nav-menu">
-                <a href="/" class={`nav-link nav-triangle ${currentPath === '/' ? 'active' : ''}`}>
-                    <img src="/assets/svg/triangle.svg" alt="Home">
-                </a>
-                <a href="/about" class={`nav-link ${currentPath === '/about' || currentPath === '/about/' ? 'active' : ''}`}>About</a>
-                <a href="/projects" class={`nav-link ${currentPath === '/projects' || currentPath === '/projects/' ? 'active' : ''}`}>Projects</a>
-                <a href="/thoughts" class={`nav-link ${currentPath === '/thoughts' || currentPath === '/thoughts/' ? 'active' : ''}`}>Thoughts</a>
-                <a href="/experiments" class={`nav-link ${currentPath === '/experiments' || currentPath === '/experiments/' ? 'active' : ''}`}>Experiments</a>
-            </div>
-        </nav>
-    )}
-
     <slot />
     <Analytics />
     <SpeedInsights />
