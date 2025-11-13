@@ -178,10 +178,10 @@ body {
     .logo {
         position: absolute;
         top: 2rem;
-        left: 0;
+        left: 2rem;
         right: auto;
-        margin: 0;
-        padding: 0 0 0 2rem;
+        margin-left: -4px;
+        padding: 0;
         display: block;
     }
 
