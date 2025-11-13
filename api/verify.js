@@ -1,17 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Check if environment variables are actually defined
-if (!process.env.PUBLIC_SUPABASE_URL || !process.env.PUBLIC_SUPABASE_ANON_KEY) {
-    console.error('Missing environment variables in verify:', {
-        url: process.env.PUBLIC_SUPABASE_URL ? 'exists' : 'missing',
-        key: process.env.PUBLIC_SUPABASE_ANON_KEY ? 'exists' : 'missing'
-    });
-}
+// Trim environment variables to remove any accidental whitespace
+const supabaseUrl = process.env.PUBLIC_SUPABASE_URL ? process.env.PUBLIC_SUPABASE_URL.trim() : '';
+const supabaseKey = process.env.PUBLIC_SUPABASE_ANON_KEY ? process.env.PUBLIC_SUPABASE_ANON_KEY.trim() : '';
 
-const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL || '',
-    process.env.PUBLIC_SUPABASE_ANON_KEY || ''
-);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req, res) {
     // Only allow GET requests

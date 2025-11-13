@@ -2,19 +2,21 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 // Check if environment variables are actually defined
-if (!process.env.PUBLIC_SUPABASE_URL || !process.env.PUBLIC_SUPABASE_ANON_KEY) {
-    console.error('Missing environment variables:', {
-        url: process.env.PUBLIC_SUPABASE_URL ? 'exists' : 'missing',
-        key: process.env.PUBLIC_SUPABASE_ANON_KEY ? 'exists (length: ' + process.env.PUBLIC_SUPABASE_ANON_KEY.length + ')' : 'missing'
-    });
-}
+const supabaseUrl = process.env.PUBLIC_SUPABASE_URL ? process.env.PUBLIC_SUPABASE_URL.trim() : '';
+const supabaseKey = process.env.PUBLIC_SUPABASE_ANON_KEY ? process.env.PUBLIC_SUPABASE_ANON_KEY.trim() : '';
 
-const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL || '',
-    process.env.PUBLIC_SUPABASE_ANON_KEY || ''
-);
+console.log('Supabase config debug:', {
+    urlLength: supabaseUrl.length,
+    urlStart: supabaseUrl.substring(0, 30),
+    urlHasSpace: supabaseUrl !== process.env.PUBLIC_SUPABASE_URL,
+    keyLength: supabaseKey.length,
+    keyStart: supabaseKey.substring(0, 50),
+    keyHasSpace: supabaseKey !== process.env.PUBLIC_SUPABASE_ANON_KEY,
+});
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const resend = new Resend(process.env.RESEND_API_KEY ? process.env.RESEND_API_KEY.trim() : '');
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
