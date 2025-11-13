@@ -6,9 +6,4 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   output: 'static',
   adapter: vercel(),
-  outDir: './dist',
-  publicDir: './public',
-  build: {
-    format: 'directory'
-  }
 });
