@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { createClient} from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
+export const prerender = false;
+
 const supabase = createClient (
     import.meta.env.PUBLIC_SUPABASE_URL,
     import.meta.env.PUBLIC_SUPABASE_ANON_KEY
@@ -106,8 +108,8 @@ export const POST: APIRoute = async ({ request }) => {
             <body>
               <div class="container">
                 <img src="https://www.brody.gg/assets/svg/triangle.svg" alt="Logo" class="logo">
-                <h2>Confirm your subscription</h2>
-                <p>Click the button below to verify your email and start receiving newsletters:</p>
+                <h2>Hey, it's Broderick!</h2>
+                <p>Thank you for subscribing to my newsletter. Please click below to verify that this is really you :)</p>
                 <a href="${verificationUrl}" class="button">Verify Email</a>
                 <p class="footer">If you didn't request this, you can safely ignore this email.</p>
               </div>

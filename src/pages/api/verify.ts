@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { createClient } from '@supabase/supabase-js';
 
+export const prerender = false;
+
 const supabase = createClient(
     import.meta.env.PUBLIC_SUPABASE_URL,
     import.meta.env.PUBLIC_SUPABASE_ANON_KEY
@@ -25,7 +27,7 @@ export const GET: APIRoute = async ({ url, redirect }) => {
         }
 
         if (subscriber.verified) {
-            return redirect('/?message=already_verified');
+            return redirect('/verified?already=true');
         }
 
         const { error: updateError } = await supabase
@@ -38,10 +40,10 @@ export const GET: APIRoute = async ({ url, redirect }) => {
 
         if (updateError) {
             console.error('Database update error:', updateError);
-            return redirect('/?error=verification_failed');
+            return redirect('/verified?error=failed');
         }
 
-        return redirect('/?success=verified');
+        return redirect('/verified');
     } catch (error) {
         console.error('Verification error:', error);
         return redirect('/?error=something-went-wrong');

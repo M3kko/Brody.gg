@@ -1,0 +1,107 @@
+---
+const url = Astro.url;
+const alreadyVerified = url.searchParams.get('already') === 'true';
+const error = url.searchParams.get('error');
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified - Broderick</title>
+    <link rel="icon" type="image/png" href="/assets/svg/favicon.png">
+    <style>
+        :root {
+            --bg: #F5F1E8;
+            --text: #1a1a1a;
+            --accent: #FF0000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 2rem;
+            display: block;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        a {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--bg);
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
+        }
+
+        .error {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/assets/svg/triangle.svg" alt="Logo" class="logo">
+
+        {error ? (
+            <>
+                <h1 class="error">Verification Failed</h1>
+                <p>Something went wrong during verification. Please try subscribing again.</p>
+            </>
+        ) : alreadyVerified ? (
+            <>
+                <h1>Already Verified</h1>
+                <p>Your email has already been verified. You're all set!</p>
+            </>
+        ) : (
+            <>
+                <h1>You're All Set!</h1>
+                <p>Thank you for verifying your email. You'll now receive updates on new projects, thoughts, and experiments.</p>
+            </>
+        )}
+
+        <a href="/">Return Home</a>
+    </div>
+</body>
+</html>
