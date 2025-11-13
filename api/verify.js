@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Check if environment variables are actually defined
+if (!process.env.PUBLIC_SUPABASE_URL || !process.env.PUBLIC_SUPABASE_ANON_KEY) {
+    console.error('Missing environment variables in verify:', {
+        url: process.env.PUBLIC_SUPABASE_URL ? 'exists' : 'missing',
+        key: process.env.PUBLIC_SUPABASE_ANON_KEY ? 'exists' : 'missing'
+    });
+}
+
 const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL,
-    process.env.PUBLIC_SUPABASE_ANON_KEY
+    process.env.PUBLIC_SUPABASE_URL || '',
+    process.env.PUBLIC_SUPABASE_ANON_KEY || ''
 );
 
 export default async function handler(req, res) {

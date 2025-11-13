@@ -1,9 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
+// Check if environment variables are actually defined
+if (!process.env.PUBLIC_SUPABASE_URL || !process.env.PUBLIC_SUPABASE_ANON_KEY) {
+    console.error('Missing environment variables:', {
+        url: process.env.PUBLIC_SUPABASE_URL ? 'exists' : 'missing',
+        key: process.env.PUBLIC_SUPABASE_ANON_KEY ? 'exists (length: ' + process.env.PUBLIC_SUPABASE_ANON_KEY.length + ')' : 'missing'
+    });
+}
+
 const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL,
-    process.env.PUBLIC_SUPABASE_ANON_KEY
+    process.env.PUBLIC_SUPABASE_URL || '',
+    process.env.PUBLIC_SUPABASE_ANON_KEY || ''
 );
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -14,6 +22,12 @@ export default async function handler(req, res) {
     }
 
     try {
+        // Debug: List all env vars that start with PUBLIC_ or RESEND (remove in production!)
+        const relevantEnvVars = Object.keys(process.env).filter(key =>
+            key.includes('SUPABASE') || key.includes('RESEND') || key.startsWith('PUBLIC_')
+        );
+        console.log('Available relevant env vars:', relevantEnvVars);
+
         // Log to check if env vars are loaded (remove in production)
         console.log('ENV vars loaded:', {
             hasSupabaseUrl: !!process.env.PUBLIC_SUPABASE_URL,
