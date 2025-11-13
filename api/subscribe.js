@@ -5,14 +5,25 @@ import { Resend } from 'resend';
 const supabaseUrl = process.env.PUBLIC_SUPABASE_URL ? process.env.PUBLIC_SUPABASE_URL.trim() : '';
 const supabaseKey = process.env.PUBLIC_SUPABASE_ANON_KEY ? process.env.PUBLIC_SUPABASE_ANON_KEY.trim() : '';
 
+// Validate that the key looks like a JWT
+const isValidJWT = supabaseKey && supabaseKey.split('.').length === 3;
+
 console.log('Supabase config debug:', {
     urlLength: supabaseUrl.length,
     urlStart: supabaseUrl.substring(0, 30),
-    urlHasSpace: supabaseUrl !== process.env.PUBLIC_SUPABASE_URL,
     keyLength: supabaseKey.length,
     keyStart: supabaseKey.substring(0, 50),
-    keyHasSpace: supabaseKey !== process.env.PUBLIC_SUPABASE_ANON_KEY,
+    isValidJWT: isValidJWT,
+    keyParts: supabaseKey ? supabaseKey.split('.').length : 0,
 });
+
+// Only create client if we have valid credentials
+if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing Supabase credentials!', {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseKey
+    });
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
