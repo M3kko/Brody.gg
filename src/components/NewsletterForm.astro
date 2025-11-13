@@ -2,8 +2,8 @@
 ---
 
 <div class="newsletter-card">
-    <h3>Newsletter</h3>
-    <p class="description">Get updates on new projects, thoughts, and experiments.</p>
+    <h3>Like what I'm doing?</h3>
+    <p class="description">Subscribe to my newsletter.</p>
     <form id="newsletter-form">
         <input
             type="email"
@@ -13,7 +13,6 @@
         />
         <button type="submit">Subscribe</button>
     </form>
-    <p id="form-message"></p>
 </div>
 
 <style> 
@@ -64,15 +63,17 @@ button {
     background-color: var(--text);
     color: var(--bg);
     border: none;
-    border-radius: ;6px;
+    border-radius: 6px;
     font-size: 0.9rem;
-    cursor: ponter;
+    cursor: pointer;
     font-weight: 500;
     transition: opacity 0.2s;
 }
 
 button:hover {
     opacity: 0.8;
+    background-color: var(--accent);
+    cursor: pointer;
 }
 
 button:disabled {
@@ -80,26 +81,60 @@ button:disabled {
     cursor: not-allowed;
 }
 
-#form-message {
-    font-size 0.8rem;
-    margin: 0.5rem 0 0 0;
-}
-
-#form-message.success {
-    color: green;
-}
-
-#form-message.error {
-    color: red;
-}
-
 </style>
 
 <script>
     const form = document.getElementById('newsletter-form') as HTMLFormElement;
     const emailInput = document.getElementById('email-input') as HTMLInputElement;
-    const messageEl = document.getElementById('form-message') as HTMLParagraphElement;
     const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
 
-    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+      const email = emailInput.value.trim();
+
+      if (!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Subscribing...';
+
+      try {
+        const response = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          submitBtn.textContent = '✓ Check your email!';
+          submitBtn.style.backgroundColor = 'green';
+          emailInput.value = '';
+          setTimeout(() => {
+            submitBtn.textContent = 'Subscribe';
+            submitBtn.style.backgroundColor = '';
+            submitBtn.disabled = false;
+          }, 3000);
+        } else {
+          submitBtn.textContent = data.error || 'Error!';
+          submitBtn.style.backgroundColor = 'red';
+          setTimeout(() => {
+            submitBtn.textContent = 'Subscribe';
+            submitBtn.style.backgroundColor = '';
+            submitBtn.disabled = false;
+          }, 3000);
+        }
+      } catch (error) {
+        submitBtn.textContent = 'Network error!';
+        submitBtn.style.backgroundColor = 'red';
+        setTimeout(() => {
+          submitBtn.textContent = 'Subscribe';
+          submitBtn.style.backgroundColor = '';
+          submitBtn.disabled = false;
+        }, 3000);
+      }
+    });
 </script>
