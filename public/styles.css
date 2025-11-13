@@ -180,12 +180,16 @@ body {
         top: 2rem;
         left: 2rem;
         right: auto;
+        margin: 0;
+        padding: 0;
+        display: block;
     }
 
     .logo img {
         width: 48px;
         height: 48px;
         transform: rotate(0deg);
+        display: block;
     }
 
     .container {
