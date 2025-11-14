@@ -12,4 +12,8 @@ As our members explored different languages I would often create basic flashcard
 
 And Quizlet wouldn't allow certain Japanese words for who knows what reason, specifically the romaji versions. In my frustration and refusal to pay for premium on Quizlet or another service, I instead decided to build my own flashcard site. 
 
-### You can see a video of the site here: 
+### You can see a video of the site here
+
+<div class="video-wrapper">
+<iframe src="https://www.youtube.com/embed/CylCUKMlMrI" allowfullscreen></iframe>
+</div> 

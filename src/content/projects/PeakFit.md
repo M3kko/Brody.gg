@@ -14,8 +14,11 @@ Take biometric data + user reported muscle soreness + the basics like their heig
 
 At first it makes very small changes to a default training plan. Changing the set or rep amounts based off your recovery. But after 7 days from you logging muscle soreness it begins to get an idea of what muscle groups need more work. By day 28, it has created a baseline for you, and models workouts based off that scored baseline, meaning it can completely modify training plans/workouts to what is going to benefit you most. 
 
-### Here is a video of me presenting it: 
+### Here is a video of the app:
 
+<div class="video-wrapper">
+<iframe src="https://www.youtube.com/embed/dLv5XPuS71Y" allowfullscreen></iframe>
+</div> 
 
 ## PeakFit Now
 Toward the end of August I was given an opportunity to bring my app to another startup that was more focused on the hardware side of things. I ultimately decided to forgo my launch of PeakFit to take this opportunity as I believed this would give me much more experience in startups than if I had stayed on my own (which proved to be true). If you're interested in seeing what the app has become now, I'll be making a post on the new NoLimit app sometime soon in the future.

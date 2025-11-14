@@ -13,5 +13,4 @@ I realized that maybe college isn't all about USnews rankings. Which it isn't be
 # Architecture is cool too
 For me that was the school architecture, the labs, and the entrepreneurship programs. Will I be inspired when I walk into the library every single day? Will I gain access to something that I previously could not access whatsoever? Will I be surrounded by likeminded people who want to make an impact via entrepreneurship? 
 
-### Check out the college ranking framework I used here: 
-https://humorous-hardcover-e1d.notion.site/College-Ranking-Framework-1dd98f3f0ef8806e9e2bc5838f6f4bdc
+### Check out the college ranking framework I used [here](https://humorous-hardcover-e1d.notion.site/College-Ranking-Framework-1dd98f3f0ef8806e9e2bc5838f6f4bdc).
