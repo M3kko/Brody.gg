@@ -21,7 +21,6 @@ const { Content, headings } = await entry.render();
 
 const backLink = collection === 'thoughts' ? '/thoughts' : collection === 'projects' ? '/projects' : '/experiments';
 
-// Helper function to add ordinal suffix
 function getOrdinalSuffix(day: number) {
   if (day > 3 && day < 21) return 'th';
   switch (day % 10) {
@@ -82,26 +81,40 @@ function formatDateWithOrdinal(date: Date) {
 
         document.addEventListener('astro:page-load', highlightFirstSection);
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    const id = entry.target.getAttribute('id');
-                    const tocLink = document.querySelector(`.toc nav a[href="#${id}"]`);
-                    if (tocLink) {
-                        const tocItem = tocLink.closest('li');
-                        if (entry.isIntersecting) {
-                            document.querySelectorAll('.toc li').forEach(li => li.classList.remove('active'));
-                            tocItem?.classList.add('active');
-                        }
-                    }
-                });
-            },
-            { rootMargin: '-100px 0px -66% 0px' }
-        );
+        let currentActive: string | null = null;
 
-        document.querySelectorAll('.thought-content h1, .thought-content h2, .thought-content h3').forEach((heading) => {
-            observer.observe(heading);
-        });
+        function updateTOC() {
+            const headings = Array.from(document.querySelectorAll('.thought-content h1, .thought-content h2, .thought-content h3')) as HTMLElement[];
+            const viewportCenter = window.innerHeight / 2;
+
+            let closestHeading = null;
+            let smallestDistance = Infinity;
+
+            headings.forEach((heading) => {
+                const rect = heading.getBoundingClientRect();
+                const headingCenter = rect.top + (rect.height / 2);
+                const distanceFromCenter = Math.abs(headingCenter - viewportCenter);
+
+                if (distanceFromCenter < smallestDistance) {
+                    smallestDistance = distanceFromCenter;
+                    closestHeading = heading;
+                }
+            });
+
+            if (closestHeading) {
+                const id = closestHeading.getAttribute('id');
+                if (id && id !== currentActive) {
+                    currentActive = id;
+                    document.querySelectorAll('.toc li').forEach(li => li.classList.remove('active'));
+                    const tocLink = document.querySelector(`.toc nav a[href="#${id}"]`);
+                    const tocItem = tocLink?.closest('li');
+                    tocItem?.classList.add('active');
+                }
+            }
+        }
+
+        window.addEventListener('scroll', updateTOC, { passive: true });
+        updateTOC();
     </script>
 </Layout>
 
