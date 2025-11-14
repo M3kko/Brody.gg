@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import NewsletterForm from '../components/NewsletterForm.astro';
 
 export async function getStaticPaths() {
   const thoughts = await getCollection('thoughts');
@@ -65,6 +66,9 @@ function formatDateWithOrdinal(date: Date) {
                 <Content />
             </div>
         </article>
+        <div class="newsletter-wrapper">
+        <NewsletterForm active={entry.data.active} />
+        </div>
 
         <div class="toc-spacer"></div>
     </main>
@@ -343,6 +347,12 @@ function formatDateWithOrdinal(date: Date) {
         width: 100%;
         height: 100%;
         margin: 0;
+    }
+
+    .newsletter-wrapper {
+        max-width: 500px;
+        margin: 3rem auto;
+        padding: 0 2rem;
     }
 
     @media (max-width: 1024px) {

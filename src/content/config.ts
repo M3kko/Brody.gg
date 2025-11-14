@@ -6,7 +6,7 @@ const thoughts = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.date(),
-    draft: z.boolean().optional().default(false),
+    draft: z.boolean().optional().default(true),
   }),
 });
 
@@ -16,7 +16,7 @@ const projects = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.date(),
-    draft: z.boolean().optional().default(false),
+    draft: z.boolean().optional().default(true),
   }),
 });
 
@@ -26,8 +26,10 @@ const experiments = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.date(),
-    draft: z.boolean().optional().default(false),
+    draft: z.boolean().optional().default(true),
+    active: z.boolean().optional().default(false),
   }),
 });
+
 
 export const collections = { thoughts, projects, experiments };

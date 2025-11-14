@@ -28,7 +28,7 @@
         },
         "draft": {
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "$schema": {
           "type": "string"
