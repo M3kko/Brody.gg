@@ -20,30 +20,33 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        const { data: existing } = await supabase
-            .from('subscribers')
-            .select('*')
-            .eq('email', email)
-            .single();
-
-        if (existing) {
-            if (existing.verified) {
-                return res.status(400).json({ error: 'Email already subscribed' });
-            }
-        }
-
         const verificationToken = crypto.randomUUID();
 
         const { error: dbError } = await supabase
             .from('subscribers')
-            .upsert({
+            .insert({
                 email,
                 verification_token: verificationToken,
                 verified: false,
             });
 
         if (dbError) {
-            return res.status(500).json({ error: 'Failed to save email' });
+            // If email already exists, update the verification token
+            if (dbError.code === '23505') {
+                const { error: updateError } = await supabase
+                    .from('subscribers')
+                    .update({
+                        verification_token: verificationToken,
+                        verified: false,
+                    })
+                    .eq('email', email);
+
+                if (updateError) {
+                    return res.status(500).json({ error: 'Failed to update email' });
+                }
+            } else {
+                return res.status(500).json({ error: 'Failed to save email' });
+            }
         }
 
         const origin = req.headers.origin || `https://${req.headers.host}`;

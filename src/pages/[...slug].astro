@@ -57,6 +57,9 @@ function formatDateWithOrdinal(date: Date) {
         <article class="thought-post" class:list={[collection]}>
             <header class="thought-header">
                 <h1>{entry.data.title}</h1>
+                {entry.data.description && (
+                    <p class="description">{entry.data.description}</p>
+                )}
                 <time datetime={entry.data.date.toISOString()}>
                     {formatDateWithOrdinal(entry.data.date)}
                 </time>
@@ -228,6 +231,14 @@ function formatDateWithOrdinal(date: Date) {
         font-weight: 600;
         line-height: 1.2;
         margin-bottom: 0.5rem;
+    }
+
+    .description {
+        font-size: 1.125rem;
+        font-style: italic;
+        opacity: 0.7;
+        margin-bottom: 1rem;
+        margin-top: 0.5rem;
     }
 
     .projects .thought-header h1 {

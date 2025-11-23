@@ -1,8 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const supabase = createClient(
     process.env.PUBLIC_SUPABASE_URL.trim(),
-    process.env.PUBLIC_SUPABASE_ANON_KEY.trim()
+    process.env.SUPABASE_SERVICE_ROLE_KEY.trim()
 );
 
 async function cleanupUnverifiedEmails() {

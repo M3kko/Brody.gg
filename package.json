@@ -7,7 +7,8 @@
     "build": "astro build && cp -r charms .vercel/output/static/",
     "preview": "astro preview",
     "astro": "astro",
-    "cleanup:emails": "node scripts/cleanup-unverified.js"
+    "cleanup:emails": "node scripts/cleanup-unverified.js",
+    "send:newsletter": "node scripts/send-newsletter.js"
   },
   "dependencies": {
     "@astrojs/vercel": "^9.0.0",
@@ -15,6 +16,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "astro": "^5.15.5",
+    "dotenv": "^17.2.3",
     "resend": "^6.4.2"
   }
 }
