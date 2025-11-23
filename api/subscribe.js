@@ -31,15 +31,23 @@ export default async function handler(req, res) {
             });
 
         if (dbError) {
-            // If email already exists, update the verification token
+            // If email already exists, check if it's verified
             if (dbError.code === '23505') {
-                const { error: updateError } = await supabase
+                // Try to update only unverified emails
+                const { data: updateData, error: updateError } = await supabase
                     .from('subscribers')
                     .update({
                         verification_token: verificationToken,
                         verified: false,
                     })
-                    .eq('email', email);
+                    .eq('email', email)
+                    .eq('verified', false)
+                    .select();
+
+                // If no rows were updated, email is already verified
+                if (!updateError && (!updateData || updateData.length === 0)) {
+                    return res.status(400).json({ error: 'Email already subscribed' });
+                }
 
                 if (updateError) {
                     return res.status(500).json({ error: 'Failed to update email' });
