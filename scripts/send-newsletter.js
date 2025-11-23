@@ -6,7 +6,7 @@ dotenv.config();
 
 const supabase = createClient(
     process.env.PUBLIC_SUPABASE_URL.trim(),
-    process.env.PUBLIC_SUPABASE_ANON_KEY.trim()
+    process.env.SUPABASE_SERVICE_ROLE_KEY.trim()
 );
 
 const resend = new Resend(process.env.RESEND_API_KEY.trim());
@@ -31,26 +31,20 @@ async function sendNewsletter(subject, htmlContent) {
 
         console.log(`Sending newsletter to ${subscribers.length} subscribers...`);
 
-        // Send emails in batches to avoid rate limits
-        const batchSize = 100;
-        for (let i = 0; i < subscribers.length; i += batchSize) {
-            const batch = subscribers.slice(i, i + batchSize);
+        // Send emails at 2 requests per second to respect rate limits
+        for (let i = 0; i < subscribers.length; i++) {
+            await resend.emails.send({
+                from: 'Broderick <newsletter@news.brody.gg>',
+                to: subscribers[i].email,
+                subject: subject,
+                html: htmlContent,
+            });
 
-            const promises = batch.map(subscriber =>
-                resend.emails.send({
-                    from: 'Broderick <newsletter@news.brody.gg>',
-                    to: subscriber.email,
-                    subject: subject,
-                    html: htmlContent,
-                })
-            );
+            console.log(`Sent ${i + 1}/${subscribers.length} emails`);
 
-            await Promise.all(promises);
-            console.log(`Sent batch ${Math.floor(i / batchSize) + 1} (${batch.length} emails)`);
-
-            // Wait a bit between batches to avoid rate limits
-            if (i + batchSize < subscribers.length) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
+            // Wait 500ms between emails (2 requests per second)
+            if (i < subscribers.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 500));
             }
         }
 
@@ -166,5 +160,5 @@ async function sendTestNewsletter() {
     }
 }
 
-// Run test newsletter
-sendTestNewsletter();
+// Run newsletter to all verified subscribers
+sendNewsletter(subject, htmlContent);
