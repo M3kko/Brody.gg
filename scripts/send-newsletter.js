@@ -133,7 +133,7 @@ const htmlContent = `
 
     <p>And yet when MIT media lab posts on X a brand new discovery that could potentially enable one of these technologies, it gets under 20 likes. In comparison a chatgpt wrapper called Jasper AI that does copywriting for you raised 125 million at a 1.5 BILLION dollar valuation.</p>
 
-    <a href="https://brody.gg/thoughts/materialspursuit" class="read-more">Read the full article →</a>
+    <a href="https://brody.gg/materialspursuit" class="read-more">Read the full article →</a>
 
     <div class="footer">
       <p>You're receiving this because you subscribed at <a href="https://brody.gg">brody.gg</a></p>
