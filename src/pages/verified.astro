@@ -1,9 +1,3 @@
----
-const url = Astro.url;
-const alreadyVerified = url.searchParams.get('already') === 'true';
-const error = url.searchParams.get('error');
----
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,24 +78,36 @@ const error = url.searchParams.get('error');
     <div class="container">
         <img src="/assets/svg/triangle.svg" alt="Logo" class="logo">
 
-        {error ? (
-            <>
-                <h1 class="error">Verification Failed</h1>
-                <p>Something went wrong during verification. Please try subscribing again.</p>
-            </>
-        ) : alreadyVerified ? (
-            <>
-                <h1>Already Verified</h1>
-                <p>Your email has already been verified. You're all set!</p>
-            </>
-        ) : (
-            <>
-                <h1>You're All Set!</h1>
-                <p>Thank you for verifying your email. You'll now receive updates on new projects, thoughts, and experiments.</p>
-            </>
-        )}
+        <div id="content">
+            <h1>You're All Set!</h1>
+            <p>Thank you for verifying your email. You'll now receive updates on new projects, thoughts, and experiments.</p>
+        </div>
 
         <a href="/">Return Home</a>
     </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
+        const alreadyVerified = params.get('already') === 'true';
+        const contentDiv = document.getElementById('content');
+
+        if (error === 'expired') {
+            contentDiv.innerHTML = `
+                <h1 class="error">Link Expired</h1>
+                <p>This verification link has expired. Verification links are only valid for 2 hours. Please subscribe again to receive a new verification email.</p>
+            `;
+        } else if (error) {
+            contentDiv.innerHTML = `
+                <h1 class="error">Verification Failed</h1>
+                <p>Something went wrong during verification. Please try subscribing again.</p>
+            `;
+        } else if (alreadyVerified) {
+            contentDiv.innerHTML = `
+                <h1>Already Verified</h1>
+                <p>Your email has already been verified. You're all set!</p>
+            `;
+        }
+    </script>
 </body>
 </html>

@@ -4,9 +4,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && cp -r charms dist/",
+    "build": "astro build && cp -r charms .vercel/output/static/",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "cleanup:emails": "node scripts/cleanup-unverified.js"
   },
   "dependencies": {
     "@astrojs/vercel": "^9.0.0",

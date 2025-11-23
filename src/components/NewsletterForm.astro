@@ -89,57 +89,64 @@ button:disabled {
 </style>
 
 <script>
-    const form = document.getElementById('newsletter-form') as HTMLFormElement;
-    const emailInput = document.getElementById('email-input') as HTMLInputElement;
-    const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('newsletter-form') as HTMLFormElement;
+        const emailInput = document.getElementById('email-input') as HTMLInputElement;
+        const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-      const email = emailInput.value.trim();
-
-      if (!email) return;
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Subscribing...';
-
-      try {
-        const response = await fetch('/api/subscribe', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          submitBtn.textContent = '✓ Plese verify your email!';
-          submitBtn.style.backgroundColor = 'rgba(255, 0, 0, 0.6)';
-          emailInput.value = '';
-          setTimeout(() => {
-            submitBtn.textContent = 'Subscribe';
-            submitBtn.style.backgroundColor = '';
-            submitBtn.disabled = false;
-          }, 3000);
-        } else {
-          submitBtn.textContent = data.error || 'Error!';
-          submitBtn.style.backgroundColor = 'red';
-          setTimeout(() => {
-            submitBtn.textContent = 'Subscribe';
-            submitBtn.style.backgroundColor = '';
-            submitBtn.disabled = false;
-          }, 3000);
+        if (!form || !emailInput || !submitBtn) {
+            console.error('Newsletter form elements not found');
+            return;
         }
-      } catch (error) {
-        submitBtn.textContent = 'Network error!';
-        submitBtn.style.backgroundColor = 'red';
-        setTimeout(() => {
-          submitBtn.textContent = 'Subscribe';
-          submitBtn.style.backgroundColor = '';
-          submitBtn.disabled = false;
-        }, 3000);
-      }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+
+            if (!email) return;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Subscribing...';
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    submitBtn.textContent = '✓ Plese verify your email!';
+                    submitBtn.style.backgroundColor = 'rgba(255, 0, 0, 0.6)';
+                    emailInput.value = '';
+                    setTimeout(() => {
+                        submitBtn.textContent = 'Subscribe';
+                        submitBtn.style.backgroundColor = '';
+                        submitBtn.disabled = false;
+                    }, 3000);
+                } else {
+                    submitBtn.textContent = data.error || 'Error!';
+                    submitBtn.style.backgroundColor = 'red';
+                    setTimeout(() => {
+                        submitBtn.textContent = 'Subscribe';
+                        submitBtn.style.backgroundColor = '';
+                        submitBtn.disabled = false;
+                    }, 3000);
+                }
+            } catch (error) {
+                submitBtn.textContent = 'Network error!';
+                submitBtn.style.backgroundColor = 'red';
+                setTimeout(() => {
+                    submitBtn.textContent = 'Subscribe';
+                    submitBtn.style.backgroundColor = '';
+                    submitBtn.disabled = false;
+                }, 3000);
+            }
+        });
     });
 </script>

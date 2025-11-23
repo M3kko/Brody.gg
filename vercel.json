@@ -23,6 +23,12 @@
       "api/verify.js": {
         "maxDuration": 10
       }
-    }
+    },
+    "crons": [
+      {
+        "path": "/api/cleanup-cron",
+        "schedule": "0 * * * *"
+      }
+    ]
   }
   

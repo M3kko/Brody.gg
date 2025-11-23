@@ -25,11 +25,23 @@ export default async function handler(req, res) {
             .single();
 
         if (findError || !subscriber) {
-            return res.redirect(302, '/?error=invalid_token');
+            return res.redirect(302, '/verified?error=expired');
         }
 
         if (subscriber.verified) {
             return res.redirect(302, '/verified?already=true');
+        }
+
+        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        const createdAt = new Date(subscriber.created_at);
+
+        if (createdAt < twoHoursAgo) {
+            await supabase
+                .from('subscribers')
+                .delete()
+                .eq('verification_token', token);
+
+            return res.redirect(302, '/verified?error=expired');
         }
 
         const { error: updateError } = await supabase
