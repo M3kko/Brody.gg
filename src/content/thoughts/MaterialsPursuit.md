@@ -5,8 +5,6 @@ date: 2025-11-23
 draft: false
 ---
 
-Humanity’s biggest bottleneck. 
-
 Billions are poured into Ai each year, over 400 billion in 2025 alone. Venture capital and consumer attention is constantly focused on solving the next software breakthrough, the next thing to give us more control over the digital world. Yet believe it or not, the reason your phone overheats, electric vehicles cost so much, and fusion is constantly “10 years away”, is not in fact a software problem. 
 
 And yet when MIT media lab posts on X a brand new discovery that could potentially enable one of these technologies, it gets under 20 likes. In comparison a chatgpt wrapper called Jasper AI that does copywriting for you raised 125 million at a 1.5 BILLION dollar valuation. 
