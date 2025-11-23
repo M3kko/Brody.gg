@@ -32,10 +32,10 @@ export default async function handler(req, res) {
             return res.redirect(302, '/verified?already=true');
         }
 
-        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         const createdAt = new Date(subscriber.created_at);
 
-        if (createdAt < twoHoursAgo) {
+        if (createdAt < twentyFourHoursAgo) {
             await supabase
                 .from('subscribers')
                 .delete()

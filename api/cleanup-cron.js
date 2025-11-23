@@ -16,13 +16,13 @@ export default async function handler(req, res) {
     }
 
     try {
-        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
         const { data, error } = await supabase
             .from('subscribers')
             .delete()
             .eq('verified', false)
-            .lt('created_at', twoHoursAgo)
+            .lt('created_at', twentyFourHoursAgo)
             .select();
 
         if (error) {
