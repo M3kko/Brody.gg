@@ -88,16 +88,25 @@ button:disabled {
 
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('newsletter-form') as HTMLFormElement;
-        const emailInput = document.getElementById('email-input') as HTMLInputElement;
-        const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+<script is:inline>
+    (function initNewsletterForm() {
+        const form = document.getElementById('newsletter-form');
+        const emailInput = document.getElementById('email-input');
+        const submitBtn = form?.querySelector('button[type="submit"]');
 
         if (!form || !emailInput || !submitBtn) {
-            console.error('Newsletter form elements not found');
+            // Elements not ready yet, try again soon
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initNewsletterForm);
+            } else {
+                setTimeout(initNewsletterForm, 100);
+            }
             return;
         }
+
+        // Prevent double initialization
+        if (form.dataset.initialized) return;
+        form.dataset.initialized = 'true';
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -148,5 +157,5 @@ button:disabled {
                 }, 3000);
             }
         });
-    });
+    })();
 </script>
