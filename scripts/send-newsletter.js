@@ -11,52 +11,10 @@ const supabase = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY.trim());
 
-async function sendNewsletter(subject, htmlContent) {
-    try {
-        // Get all verified subscribers
-        const { data: subscribers, error } = await supabase
-            .from('subscribers')
-            .select('email')
-            .eq('verified', true);
+// Your Resend Audience ID (created once, reused for all newsletters)
+const AUDIENCE_ID = '1563b4e7-a6fb-43e3-a4d7-56041efb7442';
 
-        if (error) {
-            console.error('Error fetching subscribers:', error);
-            process.exit(1);
-        }
-
-        if (!subscribers || subscribers.length === 0) {
-            console.log('No verified subscribers found');
-            process.exit(0);
-        }
-
-        console.log(`Sending newsletter to ${subscribers.length} subscribers...`);
-
-        // Send emails at 2 requests per second to respect rate limits
-        for (let i = 0; i < subscribers.length; i++) {
-            await resend.emails.send({
-                from: 'Broderick <newsletter@news.brody.gg>',
-                to: subscribers[i].email,
-                subject: subject,
-                html: htmlContent,
-            });
-
-            console.log(`Sent ${i + 1}/${subscribers.length} emails`);
-
-            // Wait 500ms between emails (2 requests per second)
-            if (i < subscribers.length - 1) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-        }
-
-        console.log('Newsletter sent successfully!');
-        process.exit(0);
-    } catch (error) {
-        console.error('Error sending newsletter:', error);
-        process.exit(1);
-    }
-}
-
-// Example usage:
+// Newsletter content - UPDATE THIS FOR EACH NEWSLETTER
 const subject = "In Pursuit of Better Materials";
 const htmlContent = `
 <!DOCTYPE html>
@@ -123,7 +81,7 @@ const htmlContent = `
     <h1>In Pursuit of Better Materials</h1>
     <p class="subtitle">Humanity's biggest bottleneck.</p>
 
-    <p>Billions are poured into Ai each year, over 400 billion in 2025 alone. Venture capital and consumer attention is constantly focused on solving the next software breakthrough, the next thing to give us more control over the digital world. Yet believe it or not, the reason your phone overheats, electric vehicles cost so much, and fusion is constantly "10 years away", is not in fact a software problem.</p>
+    <p>Billions are poured into AI each year, over 400 billion in 2025 alone. Venture capital and consumer attention is constantly focused on solving the next software breakthrough, the next thing to give us more control over the digital world. Yet believe it or not, the reason your phone overheats, electric vehicles cost so much, and fusion is constantly "10 years away", is not in fact a software problem.</p>
 
     <p>And yet when MIT media lab posts on X a brand new discovery that could potentially enable one of these technologies, it gets under 20 likes. In comparison a chatgpt wrapper called Jasper AI that does copywriting for you raised 125 million at a 1.5 BILLION dollar valuation.</p>
 
@@ -131,19 +89,141 @@ const htmlContent = `
 
     <div class="footer">
       <p>You're receiving this because you subscribed at <a href="https://brody.gg">brody.gg</a></p>
+      <p><a href="{{{RESEND_UNSUBSCRIBE_URL}}}">Unsubscribe</a></p>
     </div>
   </div>
 </body>
 </html>
 `;
 
-// TEST MODE - Only send to me@brody.gg
-async function sendTestNewsletter() {
+async function syncContactsToResend() {
     try {
-        const { error } = await resend.emails.send({
+        console.log('Syncing contacts from Supabase to Resend...');
+
+        // Get all verified subscribers
+        const { data: subscribers, error } = await supabase
+            .from('subscribers')
+            .select('email')
+            .eq('verified', true);
+
+        if (error) {
+            console.error('Error fetching subscribers:', error);
+            return false;
+        }
+
+        if (!subscribers || subscribers.length === 0) {
+            console.log('No verified subscribers found');
+            return false;
+        }
+
+        console.log(`Found ${subscribers.length} verified subscribers`);
+
+        // Add contacts to Resend (respecting rate limits: 2 requests per second)
+        let added = 0;
+        let existing = 0;
+
+        for (let i = 0; i < subscribers.length; i++) {
+            try {
+                const { data, error } = await resend.contacts.create({
+                    email: subscribers[i].email,
+                    unsubscribed: false,
+                });
+
+                if (error) {
+                    if (error.message && error.message.includes('already exists')) {
+                        existing++;
+                    } else {
+                        console.error(`Failed to add ${subscribers[i].email}:`, error);
+                    }
+                } else {
+                    added++;
+                }
+
+                // Wait 500ms between requests (2 requests per second)
+                if (i < subscribers.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            } catch (err) {
+                console.error(`Error adding contact ${subscribers[i].email}:`, err);
+            }
+        }
+
+        console.log(`Sync complete: ${added} new, ${existing} existing, ${subscribers.length} total\n`);
+        return true;
+
+    } catch (error) {
+        console.error('Error syncing contacts:', error);
+        return false;
+    }
+}
+
+async function sendNewsletter(testMode = false, testEmail = null) {
+    try {
+        console.log('=== Newsletter Send ===\n');
+
+        // Step 1: Sync contacts from Supabase
+        const synced = await syncContactsToResend();
+        if (!synced) {
+            console.error('Failed to sync contacts, aborting send');
+            process.exit(1);
+        }
+
+        // Step 2: Create and send broadcast
+        console.log('Creating broadcast...');
+
+        const broadcastData = {
+            audienceId: AUDIENCE_ID,
             from: 'Broderick <newsletter@news.brody.gg>',
-            to: 'me@brody.gg',
             subject: subject,
+            html: htmlContent,
+        };
+
+        const { data, error } = await resend.broadcasts.create(broadcastData);
+
+        if (error) {
+            console.error('Error creating broadcast:', error);
+            process.exit(1);
+        }
+
+        console.log('Broadcast created successfully');
+        console.log('Broadcast ID:', data.id);
+
+        // Step 3: Send the broadcast
+        console.log('\nSending broadcast...');
+
+        const { data: sendData, error: sendError } = await resend.broadcasts.send(data.id);
+
+        if (sendError) {
+            console.error('Error sending broadcast:', sendError);
+            process.exit(1);
+        }
+
+        console.log('✓ Newsletter sent successfully!');
+
+        if (testMode) {
+            console.log(`\nTest mode: Broadcast sent to ${testEmail}`);
+        } else {
+            console.log('\nBroadcast sent to all subscribers in audience');
+        }
+
+        process.exit(0);
+
+    } catch (error) {
+        console.error('Error sending newsletter:', error);
+        process.exit(1);
+    }
+}
+
+// TEST MODE - Send to single email
+async function sendTestNewsletter(testEmail) {
+    try {
+        console.log('=== Test Newsletter Send ===\n');
+        console.log(`Sending test to: ${testEmail}\n`);
+
+        const { data, error } = await resend.emails.send({
+            from: 'Broderick <newsletter@news.brody.gg>',
+            to: testEmail,
+            subject: `[TEST] ${subject}`,
             html: htmlContent,
         });
 
@@ -152,13 +232,17 @@ async function sendTestNewsletter() {
             process.exit(1);
         }
 
-        console.log('Test newsletter sent to me@brody.gg!');
+        console.log('✓ Test newsletter sent successfully!');
         process.exit(0);
+
     } catch (error) {
         console.error('Unexpected error:', error);
         process.exit(1);
     }
 }
 
-// Run newsletter to all verified subscribers
-sendNewsletter(subject, htmlContent);
+// Run test newsletter to me@brody.gg
+sendTestNewsletter('me@brody.gg');
+
+// To send to all subscribers, comment out the line above and uncomment this:
+// sendNewsletter();
