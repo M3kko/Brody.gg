@@ -7,12 +7,10 @@
     "build": "astro build && cp -r charms .vercel/output/static/",
     "preview": "astro preview",
     "astro": "astro",
-    "cleanup:emails": "node scripts/cleanup-unverified.js",
     "send:newsletter": "node scripts/send-newsletter.js"
   },
   "dependencies": {
     "@astrojs/vercel": "^9.0.0",
-    "@supabase/supabase-js": "^2.81.1",
     "@vercel/analytics": "^1.5.0",
     "@vercel/og": "^0.8.5",
     "@vercel/speed-insights": "^1.2.0",
