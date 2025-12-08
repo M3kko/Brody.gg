@@ -1,17 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL.trim(),
-    process.env.SUPABASE_SERVICE_ROLE_KEY.trim()
-);
-
 const resend = new Resend(process.env.RESEND_API_KEY.trim());
 
-// Your Resend Audience ID (created once, reused for all newsletters)
+// Your Resend Audience ID
 const AUDIENCE_ID = '1563b4e7-a6fb-43e3-a4d7-56041efb7442';
 
 // Newsletter content - UPDATE THIS FOR EACH NEWSLETTER
@@ -96,89 +90,19 @@ const htmlContent = `
 </html>
 `;
 
-async function syncContactsToResend() {
-    try {
-        console.log('Syncing contacts from Supabase to Resend...');
-
-        // Get all verified subscribers
-        const { data: subscribers, error } = await supabase
-            .from('subscribers')
-            .select('email')
-            .eq('verified', true);
-
-        if (error) {
-            console.error('Error fetching subscribers:', error);
-            return false;
-        }
-
-        if (!subscribers || subscribers.length === 0) {
-            console.log('No verified subscribers found');
-            return false;
-        }
-
-        console.log(`Found ${subscribers.length} verified subscribers`);
-
-        // Add contacts to Resend (respecting rate limits: 2 requests per second)
-        let added = 0;
-        let existing = 0;
-
-        for (let i = 0; i < subscribers.length; i++) {
-            try {
-                const { data, error } = await resend.contacts.create({
-                    email: subscribers[i].email,
-                    unsubscribed: false,
-                });
-
-                if (error) {
-                    if (error.message && error.message.includes('already exists')) {
-                        existing++;
-                    } else {
-                        console.error(`Failed to add ${subscribers[i].email}:`, error);
-                    }
-                } else {
-                    added++;
-                }
-
-                // Wait 500ms between requests (2 requests per second)
-                if (i < subscribers.length - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
-            } catch (err) {
-                console.error(`Error adding contact ${subscribers[i].email}:`, err);
-            }
-        }
-
-        console.log(`Sync complete: ${added} new, ${existing} existing, ${subscribers.length} total\n`);
-        return true;
-
-    } catch (error) {
-        console.error('Error syncing contacts:', error);
-        return false;
-    }
-}
-
-async function sendNewsletter(testMode = false, testEmail = null) {
+async function sendNewsletter() {
     try {
         console.log('=== Newsletter Send ===\n');
 
-        // Step 1: Sync contacts from Supabase
-        const synced = await syncContactsToResend();
-        if (!synced) {
-            console.error('Failed to sync contacts, aborting send');
-            process.exit(1);
-        }
-
-        // Step 2: Create and send broadcast
+        // Create broadcast
         console.log('Creating broadcast...');
 
-        const broadcastData = {
+        const { data, error } = await resend.broadcasts.create({
             audienceId: AUDIENCE_ID,
             from: 'Broderick <newsletter@news.brody.gg>',
             subject: subject,
             html: htmlContent,
-        };
-
-        const { data, error } = await resend.broadcasts.create(broadcastData);
+        });
 
         if (error) {
             console.error('Error creating broadcast:', error);
@@ -188,10 +112,10 @@ async function sendNewsletter(testMode = false, testEmail = null) {
         console.log('Broadcast created successfully');
         console.log('Broadcast ID:', data.id);
 
-        // Step 3: Send the broadcast
+        // Send the broadcast
         console.log('\nSending broadcast...');
 
-        const { data: sendData, error: sendError } = await resend.broadcasts.send(data.id);
+        const { error: sendError } = await resend.broadcasts.send(data.id);
 
         if (sendError) {
             console.error('Error sending broadcast:', sendError);
@@ -199,13 +123,7 @@ async function sendNewsletter(testMode = false, testEmail = null) {
         }
 
         console.log('✓ Newsletter sent successfully!');
-
-        if (testMode) {
-            console.log(`\nTest mode: Broadcast sent to ${testEmail}`);
-        } else {
-            console.log('\nBroadcast sent to all subscribers in audience');
-        }
-
+        console.log('Broadcast sent to all subscribers in audience');
         process.exit(0);
 
     } catch (error) {

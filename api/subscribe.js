@@ -1,12 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-
-const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL.trim(),
-    process.env.PUBLIC_SUPABASE_ANON_KEY.trim()
-);
+import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY.trim());
+
+function createVerificationToken(email) {
+    const expires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    const data = `${email}:${expires}`;
+    const signature = crypto
+        .createHmac('sha256', process.env.RESEND_API_KEY.trim())
+        .update(data)
+        .digest('hex');
+    return Buffer.from(`${data}:${signature}`).toString('base64url');
+}
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -20,45 +25,9 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        const verificationToken = crypto.randomUUID();
-
-        const { error: dbError } = await supabase
-            .from('subscribers')
-            .insert({
-                email,
-                verification_token: verificationToken,
-                verified: false,
-            });
-
-        if (dbError) {
-            // If email already exists, check if it's verified
-            if (dbError.code === '23505') {
-                // Try to update only unverified emails
-                const { data: updateData, error: updateError } = await supabase
-                    .from('subscribers')
-                    .update({
-                        verification_token: verificationToken,
-                        verified: false,
-                    })
-                    .eq('email', email)
-                    .eq('verified', false)
-                    .select();
-
-                // If no rows were updated, email is already verified
-                if (!updateError && (!updateData || updateData.length === 0)) {
-                    return res.status(400).json({ error: 'Email already subscribed' });
-                }
-
-                if (updateError) {
-                    return res.status(500).json({ error: 'Failed to update email' });
-                }
-            } else {
-                return res.status(500).json({ error: 'Failed to save email' });
-            }
-        }
-
+        const token = createVerificationToken(email);
         const origin = req.headers.origin || `https://${req.headers.host}`;
-        const verificationUrl = `${origin}/api/verify?token=${verificationToken}`;
+        const verificationUrl = `${origin}/api/verify?token=${token}`;
 
         const { error: emailError } = await resend.emails.send({
             from: 'Broderick <newsletter@news.brody.gg>',
@@ -116,6 +85,7 @@ export default async function handler(req, res) {
                 <img src="https://www.brody.gg/assets/svg/triangle.svg" alt="Logo" class="logo">
                 <h2>Hey, it's Broderick!</h2>
                 <p>Thank you for subscribing to my newsletter. Please click below to verify that this is really you :)</p>
+                <p class="footer">This link expires in 15 minutes.</p>
                 <a href="${verificationUrl}" class="button">Verify Email</a>
                 <p class="footer">If you didn't request this, you can safely ignore this email.</p>
               </div>

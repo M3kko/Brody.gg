@@ -1,12 +1,37 @@
-import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
+import crypto from 'crypto';
 
-const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL.trim(),
-    process.env.SUPABASE_SERVICE_ROLE_KEY.trim()
-);
+const resend = new Resend(process.env.RESEND_API_KEY.trim());
+const AUDIENCE_ID = '1563b4e7-a6fb-43e3-a4d7-56041efb7442';
+
+function verifyToken(token) {
+    try {
+        const decoded = Buffer.from(token, 'base64url').toString();
+        const [email, expires, signature] = decoded.split(':');
+
+        // Verify signature
+        const data = `${email}:${expires}`;
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.RESEND_API_KEY.trim())
+            .update(data)
+            .digest('hex');
+
+        if (signature !== expectedSignature) {
+            return { valid: false, reason: 'invalid' };
+        }
+
+        // Check expiration
+        if (Date.now() > parseInt(expires)) {
+            return { valid: false, reason: 'expired' };
+        }
+
+        return { valid: true, email };
+    } catch {
+        return { valid: false, reason: 'invalid' };
+    }
+}
 
 export default async function handler(req, res) {
-    // Only allow GET requests
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -17,42 +42,24 @@ export default async function handler(req, res) {
         return res.redirect(302, '/?error=invalid_token');
     }
 
+    const result = verifyToken(token);
+
+    if (!result.valid) {
+        return res.redirect(302, `/verified?error=${result.reason}`);
+    }
+
     try {
-        const { data: subscriber, error: findError } = await supabase
-            .from('subscribers')
-            .select('*')
-            .eq('verification_token', token)
-            .single();
+        // Add contact to Resend audience
+        const { error } = await resend.contacts.create({
+            audienceId: AUDIENCE_ID,
+            email: result.email,
+        });
 
-        if (findError || !subscriber) {
-            return res.redirect(302, '/verified?error=expired');
-        }
-
-        if (subscriber.verified) {
-            return res.redirect(302, '/verified?already=true');
-        }
-
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const createdAt = new Date(subscriber.created_at);
-
-        if (createdAt < twentyFourHoursAgo) {
-            await supabase
-                .from('subscribers')
-                .delete()
-                .eq('verification_token', token);
-
-            return res.redirect(302, '/verified?error=expired');
-        }
-
-        const { error: updateError } = await supabase
-            .from('subscribers')
-            .update({
-                verified: true,
-                verified_at: new Date().toISOString(),
-            })
-            .eq('verification_token', token);
-
-        if (updateError) {
+        if (error) {
+            // If already exists, that's fine - they're already subscribed
+            if (error.message?.includes('already exists')) {
+                return res.redirect(302, '/verified?already=true');
+            }
             return res.redirect(302, '/verified?error=failed');
         }
 
