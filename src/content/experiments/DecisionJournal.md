@@ -1,7 +1,7 @@
 ---
 title: "I Used a Decision Journal for 30 Days"
 description: "A 1 month experiment to make decision making more analytical."
-date: 2025-11-11
+date: 2025-12-08
 draft: false
 ---
 

@@ -162,7 +162,7 @@ async function sendTestNewsletter(testEmail) {
 }
 
 // Run test newsletter to me@brody.gg
-sendTestNewsletter('me@brody.gg');
+// sendTestNewsletter('me@brody.gg');
 
 // To send to all subscribers, comment out the line above and uncomment this:
-// sendNewsletter();
+sendNewsletter();
