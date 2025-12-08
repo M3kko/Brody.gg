@@ -42,3 +42,5 @@ It's also okay to not make a definitive decision after your first entry. Sometim
 Always be curious about your thoughts. When using the journal try to find the core thing driving the decision and challenge its accuracy outside of your emotions. That's not to say you should ignore the way you feel about a decision, but the whole point of this journal is to try and better understand why you're making a decision, so that future ones can be better informed.
 
 Adding in little notes about external factors that changed your mind or almost did can also be extremely useful later on. For example a tiny note about an article, or something your mom said, can all give you more information for your future decisions.
+
+A month in, the biggest change isn't that I make better decisions. It's that I actually know why I made them. And when something doesn't work out, I can go back and see exactly where my thinking went wrong, not the story I tried to convince myself later. Which in itself is valuable, and better decisions will only follow once I better understand these thought patterns.
