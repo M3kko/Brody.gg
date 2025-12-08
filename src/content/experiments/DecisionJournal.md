@@ -2,7 +2,7 @@
 title: "I Used a Decision Journal for 30 Days"
 description: "A 1 month experiment to make decision making more analytical."
 date: 2025-11-11
-draft: true
+draft: false
 ---
 
 Our brains are terrible narrators. In fact, they lie to us... quite often. Either by amplifying our negatives through a "sky is falling" effect where we perceive things as much worse. Or through self preservation, where our inner narrator attempts to make things seem in our favor by omitting certain details and by bending the truth.
