@@ -81,13 +81,11 @@ export default async function handler(req, res) {
 
                 <p>Hey!</p>
 
-                <p>Thanks for subscribing — it genuinely means a lot that you're interested in what I'm working on.</p>
+                <p>Thanks for subscribing, it genuinely means a lot that you're interested in what I'm working on.</p>
 
-                <p>I send updates once or twice a month, usually when I finish a project, wrap up an experiment, or have something I think is worth sharing. No fluff, no spam.</p>
+                <p>I send updates once or twice a month, usually when I finish a project, wrap up an experiment, or have something I think is worth sharing.</p>
 
                 <p>In the meantime, feel free to poke around the site. The experiments page is where I document my random productivity challenges and things I'm testing out. Projects has the stuff I've actually shipped.</p>
-
-                <p>If you ever want to chat or have questions about anything, just reply to this email. I read everything.</p>
 
                 <p class="signature">– Broderick</p>
 
