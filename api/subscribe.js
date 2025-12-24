@@ -27,6 +27,81 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Failed to subscribe' });
         }
 
+        await resend.emails.send({
+            from: 'Broderick <newsletter@news.brody.gg>',
+            to: email,
+            subject: 'Hey, welcome!',
+            html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+                body {
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  background-color: #F5F1E8;
+                  padding: 40px 20px;
+                  color: #1a1a1a;
+                }
+                .container {
+                  max-width: 500px;
+                  margin: 0 auto;
+                  background-color: white;
+                  padding: 40px;
+                  border-radius: 8px;
+                }
+                .logo {
+                  width: 36px;
+                  height: 36px;
+                  margin-bottom: 24px;
+                }
+                p {
+                  font-size: 16px;
+                  line-height: 1.7;
+                  margin-bottom: 16px;
+                }
+                .signature {
+                  margin-top: 32px;
+                }
+                .links {
+                  margin-top: 24px;
+                  padding-top: 24px;
+                  border-top: 1px solid rgba(0,0,0,0.1);
+                  font-size: 14px;
+                }
+                .links a {
+                  color: #FF0000;
+                  text-decoration: none;
+                  margin-right: 16px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <img src="https://www.brody.gg/assets/svg/triangle.svg" alt="Logo" class="logo">
+
+                <p>Hey!</p>
+
+                <p>Thanks for subscribing — it genuinely means a lot that you're interested in what I'm working on.</p>
+
+                <p>I send updates once or twice a month, usually when I finish a project, wrap up an experiment, or have something I think is worth sharing. No fluff, no spam.</p>
+
+                <p>In the meantime, feel free to poke around the site. The experiments page is where I document my random productivity challenges and things I'm testing out. Projects has the stuff I've actually shipped.</p>
+
+                <p>If you ever want to chat or have questions about anything, just reply to this email. I read everything.</p>
+
+                <p class="signature">– Broderick</p>
+
+                <div class="links">
+                  <a href="https://brody.gg/projects">Projects</a>
+                  <a href="https://brody.gg/experiments">Experiments</a>
+                  <a href="https://brody.gg/about">About</a>
+                </div>
+              </div>
+            </body>
+            </html>
+            `,
+        });
+
         return res.status(200).json({ message: 'Successfully subscribed!' });
 
     } catch (error) {
