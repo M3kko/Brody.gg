@@ -15,15 +15,25 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
+        // Check if contact already exists
+        const { data: existingContacts } = await resend.contacts.list({
+            audienceId: AUDIENCE_ID,
+        });
+
+        const alreadySubscribed = existingContacts?.data?.some(
+            contact => contact.email.toLowerCase() === email.toLowerCase()
+        );
+
+        if (alreadySubscribed) {
+            return res.status(200).json({ message: 'You\'re already subscribed!' });
+        }
+
         const { error } = await resend.contacts.create({
             audienceId: AUDIENCE_ID,
             email: email,
         });
 
         if (error) {
-            if (error.message?.includes('already exists')) {
-                return res.status(200).json({ message: 'You\'re already subscribed!' });
-            }
             return res.status(500).json({ error: 'Failed to subscribe' });
         }
 
