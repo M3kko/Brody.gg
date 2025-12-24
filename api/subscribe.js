@@ -20,21 +20,32 @@ export default async function handler(req, res) {
             audienceId: AUDIENCE_ID,
         });
 
-        const alreadySubscribed = existingContacts?.data?.some(
+        const existingContact = existingContacts?.data?.find(
             contact => contact.email.toLowerCase() === email.toLowerCase()
         );
 
-        if (alreadySubscribed) {
-            return res.status(200).json({ message: 'You\'re already subscribed!' });
-        }
+        if (existingContact) {
+            // If unsubscribed, resubscribe them
+            if (existingContact.unsubscribed) {
+                await resend.contacts.update({
+                    audienceId: AUDIENCE_ID,
+                    id: existingContact.id,
+                    unsubscribed: false,
+                });
+                // Continue to send welcome email below
+            } else {
+                return res.status(200).json({ message: 'You\'re already subscribed!' });
+            }
+        } else {
+            // Create new contact
+            const { error } = await resend.contacts.create({
+                audienceId: AUDIENCE_ID,
+                email: email,
+            });
 
-        const { error } = await resend.contacts.create({
-            audienceId: AUDIENCE_ID,
-            email: email,
-        });
-
-        if (error) {
-            return res.status(500).json({ error: 'Failed to subscribe' });
+            if (error) {
+                return res.status(500).json({ error: 'Failed to subscribe' });
+            }
         }
 
         await resend.emails.send({
