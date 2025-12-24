@@ -8,7 +8,6 @@
 
 - Framework: https://astro.build v5.15.5
 - Deployment: https://vercel.com with serverless functions
-- Database: https://supabase.com
 - Email: https://resend.com
 - Analytics: Vercel Analytics & Speed Insights
 

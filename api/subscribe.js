@@ -1,17 +1,7 @@
 import { Resend } from 'resend';
-import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY.trim());
-
-function createVerificationToken(email) {
-    const expires = Date.now() + 15 * 60 * 1000; // 15 minutes
-    const data = `${email}:${expires}`;
-    const signature = crypto
-        .createHmac('sha256', process.env.RESEND_API_KEY.trim())
-        .update(data)
-        .digest('hex');
-    return Buffer.from(`${data}:${signature}`).toString('base64url');
-}
+const AUDIENCE_ID = '1563b4e7-a6fb-43e3-a4d7-56041efb7442';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -25,80 +15,19 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        const token = createVerificationToken(email);
-        const origin = req.headers.origin || `https://${req.headers.host}`;
-        const verificationUrl = `${origin}/api/verify?token=${token}`;
-
-        const { error: emailError } = await resend.emails.send({
-            from: 'Broderick <newsletter@news.brody.gg>',
-            to: email,
-            subject: 'Verify your newsletter subscription',
-            html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <style>
-                body {
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                  background-color: #F5F1E8;
-                  padding: 40px 20px;
-                }
-                .container {
-                  max-width: 500px;
-                  margin: 0 auto;
-                  background-color: white;
-                  padding: 40px;
-                  border-radius: 8px;
-                }
-                .logo {
-                  width: 48px;
-                  height: 48px;
-                  margin-bottom: 20px;
-                }
-                h2 {
-                  color: #1a1a1a;
-                  margin-bottom: 16px;
-                }
-                p {
-                  color: #1a1a1a;
-                  line-height: 1.6;
-                  margin-bottom: 24px;
-                }
-                .button {
-                  display: inline-block;
-                  background-color: #FF0000;
-                  color: white;
-                  padding: 12px 24px;
-                  text-decoration: none;
-                  border-radius: 6px;
-                  font-weight: 500;
-                }
-                .footer {
-                  margin-top: 24px;
-                  font-size: 14px;
-                  opacity: 0.7;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <img src="https://www.brody.gg/assets/svg/triangle.svg" alt="Logo" class="logo">
-                <h2>Hey, it's Broderick!</h2>
-                <p>Thank you for subscribing to my newsletter. Please click below to verify that this is really you :)</p>
-                <p class="footer">This link expires in 15 minutes.</p>
-                <a href="${verificationUrl}" class="button">Verify Email</a>
-                <p class="footer">If you didn't request this, you can safely ignore this email.</p>
-              </div>
-            </body>
-            </html>
-            `,
+        const { error } = await resend.contacts.create({
+            audienceId: AUDIENCE_ID,
+            email: email,
         });
 
-        if (emailError) {
-            return res.status(500).json({ error: 'Failed to send verification email' });
+        if (error) {
+            if (error.message?.includes('already exists')) {
+                return res.status(200).json({ message: 'You\'re already subscribed!' });
+            }
+            return res.status(500).json({ error: 'Failed to subscribe' });
         }
 
-        return res.status(200).json({ message: 'Sent! Please check your inbox to verify your email' });
+        return res.status(200).json({ message: 'Successfully subscribed!' });
 
     } catch (error) {
         return res.status(500).json({ error: 'Something went wrong' });

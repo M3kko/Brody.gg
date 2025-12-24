@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && cp -r charms .vercel/output/static/",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "send:newsletter": "node scripts/send-newsletter.js"
