@@ -48,7 +48,10 @@ export default async function handler(req, res) {
             }
         }
 
-        await resend.emails.send({
+        // Delay to avoid Resend rate limit (2 req/sec)
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        const { error: emailError } = await resend.emails.send({
             from: 'Broderick <newsletter@news.brody.gg>',
             to: email,
             subject: 'Hey, welcome!',
@@ -120,6 +123,10 @@ export default async function handler(req, res) {
             </html>
             `,
         });
+
+        if (emailError) {
+            console.error('Welcome email failed:', emailError);
+        }
 
         return res.status(200).json({ message: 'Successfully subscribed!' });
 
