@@ -278,6 +278,16 @@ body {
     display: none;
 }
 
+[data-theme="dark"] .theme-toggle .theme-icon {
+    filter: invert(1);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-toggle .theme-icon {
+        filter: invert(1);
+    }
+}
+
 .theme-toggle .moon {
     display: block;
 }
