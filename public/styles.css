@@ -20,6 +20,29 @@
     --bg: #F5F1E8;
     --text: #1a1a1a;
     --accent: #FF0000;
+    --code-bg: rgba(0, 0, 0, 0.05);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    --bg: #1a1a1a;
+    --text: #e5e5e5;
+    --accent: #FF6B6B;
+    --code-bg: rgba(255, 255, 255, 0.08);
+    --border-color: rgba(255, 255, 255, 0.15);
+    --shadow: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #1a1a1a;
+        --text: #e5e5e5;
+        --accent: #FF6B6B;
+        --code-bg: rgba(255, 255, 255, 0.08);
+        --border-color: rgba(255, 255, 255, 0.15);
+        --shadow: rgba(0, 0, 0, 0.3);
+    }
 }
 
 *{
@@ -230,5 +253,56 @@ body {
 .about .hero h1 {
     font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
     font-size: clamp(2rem, 4vw, 2.5rem);
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 100;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.theme-toggle:hover {
+    opacity: 1;
+}
+
+.theme-toggle .theme-icon {
+    width: 24px;
+    height: 24px;
+    display: none;
+}
+
+.theme-toggle .moon {
+    display: block;
+}
+
+[data-theme="dark"] .theme-toggle .moon {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle .sun {
+    display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-toggle .moon {
+        display: none;
+    }
+    :root:not([data-theme="light"]) .theme-toggle .sun {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .theme-toggle {
+        top: 2rem;
+        right: 1.5rem;
+    }
 }
 
