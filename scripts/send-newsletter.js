@@ -9,7 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY.trim());
 const AUDIENCE_ID = '1563b4e7-a6fb-43e3-a4d7-56041efb7442';
 
 // Newsletter content - UPDATE THIS FOR EACH NEWSLETTER
-const subject = "I Used a Decision Journal for 30 Days";
+const subject = "2025";
 const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -72,16 +72,22 @@ const htmlContent = `
 </head>
 <body>
   <div class="container">
-    <h1>I Used a Decision Journal for 30 Days</h1>
-    <p class="subtitle">A 1 month experiment to make decision making more analytical.</p>
+    <h1>2025</h1>
+    <p class="subtitle">A reflection on 2025</p>
 
-    <p>Our brains are terrible narrators. In fact, they lie to us... quite often. Either by amplifying our negatives through a "sky is falling" effect, or through self preservation where our inner narrator bends the truth to make things seem in our favor.</p>
+    <p>Ever since I was a little kid, I have had a weird obsession with the number 5, so naturally I was always obsessing over the year 2025. For some reason, I had it in my mind that "2025 would be my year" because to a 7 year old's brain that <em>just</em> makes sense.</p>
 
-    <p>This creates a disconnect in <em>why</em> we made a decision, and the <em>result</em> of that decision. If we can't accurately remember why we decided something, then we can't learn the right lessons from how it turned out. Effectively corrupting our own feedback loop.</p>
+    <p>But then the year actually came. And I woke up on my 16th birthday, realizing I still had all the same ambitions and dreams from when I was a little kid. The same ambitions and dreams, because I really hadn't made much progress towards them.</p>
 
-    <p>This is why a month ago I started using a decision journal. It sounds weird right? But it has proven extremely useful in my life.</p>
+    <p>I suddenly realized that if I just kept daydreaming, just kept thinking, then I would never amount to anything close to my dreams or ambitions. And then I would be 80 years old one day on my death bed, with nothing but regret because I hadn't accomplished a single thing besides dream.</p>
 
-    <a href="https://brody.gg/decisionjournal" class="read-more">Read the full article →</a>
+    <p>Now this sounds pretty brutal, but for some reason it actually worked. It worked a bit <em>too</em> well, in that I spent a good portion of what was supposed to be a ski trip, focused on coding and designing UI's in Figma.</p>
+
+    <p>But I was determined to make this year about accomplishing my goals, working towards my dreams, and most importantly creating the discipline for myself to be able to do this for the rest of my life.</p>
+
+    <p>So here's the honest story of how that went.</p>
+
+    <a href="https://brody.gg/2025" class="read-more">Read the full article →</a>
 
     <div class="footer">
       <p>You're receiving this because you subscribed at <a href="https://brody.gg">brody.gg</a></p>
