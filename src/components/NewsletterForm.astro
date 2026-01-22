@@ -117,6 +117,7 @@ button:disabled {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ email }),
+                    keepalive: true, // Continue request even if user leaves page
                 });
 
                 const data = await response.json();
