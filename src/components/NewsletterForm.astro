@@ -89,20 +89,12 @@ button:disabled {
 </style>
 
 <script is:inline>
-    (function initNewsletterForm() {
+    function initNewsletterForm() {
         const form = document.getElementById('newsletter-form');
         const emailInput = document.getElementById('email-input');
         const submitBtn = form?.querySelector('button[type="submit"]');
 
-        if (!form || !emailInput || !submitBtn) {
-            // Elements not ready yet, try again soon
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initNewsletterForm);
-            } else {
-                setTimeout(initNewsletterForm, 100);
-            }
-            return;
-        }
+        if (!form || !emailInput || !submitBtn) return;
 
         // Prevent double initialization
         if (form.dataset.initialized) return;
@@ -157,5 +149,9 @@ button:disabled {
                 }, 3000);
             }
         });
-    })();
+    }
+
+    // Run on initial load and after View Transitions navigation
+    initNewsletterForm();
+    document.addEventListener('astro:page-load', initNewsletterForm);
 </script>
