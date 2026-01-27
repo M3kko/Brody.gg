@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://brody.gg/sitemap-index.xml

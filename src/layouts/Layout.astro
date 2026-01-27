@@ -15,12 +15,38 @@ const isBlogPost = currentPath !== '/' && currentPath !== '/thoughts' && current
 const isExperiments = currentPath === '/experiments' || currentPath === '/experiments/';
 const isProjects = currentPath === '/projects' || currentPath === '/projects/';
 const isAbout = currentPath === '/about' || currentPath === '/about/';
+const isHome = currentPath === '/' || currentPath === '';
 
 // Default OG values
 const ogTitle = title;
-const ogDescription = description || "Broderick's personal website";
+const ogDescription = description || "Broderick Cotter's personal website - engineer, polymath, and athlete sharing projects, thoughts, and experiments.";
 const ogImage = `${Astro.site}og-image.png?title=${encodeURIComponent(title)}${description ? `&description=${encodeURIComponent(description)}` : ''}`;
 const ogUrl = `${Astro.site}${currentPath.slice(1)}`;
+const canonicalUrl = ogUrl.endsWith('/') ? ogUrl.slice(0, -1) : ogUrl;
+
+// JSON-LD Schema
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Broderick Cotter",
+  "url": "https://brody.gg",
+  "sameAs": [
+    "https://www.linkedin.com/in/broderickc/",
+    "https://github.com/M3kko",
+    "https://x.com/Brodylame",
+    "https://www.instagram.com/brody_lane/"
+  ],
+  "jobTitle": "Engineer",
+  "description": "Polymath, Engineer, Athlete"
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Broderick Cotter",
+  "alternateName": "Brody.gg",
+  "url": "https://brody.gg"
+};
 ---
 
 <!DOCTYPE html>
@@ -29,7 +55,9 @@ const ogUrl = `${Astro.site}${currentPath.slice(1)}`;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={ogDescription} />
+    <meta name="author" content="Broderick Cotter" />
+    <link rel="canonical" href={canonicalUrl} />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -37,6 +65,8 @@ const ogUrl = `${Astro.site}${currentPath.slice(1)}`;
     <meta property="og:title" content={ogTitle}>
     <meta property="og:description" content={ogDescription}>
     <meta property="og:image" content={ogImage}>
+    <meta property="og:site_name" content="Broderick Cotter" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -44,6 +74,11 @@ const ogUrl = `${Astro.site}${currentPath.slice(1)}`;
     <meta property="twitter:title" content={ogTitle}>
     <meta property="twitter:description" content={ogDescription}>
     <meta property="twitter:image" content={ogImage}>
+    <meta property="twitter:creator" content="@Brodylame" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
 
     <link rel="icon" type="image/png" href="/assets/svg/favicon.png">
     <link rel="preload" href="/assets/svg/fonts/OCR-B.ttf" as="font" type="font/ttf" crossorigin>
