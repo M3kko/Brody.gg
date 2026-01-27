@@ -70,7 +70,7 @@ function formatDateWithOrdinal(date: Date) {
             </div>
         </article>
         <div class="newsletter-wrapper">
-        <NewsletterForm active={entry.data.active} />
+        <NewsletterForm active={'active' in entry.data ? entry.data.active : undefined} />
         </div>
 
         <div class="toc-spacer"></div>
@@ -94,7 +94,7 @@ function formatDateWithOrdinal(date: Date) {
             const headings = Array.from(document.querySelectorAll('.thought-content h1, .thought-content h2, .thought-content h3')) as HTMLElement[];
             const viewportCenter = window.innerHeight / 2;
 
-            let closestHeading = null;
+            let closestHeading: HTMLElement | null = null;
             let smallestDistance = Infinity;
 
             headings.forEach((heading) => {
@@ -109,7 +109,7 @@ function formatDateWithOrdinal(date: Date) {
             });
 
             if (closestHeading) {
-                const id = closestHeading.getAttribute('id');
+                const id = (closestHeading as HTMLElement).getAttribute('id');
                 if (id && id !== currentActive) {
                     currentActive = id;
                     document.querySelectorAll('.toc li').forEach(li => li.classList.remove('active'));
