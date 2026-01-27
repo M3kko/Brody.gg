@@ -7,9 +7,11 @@ interface Props {
   title: string;
   description?: string;
   backLink?: string;
+  publishDate?: Date;
+  articleType?: 'BlogPosting' | 'Article';
 }
 
-const { title, description, backLink } = Astro.props;
+const { title, description, backLink, publishDate, articleType } = Astro.props;
 const currentPath = Astro.url.pathname;
 const isBlogPost = currentPath !== '/' && currentPath !== '/thoughts' && currentPath !== '/thoughts/' && currentPath !== '/about' && currentPath !== '/about/' && currentPath !== '/projects' && currentPath !== '/projects/' && currentPath !== '/experiments' && currentPath !== '/experiments/';
 const isExperiments = currentPath === '/experiments' || currentPath === '/experiments/';
@@ -47,6 +49,28 @@ const websiteSchema = {
   "alternateName": "Brody.gg",
   "url": "https://brody.gg"
 };
+
+const articleSchema = publishDate && articleType ? {
+  "@context": "https://schema.org",
+  "@type": articleType,
+  "headline": title.replace(' - Broderick Cotter', ''),
+  "description": description || ogDescription,
+  "author": {
+    "@type": "Person",
+    "name": "Broderick Cotter",
+    "url": "https://brody.gg"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Broderick Cotter",
+    "url": "https://brody.gg"
+  },
+  "datePublished": publishDate.toISOString(),
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalUrl
+  }
+} : null;
 ---
 
 <!DOCTYPE html>
@@ -79,6 +103,7 @@ const websiteSchema = {
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
+    {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
 
     <link rel="icon" type="image/png" href="/assets/svg/favicon.png">
     <link rel="preload" href="/assets/svg/fonts/OCR-B.ttf" as="font" type="font/ttf" crossorigin>
