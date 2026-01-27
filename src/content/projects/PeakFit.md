@@ -1,7 +1,7 @@
 ---
 title: "PeakFit"
 description: "Optimizing recovery and preventing overuse injuries using bioimetric data for elite athletes."
-date: 2025-06-01
+date: 2025-08-17
 draft: false
 ---
 ## The idea
