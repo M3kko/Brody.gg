@@ -3,6 +3,74 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY.trim());
 const AUDIENCE_ID = '1563b4e7-a6fb-43e3-a4d7-56041efb7442';
 
+const WELCOME_HTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #F5F1E8;
+      padding: 40px 20px;
+      color: #1a1a1a;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 40px;
+      border-radius: 8px;
+    }
+    .logo {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 24px;
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .signature {
+      margin-top: 32px;
+    }
+    .links {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      font-size: 14px;
+    }
+    .links a {
+      color: #FF0000;
+      text-decoration: none;
+      margin-right: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://www.brody.gg/assets/svg/triangle.svg" alt="Logo" class="logo">
+
+    <p>Hey!</p>
+
+    <p>Thanks for subscribing, it genuinely means a lot that you're interested in what I'm working on.</p>
+
+    <p>I send updates once or twice a month, usually when I finish a project, wrap up an experiment, or have something I think is worth sharing.</p>
+
+    <p>In the meantime, feel free to poke around the site. The experiments page is where I document my random productivity challenges and things I'm testing out. Projects has the stuff I've actually shipped.</p>
+
+    <p class="signature">– Broderick</p>
+
+    <div class="links">
+      <a href="https://brody.gg/projects">Projects</a>
+      <a href="https://brody.gg/experiments">Experiments</a>
+      <a href="https://brody.gg/about">About</a>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -15,113 +83,28 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        // Check if contact already exists
-        const { data: existingContacts } = await resend.contacts.list({
+        // Create contact directly — no need to list all contacts first
+        const { data, error } = await resend.contacts.create({
             audienceId: AUDIENCE_ID,
+            email: email,
         });
 
-        const existingContact = existingContacts?.data?.find(
-            contact => contact.email.toLowerCase() === email.toLowerCase()
-        );
-
-        if (existingContact) {
-            // If unsubscribed, resubscribe them
-            if (existingContact.unsubscribed) {
-                await resend.contacts.update({
-                    audienceId: AUDIENCE_ID,
-                    id: existingContact.id,
-                    unsubscribed: false,
-                });
-                // Continue to send welcome email below
-            } else {
-                return res.status(200).json({ message: 'You\'re already subscribed!' });
+        if (error) {
+            // Contact already exists
+            if (error.message?.toLowerCase().includes('already') ||
+                error.name === 'validation_error') {
+                return res.status(200).json({ message: "You're already subscribed!" });
             }
-        } else {
-            // Create new contact
-            const { error } = await resend.contacts.create({
-                audienceId: AUDIENCE_ID,
-                email: email,
-            });
-
-            if (error) {
-                return res.status(500).json({ error: 'Failed to subscribe' });
-            }
+            console.error('Contact creation failed:', error);
+            return res.status(500).json({ error: 'Failed to subscribe' });
         }
 
-        // Delay to avoid Resend rate limit (2 req/sec)
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
+        // Send welcome email (no artificial delay needed with only 1 prior API call)
         const { error: emailError } = await resend.emails.send({
             from: 'Broderick <newsletter@news.brody.gg>',
             to: email,
             subject: 'Hey, welcome!',
-            html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <style>
-                body {
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                  background-color: #F5F1E8;
-                  padding: 40px 20px;
-                  color: #1a1a1a;
-                }
-                .container {
-                  max-width: 500px;
-                  margin: 0 auto;
-                  background-color: white;
-                  padding: 40px;
-                  border-radius: 8px;
-                }
-                .logo {
-                  width: 36px;
-                  height: 36px;
-                  margin-bottom: 24px;
-                }
-                p {
-                  font-size: 16px;
-                  line-height: 1.7;
-                  margin-bottom: 16px;
-                }
-                .signature {
-                  margin-top: 32px;
-                }
-                .links {
-                  margin-top: 24px;
-                  padding-top: 24px;
-                  border-top: 1px solid rgba(0,0,0,0.1);
-                  font-size: 14px;
-                }
-                .links a {
-                  color: #FF0000;
-                  text-decoration: none;
-                  margin-right: 16px;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <img src="https://www.brody.gg/assets/svg/triangle.svg" alt="Logo" class="logo">
-
-                <p>Hey!</p>
-
-                <p>Thanks for subscribing, it genuinely means a lot that you're interested in what I'm working on.</p>
-
-                <p>I send updates once or twice a month, usually when I finish a project, wrap up an experiment, or have something I think is worth sharing.</p>
-
-                <p>In the meantime, feel free to poke around the site. The experiments page is where I document my random productivity challenges and things I'm testing out. Projects has the stuff I've actually shipped.</p>
-
-                <p class="signature">– Broderick</p>
-
-                <div class="links">
-                  <a href="https://brody.gg/projects">Projects</a>
-                  <a href="https://brody.gg/experiments">Experiments</a>
-                  <a href="https://brody.gg/about">About</a>
-                </div>
-              </div>
-            </body>
-            </html>
-            `,
+            html: WELCOME_HTML,
         });
 
         if (emailError) {
@@ -131,6 +114,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: 'Successfully subscribed!' });
 
     } catch (error) {
+        console.error('Subscribe error:', error);
         return res.status(500).json({ error: 'Something went wrong' });
     }
 }
