@@ -5,9 +5,9 @@ date: 2026-03-03
 draft: false
 ---
 
-Now that the Olympics are wrapped up I wanted to take some time to write about my experience at NoLimit and the incredible things that we are working on. (you can also read more about my experience at the olympics here)
+Now that the Olympics are wrapped up I wanted to take some time to write about my experience at NoLimit and the incredible things that we are working on. (you can also read more about my experience at the olympics [here](/2026-Winter-Olympics))
 
-For quick context, NoLimit is a sports tech startup that created shorts that have EMG sensors and IMUs to detect muscle activation + track height and speed. They acquired my app PeakFit and brought me on as a founding engineer in August of 2025 to have me create their software and algorithms for injury detection.
+For quick context, NoLimit is a sports tech startup that created shorts that have EMG sensors and IMUs to detect muscle activation + track height and speed. They acquired my app [PeakFit](/PeakFit) and brought me on as a founding engineer in August of 2025 to have me create their software and algorithms for injury detection.
 
 My 2 primary tasks thus far have been creating
 

@@ -6,9 +6,9 @@ draft: false
 slug: 2026-Winter-Olympics
 ---
 
-This post is related to my work at NoLimit and my experience at the Winter Olympics. 
+This post is related to my work at [NoLimit](/NoLimit) and my experience at the Winter Olympics.
 
-For context NoLimit is a sports tech startup that created shorts that have EMG sensors and IMUs to detect muscle activation + track height and speed. They acquired my app PeakFit and brought me on as a founding engineer in August of 2025 to have me create their software and algorithms for injury detection 
+For context NoLimit is a sports tech startup that created shorts that have EMG sensors and IMUs to detect muscle activation + track height and speed. They acquired my app [PeakFit](/PeakFit) and brought me on as a founding engineer in August of 2025 to have me create their software and algorithms for injury detection
 
 A month ahead of the Winter Olympics I was able to sign on 7 athletes to using our tech, which is how we were able to go. Here is what I learned from this absolutely incredible experience. 
 
@@ -42,7 +42,7 @@ My most incredible side quest yet.
 
 I was just walking Milano with Maxim Naumov, we walk into a Starbucks and suddenly me and my friend are shooting him walking around and taking sips of coffee and the employees are all interacting with him. We made a reel since Starbucks is an official sponsor of Team USA and then boom they reposted it on their story like wtf?? 
 
-The whole thing was completely spontaneous and the staff were so chill about it (I mean they kinda had to be the guy *is* an Olympian), and we did it in like an hour and a half, you can check it out here
+The whole thing was completely spontaneous and the staff were so chill about it (I mean they kinda had to be the guy *is* an Olympian), and we did it in like an hour and a half, you can check it out [here](https://www.instagram.com/reel/DVB0wQiES1u/?igsh=MTgwejdwZjNjd24wNQ==)
 
 ## Houses and Pin Trading
 I didn't know this going into the Olympics, but pin trading is a really big side thing that people do. There are a ton of popups from the Olympic sponsors like Visa, Alibaba, Prosecco, etc., where you can go and get free pins, and if you run into athletes, you can trade with them for their country's pin, which are way harder to get. It's actually a really fun use of time just walking around the city, collecting and trading pins. 
