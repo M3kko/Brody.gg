@@ -3,6 +3,7 @@ title: "2026 Winter Olympics"
 description: "What I learned from signing 7 athletes and going to Milano"
 date: 2026-02-17
 draft: false
+slug: 2026-Winter-Olympics
 ---
 
 This post is related to my work at NoLimit and my experience at the Winter Olympics. 

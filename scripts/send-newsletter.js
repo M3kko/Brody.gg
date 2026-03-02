@@ -81,7 +81,7 @@ const htmlContent = `
 
     <p>Here's everything I learned.</p>
 
-    <a href="https://brody.gg/2026-Winter-Olympics" class="read-more">Read the full article →</a>
+    <a href="https://brody.gg/2026-winter-olympics" class="read-more">Read the full article →</a>
 
     <div class="footer">
       <p>You're receiving this because you subscribed at <a href="https://brody.gg">brody.gg</a></p>
