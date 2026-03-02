@@ -1,6 +1,6 @@
 ---
-title: "My First Thought"
-description: "This is an example blog post to show how the markdown system works"
+title: "NoLimit"
+description: "Building sports tech for injury prevention at the intersection of wearables and performance data"
 date: 2026-03-03
 draft: false
 ---

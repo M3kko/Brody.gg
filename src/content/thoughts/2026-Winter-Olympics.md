@@ -1,6 +1,6 @@
 ---
-title: "My First Thought"
-description: "This is an example blog post to show how the markdown system works"
+title: "2026 Winter Olympics"
+description: "What I learned from signing 7 athletes and going to Milano"
 date: 2026-02-17
 draft: false
 ---
