@@ -9,7 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY.trim());
 const AUDIENCE_ID = '1563b4e7-a6fb-43e3-a4d7-56041efb7442';
 
 // Newsletter content - UPDATE THIS FOR EACH NEWSLETTER
-const subject = "2025";
+const subject = "I went to the Winter Olympics";
 const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -72,22 +72,16 @@ const htmlContent = `
 </head>
 <body>
   <div class="container">
-    <h1>2025</h1>
-    <p class="subtitle">A reflection on 2025</p>
+    <h1>I went to the Winter Olympics</h1>
+    <p class="subtitle">Milano, February 2026</p>
 
-    <p>Ever since I was a little kid, I have had a weird obsession with the number 5, so naturally I was always obsessing over the year 2025. For some reason, I had it in my mind that "2025 would be my year" because to a 7 year old's brain that <em>just</em> makes sense.</p>
+    <p>A month before the Winter Olympics, I was able to sign on 7 athletes to using our sports tech at NoLimit — and that's how I ended up in Milano for the games.</p>
 
-    <p>But then the year actually came. And I woke up on my 16th birthday, realizing I still had all the same ambitions and dreams from when I was a little kid. The same ambitions and dreams, because I really hadn't made much progress towards them.</p>
+    <p>I thought we'd be able to just prance right into the Olympic village. I was very wrong. I also accidentally ended up shooting a Starbucks ad with a US Olympian, learned why pin trading is a whole thing, and walked away with probably the most valuable lesson I've taken from any trip.</p>
 
-    <p>I suddenly realized that if I just kept daydreaming, just kept thinking, then I would never amount to anything close to my dreams or ambitions. And then I would be 80 years old one day on my death bed, with nothing but regret because I hadn't accomplished a single thing besides dream.</p>
+    <p>Here's everything I learned.</p>
 
-    <p>Now this sounds pretty brutal, but for some reason it actually worked. It worked a bit <em>too</em> well, in that I spent a good portion of what was supposed to be a ski trip, focused on coding and designing UI's in Figma.</p>
-
-    <p>But I was determined to make this year about accomplishing my goals, working towards my dreams, and most importantly creating the discipline for myself to be able to do this for the rest of my life.</p>
-
-    <p>So here's the honest story of how that went.</p>
-
-    <a href="https://brody.gg/2025" class="read-more">Read the full article →</a>
+    <a href="https://brody.gg/2026-Winter-Olympics" class="read-more">Read the full article →</a>
 
     <div class="footer">
       <p>You're receiving this because you subscribed at <a href="https://brody.gg">brody.gg</a></p>
