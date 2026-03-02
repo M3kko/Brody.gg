@@ -6,9 +6,9 @@ draft: false
 slug: 2026-Winter-Olympics
 ---
 
-This post is related to my work at [NoLimit](/NoLimit) and my experience at the Winter Olympics.
+This post is related to my work at [NoLimit](/nolimit) and my experience at the Winter Olympics.
 
-For context NoLimit is a sports tech startup that created shorts that have EMG sensors and IMUs to detect muscle activation + track height and speed. They acquired my app [PeakFit](/PeakFit) and brought me on as a founding engineer in August of 2025 to have me create their software and algorithms for injury detection
+For context NoLimit is a sports tech startup that created shorts that have EMG sensors and IMUs to detect muscle activation + track height and speed. They acquired my app [PeakFit](/peakfit) and brought me on as a founding engineer in August of 2025 to have me create their software and algorithms for injury detection
 
 A month ahead of the Winter Olympics I was able to sign on 7 athletes to using our tech, which is how we were able to go. Here is what I learned from this absolutely incredible experience. 
 
