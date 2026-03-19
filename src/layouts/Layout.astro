@@ -13,11 +13,12 @@ interface Props {
 
 const { title, description, backLink, publishDate, articleType } = Astro.props;
 const currentPath = Astro.url.pathname;
-const isBlogPost = currentPath !== '/' && currentPath !== '/thoughts' && currentPath !== '/thoughts/' && currentPath !== '/about' && currentPath !== '/about/' && currentPath !== '/projects' && currentPath !== '/projects/' && currentPath !== '/experiments' && currentPath !== '/experiments/';
+const isBlogPost = currentPath !== '/' && currentPath !== '/thoughts' && currentPath !== '/thoughts/' && currentPath !== '/about' && currentPath !== '/about/' && currentPath !== '/projects' && currentPath !== '/projects/' && currentPath !== '/experiments' && currentPath !== '/experiments/' && currentPath !== '/newsletter' && currentPath !== '/newsletter/';
 const isExperiments = currentPath === '/experiments' || currentPath === '/experiments/';
 const isProjects = currentPath === '/projects' || currentPath === '/projects/';
 const isAbout = currentPath === '/about' || currentPath === '/about/';
 const isHome = currentPath === '/' || currentPath === '';
+const isNewsletter = currentPath === '/newsletter' || currentPath === '/newsletter/';
 
 // Default OG values
 const ogTitle = title;
@@ -122,15 +123,19 @@ const articleSchema = publishDate && articleType ? {
         })();
     </script>
 </head>
-<body class={`${isBlogPost ? 'blog-post' : ''} ${isExperiments ? 'experiments' : ''} ${isProjects ? 'projects' : ''} ${isAbout ? 'about' : ''}`}>
+<body class={`${isBlogPost ? 'blog-post' : ''} ${isExperiments ? 'experiments' : ''} ${isProjects ? 'projects' : ''} ${isAbout ? 'about' : ''} ${isNewsletter ? 'newsletter' : ''}`}>
+    {!isNewsletter && (
     <a href={backLink || (isBlogPost ? '/thoughts' : '/')} class="logo">
         <img src="/assets/svg/triangle.svg" alt="Logo" width="48" height="48">
     </a>
+    )}
 
+    {!isNewsletter && (
     <button class="theme-toggle" aria-label="Toggle theme">
         <img src="/assets/svg/sun-high.svg" alt="Light mode" class="theme-icon sun" />
         <img src="/assets/svg/moon-stars.svg" alt="Dark mode" class="theme-icon moon" />
     </button>
+    )}
 
     <slot />
 
