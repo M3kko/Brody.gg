@@ -258,7 +258,7 @@ body {
 .theme-toggle {
     position: absolute;
     top: 2rem;
-    right: 2rem;
+    right: calc(50% - 600px + 3rem);
     z-index: 100;
     background: transparent;
     border: none;
@@ -306,6 +306,12 @@ body {
     }
     :root:not([data-theme="light"]) .theme-toggle .sun {
         display: block;
+    }
+}
+
+@media (max-width: 1248px) {
+    .theme-toggle {
+        right: 2rem;
     }
 }
 
