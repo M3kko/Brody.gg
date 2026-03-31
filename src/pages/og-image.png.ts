@@ -17,7 +17,7 @@ export const GET: APIRoute = async ({ url }) => {
   const triangle2DataUri = `data:image/svg+xml,${encodeURIComponent(triangle2Svg)}`;
 
   // Small red triangle for branding
-  const brandTriSvg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 87'><polygon points='50,0 100,87 0,87' fill='%23FF0000'/></svg>`;
+  const brandTriSvg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 87'><polygon points='50,0 100,87 0,87' fill='rgb(255,0,0)'/></svg>`;
   const brandTriDataUri = `data:image/svg+xml,${encodeURIComponent(brandTriSvg)}`;
 
   return new ImageResponse(

@@ -311,17 +311,35 @@ const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(ti
 
     // --- Download ---
     downloadBtn.addEventListener('click', () => {
-      canvas.toBlob((blob) => {
+      canvas.toBlob(async (blob) => {
         if (!blob) return;
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `brody-gg-${currentFormat}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
-        flashSuccess(downloadBtn);
+        const file = new File([blob], `brody-gg-${currentFormat}.png`, { type: 'image/png' });
+
+        // Mobile: use native share sheet (saves to photos)
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file] });
+            flashSuccess(downloadBtn);
+          } catch (e: any) {
+            if (e.name !== 'AbortError') fallbackDownload(blob);
+          }
+          return;
+        }
+
+        // Desktop: standard download
+        fallbackDownload(blob);
       }, 'image/png');
     });
+
+    function fallbackDownload(blob: Blob) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `brody-gg-${currentFormat}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+      flashSuccess(downloadBtn);
+    }
 
     // --- Copy Link ---
     copyBtn.addEventListener('click', () => {
