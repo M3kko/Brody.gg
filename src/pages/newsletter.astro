@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ShareCard from '../components/ShareCard.astro';
 
 export const prerender = true;
 ---
@@ -38,6 +39,10 @@ export const prerender = true;
             <div class="divider"></div>
 
             <a href="/thoughts" class="read-link">Read past writings</a>
+
+            <div class="share-wrapper">
+                <ShareCard title="Broderick's Newsletter" description="Projects, experiments, and thoughts from a curious engineer." collection="thoughts" slug="newsletter" />
+            </div>
         </div>
     </main>
 </Layout>
@@ -170,6 +175,12 @@ export const prerender = true;
 
     .read-link:hover {
         opacity: 1;
+    }
+
+    .share-wrapper {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: center;
     }
 
     @media (max-width: 768px) {

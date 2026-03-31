@@ -499,18 +499,7 @@ const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(ti
       }
       ctx.putImageData(imageData, 0, 0);
 
-      // --- 6. Collection Label ---
-      ctx.fillStyle = 'rgba(255,255,255, 0.35)';
-      ctx.font = font(600, c.labelSize);
-      if ('letterSpacing' in ctx) {
-        (ctx as any).letterSpacing = '4px';
-      }
-      ctx.fillText(collection.toUpperCase(), c.pad, c.labelY);
-      if ('letterSpacing' in ctx) {
-        (ctx as any).letterSpacing = '0px';
-      }
-
-      // --- 7. Title ---
+      // --- 6. Title ---
       ctx.fillStyle = '#ffffff';
       ctx.font = font(700, c.titleSize);
       const maxTextW = c.w - c.pad * 2;
