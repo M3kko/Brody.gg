@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import ShareCard from '../components/ShareCard.astro';
 
 export async function getStaticPaths() {
   const thoughts = await getCollection('thoughts', ({ data }) => !data.draft);
@@ -60,9 +61,12 @@ function formatDateWithOrdinal(date: Date) {
                 {entry.data.description && (
                     <p class="description">{entry.data.description}</p>
                 )}
-                <time datetime={entry.data.date.toISOString()}>
-                    {formatDateWithOrdinal(entry.data.date)}
-                </time>
+                <div class="header-meta">
+                    <time datetime={entry.data.date.toISOString()}>
+                        {formatDateWithOrdinal(entry.data.date)}
+                    </time>
+                    <ShareCard title={entry.data.title} description={entry.data.description} collection={collection} slug={entry.slug} />
+                </div>
             </header>
 
             <div class="thought-content">
@@ -250,6 +254,12 @@ function formatDateWithOrdinal(date: Date) {
         font-family: 'OCR-B', monospace;
         letter-spacing: -0.05em;
         font-size: clamp(1.6rem, 3.8vw, 2.3rem);
+    }
+
+    .header-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
 
     time {
