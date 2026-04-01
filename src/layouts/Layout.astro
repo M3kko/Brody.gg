@@ -23,7 +23,7 @@ const isNewsletter = currentPath === '/newsletter' || currentPath === '/newslett
 // Default OG values
 const ogTitle = title;
 const ogDescription = description || "Broderick Cotter's personal website - engineer, polymath, and athlete sharing projects, thoughts, and experiments.";
-const ogImage = `${Astro.site}og-image.png?title=${encodeURIComponent(title)}${description ? `&description=${encodeURIComponent(description)}` : ''}`;
+const ogImage = `${Astro.site}og-image.png?v=2&title=${encodeURIComponent(title)}${description ? `&description=${encodeURIComponent(description)}` : ''}`;
 const ogUrl = `${Astro.site}${currentPath.slice(1)}`;
 const canonicalUrl = ogUrl.endsWith('/') ? ogUrl.slice(0, -1) : ogUrl;
 
